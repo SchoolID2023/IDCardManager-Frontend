@@ -85,7 +85,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          Expanded(
+          Container(
+            width: 600,
             child: PageView(
               controller: page,
               children: [
