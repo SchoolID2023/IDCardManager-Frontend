@@ -37,6 +37,10 @@ dependencies:
   easy_sidemenu: ^0.3.1
   get: ^4.6.5
   file_picker: ^4.6.1
+  string_to_hex: ^0.2.2
+  path_provider: ^2.0.11
+  file_saver: ^0.1.0
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

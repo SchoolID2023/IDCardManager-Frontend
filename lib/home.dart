@@ -85,15 +85,17 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          Container(
-            width: 600,
-            child: PageView(
-              controller: page,
-              children: [
-                AddSchoolPage(),
-                AddIdCardPage(),
-                ManageDataPage(),
-              ],
+          Expanded(
+            child: Container(
+              // width: 600,
+              child: PageView(
+                controller: page,
+                children: [
+                  AddSchoolPage(),
+                  AddIdCardPage(),
+                  ManageDataPage(),
+                ],
+              ),
             ),
           ),
         ],
