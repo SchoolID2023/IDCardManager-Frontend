@@ -1,12 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/widgets/generate_id_card.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import '../models/id_card_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/route_manager.dart';
+import 'package:flutter/foundation.dart';
+// import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class AddIdCardPage extends StatefulWidget {
   const AddIdCardPage({Key? key}) : super(key: key);
@@ -59,6 +61,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
   }
 
@@ -67,11 +70,18 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
     double cwidth = MediaQuery.of(context).size.width;
     double cheight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Id Card'),
+    return ScaffoldPage(
+      header: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Add ID Card',
+          style: TextStyle(
+            fontSize: 40,
+            color: Colors.blue,
+          ),
+        ),
       ),
-      body: Container(
+      content: Container(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -81,333 +91,349 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                 width: 400,
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: uploadImage,
-                          child: const Text('Upload Image'),
-                        ),
-                        file == null
-                            ? const Text('No file selected')
-                            : Image.file(
-                                File(
-                                  file.path.toString(),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Button(
+                            onPressed: uploadImage,
+                            child: const Text('Upload Image'),
+                          ),
+                          SizedBox(
+                            width: 50,
+                          ),
+                          file == null
+                              ? const Text('No file selected')
+                              : Image.file(
+                                  File(
+                                    file.path.toString(),
+                                  ),
+                                  width: 80,
+                                  height: 80,
                                 ),
-                                width: 80,
-                                height: 80,
-                              ),
-                      ],
+                        ],
+                      ),
                     ),
-                    SizedBox(
-                      width: 400,
-                      child: SwitchListTile(
-                        value: _idCard.isPhoto,
-                        onChanged: (value) {
-                          setState(() {
-                            _idCard.isPhoto = value;
-                            _idCard.photoHeight = 51.0;
-                            _idCard.photoWidth = 51.0;
-                            _photoHeight.text = '51.0';
-                            _photoWidth.text = '51.0';
-                          });
-                        },
-                        title: const Text('Is Photo'),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 400,
+                        child: ToggleButton(
+                          checked: _idCard.isPhoto,
+                          onChanged: (value) {
+                            setState(() {
+                              _idCard.isPhoto = value;
+                              _idCard.photoHeight = 51.0;
+                              _idCard.photoWidth = 51.0;
+                              _photoHeight.text = '51.0';
+                              _photoWidth.text = '51.0';
+                            });
+                          },
+                          child: const Text('Is Photo'),
+                        ),
                       ),
                     ),
                     _idCard.isPhoto
-                        ? Container(
-                            width: 400,
-                            child: Column(
-                              children: [
-                                TextField(
-                                  controller: _photoHeight,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Photo Height',
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              width: 400,
+                              child: Column(
+                                children: [
+                                  TextBox(
+                                    controller: _photoHeight,
+                                    header: 'Photo Height',
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        _idCard.photoHeight =
+                                            double.parse(value);
+                                      });
+                                    },
                                   ),
-                                  onChanged: (String value) {
-                                    setState(() {
-                                      _idCard.photoHeight = double.parse(value);
-                                    });
-                                  },
-                                ),
-                                TextField(
-                                  controller: _photoWidth,
-                                  decoration: const InputDecoration(
-                                    labelText: 'Photo Width',
+                                  TextBox(
+                                    controller: _photoWidth,
+                                    header: 'Photo Width',
+                                    onChanged: (String value) {
+                                      setState(() {
+                                        _idCard.photoWidth =
+                                            double.parse(value);
+                                      });
+                                    },
                                   ),
-                                  onChanged: (String value) {
-                                    setState(() {
-                                      _idCard.photoWidth = double.parse(value);
-                                    });
-                                  },
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           )
                         : Container(),
-                    ListTile(
-                      title: Text('Add Title'),
-                      trailing: IconButton(
-                        icon: Icon(Icons.add),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Welcome'),
-                                content: SizedBox(
-                                  // height: 400,
-                                  width: 375,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 150,
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            SizedBox(
-                                              child: TextField(
-                                                decoration: InputDecoration(
-                                                  label: Text("label Name"),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Add Title'),
+                        trailing: Button(
+                          child: Icon(FluentIcons.add),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return ContentDialog(
+                                  title: Text('Welcome'),
+                                  content: SizedBox(
+                                    // height: 400,
+                                    width: 500,
+                                    child: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 150,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                child: TextBox(
+                                                  header: "Label Name",
+                                                  controller: _titleController,
                                                 ),
-                                                controller: _titleController,
                                               ),
-                                            ),
-                                            SizedBox(
-                                              child: TextField(
-                                                decoration: InputDecoration(
-                                                  label: Text("Font Size"),
+                                              SizedBox(
+                                                child: TextBox(
+                                                  header: "Font Size",
+                                                  controller:
+                                                      _fontSizeController,
                                                 ),
-                                                controller: _fontSizeController,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 200,
-                                        height: 310,
-                                        child: ColorPicker(
-                                            colorPickerWidth: 150,
-                                            portraitOnly: true,
-                                            pickerColor: _pickerColor,
-                                            onColorChanged: (color) {
-                                              setState(() {
-                                                _pickerColor = color;
-                                              });
-                                            }),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  FlatButton(
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      Get.back();
-                                    },
-                                    child: Text('CANCEL'),
-                                  ),
-                                  FlatButton(
-                                    textColor: Colors.black,
-                                    onPressed: () {
-                                      String colorString = _pickerColor
-                                          .toString(); // Color(0x12345678)
-                                      String valueString = colorString
-                                          .split('(0x')[1]
-                                          .split(')')[0]; // kind of hacky..
-                                      int value =
-                                          int.parse(valueString, radix: 16);
-                                      setState(() {
-                                        _idCard.labels.add(
-                                          Label(
-                                            title: _titleController.text,
-                                            fontSize: int.parse(
-                                                _fontSizeController.text),
-                                            color: valueString,
-                                            x: 0,
-                                            y: (_idCard.labels.length) * 50,
-                                          ),
-                                        );
-                                        print(_idCard.labels.length);
-                                        _titleController.clear();
-                                        _fontSizeController.clear();
-                                        Get.back();
-                                      });
-                                    },
-                                    child: Text('ACCEPT'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
-                      // height: 400,
-                      // width: 200,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: _idCard.labels.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              _idCard.labels[index].title,
-                              style: TextStyle(
-                                fontSize:
-                                    _idCard.labels[index].fontSize.toDouble(),
-                                color: Color(
-                                  int.parse(_idCard.labels[index].color,
-                                      radix: 16),
-                                ),
-                              ),
-                            ),
-                            trailing: SizedBox(
-                              width: 100,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          _titleController.text =
-                                              _idCard.labels[index].title;
-                                          _fontSizeController.text = _idCard
-                                              .labels[index].fontSize
-                                              .toString();
-                                          _pickerColor = Color(
-                                            int.parse(
-                                                _idCard.labels[index].color,
-                                                radix: 16),
-                                          );
-                                          return AlertDialog(
-                                            title: Text('Welcome'),
-                                            content: SizedBox(
-                                              // height: 400,
-                                              width: 375,
-                                              child: Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 150,
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        SizedBox(
-                                                          child: TextField(
-                                                            decoration:
-                                                                InputDecoration(
-                                                              label: Text(
-                                                                  "label Name"),
-                                                            ),
-                                                            controller:
-                                                                _titleController,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          child: TextField(
-                                                            decoration:
-                                                                InputDecoration(
-                                                              label: Text(
-                                                                  "Font Size"),
-                                                            ),
-                                                            controller:
-                                                                _fontSizeController,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 200,
-                                                    height: 310,
-                                                    child: ColorPicker(
-                                                        colorPickerWidth: 150,
-                                                        portraitOnly: true,
-                                                        pickerColor:
-                                                            _pickerColor,
-                                                        onColorChanged:
-                                                            (color) {
-                                                          setState(() {
-                                                            _pickerColor =
-                                                                color;
-                                                          });
-                                                        }),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            actions: [
-                                              FlatButton(
-                                                textColor: Colors.black,
-                                                onPressed: () {
-                                                  Get.back();
-                                                },
-                                                child: Text('CANCEL'),
-                                              ),
-                                              FlatButton(
-                                                textColor: Colors.black,
-                                                onPressed: () {
-                                                  String colorString = _pickerColor
-                                                      .toString(); // Color(0x12345678)
-                                                  String valueString =
-                                                      colorString
-                                                              .split('(0x')[1]
-                                                              .split(')')[
-                                                          0]; // kind of hacky..
-                                                  int value = int.parse(
-                                                      valueString,
-                                                      radix: 16);
-                                                  setState(() {
-                                                    _idCard.labels[index]
-                                                            .title =
-                                                        _titleController.text;
-                                                    _idCard.labels[index]
-                                                            .fontSize =
-                                                        int.parse(
-                                                            _fontSizeController
-                                                                .text);
-                                                    _idCard.labels[index]
-                                                        .color = valueString;
-                                                    _idCard.labels[index].x = 0;
-                                                    _idCard.labels[index].y =
-                                                        index * 50;
-                                                    Get.back();
-                                                  });
-                                                },
-                                                child: Text('ACCEPT'),
                                               ),
                                             ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 150,
+                                          height: 410,
+                                          child: ColorPicker(
+                                              colorPickerWidth: 150,
+                                              portraitOnly: true,
+                                              pickerColor: _pickerColor,
+                                              onColorChanged: (color) {
+                                                setState(() {
+                                                  _pickerColor = color;
+                                                });
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    Button(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('CANCEL'),
+                                    ),
+                                    Button(
+                                      onPressed: () {
+                                        String colorString = _pickerColor
+                                            .toString(); // Color(0x12345678)
+                                        String valueString = colorString
+                                            .split('(0x')[1]
+                                            .split(')')[0]; // kind of hacky..
+                                        int value =
+                                            int.parse(valueString, radix: 16);
+                                        setState(() {
+                                          _idCard.labels.add(
+                                            Label(
+                                              title: _titleController.text,
+                                              fontSize: int.parse(
+                                                  _fontSizeController.text),
+                                              color: valueString,
+                                              x: 0,
+                                              y: (_idCard.labels.length) * 50,
+                                            ),
                                           );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      setState(() {
-                                        _idCard.labels.removeAt(index);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
+                                          print(_idCard.labels.length);
+                                          _titleController.clear();
+                                          _fontSizeController.clear();
+                                          Navigator.of(context).pop();
+                                        });
+                                      },
+                                      child: Text('ACCEPT'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Get.to(() => GenerateIdCard(
-                              idCard: _idCard,
-                              updateIdCardPosition: _updatePostion));
-                        },
-                        child: const Text('Save')),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        // height: 400,
+                        // width: 200,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: _idCard.labels.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                _idCard.labels[index].title,
+                                style: TextStyle(
+                                  fontSize:
+                                      _idCard.labels[index].fontSize.toDouble(),
+                                  color: Color(
+                                    int.parse(_idCard.labels[index].color,
+                                        radix: 16),
+                                  ),
+                                ),
+                              ),
+                              trailing: SizedBox(
+                                width: 100,
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(FluentIcons.edit),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            _titleController.text =
+                                                _idCard.labels[index].title;
+                                            _fontSizeController.text = _idCard
+                                                .labels[index].fontSize
+                                                .toString();
+                                            _pickerColor = Color(
+                                              int.parse(
+                                                  _idCard.labels[index].color,
+                                                  radix: 16),
+                                            );
+                                            return ContentDialog(
+                                              title: Text('Welcome'),
+                                              content: SizedBox(
+                                                // height: 400,
+                                                width: 500,
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 150,
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          SizedBox(
+                                                            child: TextBox(
+                                                              header:
+                                                                  "Label Name",
+                                                              controller:
+                                                                  _titleController,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            child: TextBox(
+                                                              header:
+                                                                  "Font Size",
+                                                              controller:
+                                                                  _fontSizeController,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 150,
+                                                      height: 410,
+                                                      child: ColorPicker(
+                                                          colorPickerWidth: 150,
+                                                          portraitOnly: true,
+                                                          pickerColor:
+                                                              _pickerColor,
+                                                          onColorChanged:
+                                                              (color) {
+                                                            setState(() {
+                                                              _pickerColor =
+                                                                  color;
+                                                            });
+                                                          }),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                Button(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Text('CANCEL'),
+                                                ),
+                                                Button(
+                                                  onPressed: () {
+                                                    String colorString =
+                                                        _pickerColor
+                                                            .toString(); // Color(0x12345678)
+                                                    String valueString =
+                                                        colorString
+                                                                .split('(0x')[1]
+                                                                .split(')')[
+                                                            0]; // kind of hacky..
+                                                    int value = int.parse(
+                                                        valueString,
+                                                        radix: 16);
+                                                    setState(() {
+                                                      _idCard.labels[index]
+                                                              .title =
+                                                          _titleController.text;
+                                                      _idCard.labels[index]
+                                                              .fontSize =
+                                                          int.parse(
+                                                              _fontSizeController
+                                                                  .text);
+                                                      _idCard.labels[index]
+                                                          .color = valueString;
+                                                      _idCard.labels[index].x =
+                                                          0;
+                                                      _idCard.labels[index].y =
+                                                          index * 50;
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    });
+                                                  },
+                                                  child: Text('ACCEPT'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(FluentIcons.delete),
+                                      onPressed: () {
+                                        setState(() {
+                                          _idCard.labels.removeAt(index);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Button(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              FluentPageRoute(
+                                builder: (context) => GenerateIdCard(
+                                    idCard: _idCard,
+                                    updateIdCardPosition: _updatePostion),
+                              ),
+                            );
+                            // Get.to(() => GenerateIdCard(
+                            //     idCard: _idCard,
+                            //     updateIdCardPosition: _updatePostion));
+                          },
+                          child: const Text('Save')),
+                    ),
                   ],
                 ),
               ),

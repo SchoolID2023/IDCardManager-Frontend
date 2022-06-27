@@ -143,7 +143,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
             children: [
               ElevatedButton(
                   onPressed: () {
-                    Get.back();
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Save')),
               ElevatedButton(
