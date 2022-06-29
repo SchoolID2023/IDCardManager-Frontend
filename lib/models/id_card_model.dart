@@ -1,96 +1,63 @@
-// class IdCardModel {
-//   List<Label> labels;
-//   bool isPhoto;
-//   String backgroundImagePath;
-//   String? photoPath;
-//   int? photoWidth;
-//   int? photoHeight;
-//   int? photoX;
-//   int? photoY;
-
-//   IdCardModel({
-//     required this.labels,
-//     required this.isPhoto,
-//     required this.backgroundImagePath,
-//     this.photoPath,
-//     this.photoWidth,
-//     this.photoHeight,
-//     this.photoX,
-//     this.photoY,
-//   });
-// }
-
-// class Label {
-//   String title;
-//   int color;
-//   int fontSize;
-//   int x, y;
-//   Label({required this.title, required this.color, required this.fontSize, required this.x, required this.y});
-// }
-
 // To parse this JSON data, do
 //
-//     final idCardModel = idCardModelFromMap(jsonString);
+//     final IdCardModel = IdCardModelFromJson(jsonString);
 
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-IdCardModel idCardModelFromMap(String str) =>
-    IdCardModel.fromMap(json.decode(str));
+IdCardModel idCardModelFromJson(String str) =>
+    IdCardModel.fromJson(json.decode(str));
 
-String idCardModelToMap(IdCardModel data) => json.encode(data.toMap());
+String idCardModelToJson(IdCardModel data) => json.encode(data.toJson());
 
 class IdCardModel {
   IdCardModel({
-    required this.isPhoto,
-    required this.backgroundImagePath,
-    this.photoPath = '',
-    this.photoWidth = 0.0,
-    this.photoHeight = 0.0,
-    this.photoX = 200.0,
-    this.photoY = 200.0,
+    required this.isDual,
+    required this.foregroundImagePath,
+    this.backgroundImagePath = "",
+    required this.width,
+    required this.height,
     required this.labels,
   });
 
-  bool isPhoto;
+  bool isDual;
+  String foregroundImagePath;
   String backgroundImagePath;
-  String photoPath;
-  double photoWidth;
-  double photoHeight;
-  double photoX;
-  double photoY;
+  double width;
+  double height;
   List<Label> labels;
 
-  factory IdCardModel.fromMap(Map<String, dynamic> json) => IdCardModel(
-        isPhoto: json["isPhoto"],
+  factory IdCardModel.fromJson(Map<String, dynamic> json) => IdCardModel(
+        isDual: json["isDual"],
+        foregroundImagePath: json["foregroundImagePath"],
         backgroundImagePath: json["backgroundImagePath"],
-        photoPath: json["photoPath"],
-        photoWidth: json["photoWidth"],
-        photoHeight: json["photoHeight"],
-        photoX: json["photoX"],
-        photoY: json["photoY"],
-        labels: List<Label>.from(json["labels"].map((x) => Label.fromMap(x))),
+        width: json["width"],
+        height: json["height"],
+        labels: List<Label>.from(json["labels"].map((x) => Label.fromJson(x))),
       );
 
-  Map<String, dynamic> toMap() => {
-        "isPhoto": isPhoto,
+  Map<String, dynamic> toJson() => {
+        "isDual": isDual,
+        "foregroundImagePath": foregroundImagePath,
         "backgroundImagePath": backgroundImagePath,
-        "photoPath": photoPath,
-        "photoWidth": photoWidth,
-        "photoHeight": photoHeight,
-        "photoX": photoX,
-        "photoY": photoY,
-        "labels": List<dynamic>.from(labels.map((x) => x.toMap())),
+        "width": width,
+        "height": height,
+        "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
       };
 }
 
 class Label {
   Label({
     required this.title,
-    required this.color,
-    required this.fontSize,
-    required this.x,
-    required this.y,
+    this.color = "ff000000",
+    this.fontSize = 20,
+    this.x = 0,
+    this.y = 0,
+    this.width = 100,
+    this.height = 20,
+    this.isPrinted = false,
+    this.isFront = true,
+    this.isPhoto = false,
   });
 
   String title;
@@ -98,20 +65,35 @@ class Label {
   int fontSize;
   int x;
   int y;
+  int width;
+  int height;
+  bool isPrinted;
+  bool isFront;
+  bool isPhoto;
 
-  factory Label.fromMap(Map<String, dynamic> json) => Label(
+  factory Label.fromJson(Map<String, dynamic> json) => Label(
         title: json["title"],
         color: json["color"],
         fontSize: json["fontSize"],
         x: json["x"],
         y: json["y"],
+        width: json["width"],
+        height: json["height"],
+        isPrinted: json["isPrinted"],
+        isFront: json["isFront"],
+        isPhoto: json["isPhoto"],
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         "title": title,
         "color": color,
         "fontSize": fontSize,
         "x": x,
         "y": y,
+        "width": width,
+        "height": height,
+        "isPrinted": isPrinted,
+        "isFront": isFront,
+        "isPhoto": isPhoto,
       };
 }

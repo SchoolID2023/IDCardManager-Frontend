@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
+import 'package:idcard_maker_frontend/home.dart';
 import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 
@@ -85,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.push(
                                         context,
                                         FluentPageRoute(
-                                          builder: (context) => AddIdCardPage(),
+                                          builder: (context) => HomePage(),
                                         ),
                                       );
                                     } catch (e) {

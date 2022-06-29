@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                 controller: page,
                 children: [
                   AddSchoolPage(),
-                  AddIdCardPage(),
+                 
                   ManageDataPage(),
                 ],
               ),
