@@ -1,18 +1,16 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:get/get.dart';
+import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/widgets/load_id_card_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/login_screen.dart';
+import 'widgets/school_tile.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  final SchoolController schoolController = Get.put(SchoolController());
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
@@ -34,54 +32,57 @@ class _HomePageState extends State<HomePage> {
           )),
       content: ScaffoldPage(
         header: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "Welcome !",
-            style: TextStyle(
-              fontSize: 40,
-              color: Colors.blue,
-            ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16.0,
+            vertical: 8.0,
           ),
-        ),
-        content: Center(
-          child: Column(
+          child: Row(
             children: [
-              // Button(
-              //   child: Text("Generate ID Card"),
-              //   onPressed: () {
-              //     Navigator.of(context).push(
-              //       FluentPageRoute(
-              //         builder: (context) => AddIdCardPage(),
-              //       ),
-              //     );
-              //   },
-              // ),
-              // Text(
-              //   "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentiumoptio, eaque rerum! Provident similique accusantium nemo autem. Veritatis obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquamnihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,tenetur error, harum nesciunt ipsum debitis quas aliquid.",
-              // ),
-              Container(
-                width: 300,
-                height: 200,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentiumoptio, eaque rerum! Provident similique accusantium nemo autem. Veritatis obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquamnihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,tenetur error, harum nesciunt ipsum debitis quas aliquid.",
+              Text(
+                "Manage School",
+                style: TextStyle(
+                  fontSize: 40,
+                  color: Colors.blue,
                 ),
               ),
+              Spacer(),
               Button(
-                child: Text("Upload"),
-                onPressed: () {
-                  showDialog(
-                      context: context, builder: (context) => LoadIdCardData());
-                },
+                child: Text("Add School"),
+                onPressed: () {},
               ),
             ],
           ),
         ),
+
+        // content: Center(
+        //   child: Column(
+        //     children: [
+
+        //       Button(
+        //         child: Text("Upload"),
+        //         onPressed: () {
+        //           showDialog(
+        //               context: context, builder: (context) => LoadIdCardData());
+        //         },
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        content: Obx(() {
+          return schoolController.isLoading.value
+              ? Center(
+                  child: ProgressRing(),
+                )
+              : ListView.builder(
+                  itemBuilder: ((context, index) {
+                    return SchoolTile(
+                      school: schoolController.schools.value.schools[index],
+                    );
+                  }),
+                  itemCount: schoolController.schools.value.schools.length,
+                );
+          // : Text(schoolController.schools.value.schools.length.toString());
+        }),
       ),
     );
   }
