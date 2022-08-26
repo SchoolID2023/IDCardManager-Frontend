@@ -23,4 +23,28 @@ class SchoolController extends GetxController {
       isLoading(false);
     }
   }
+
+  void addSchool(School school) async {
+    print("<------>");
+    print("Name-> ${school.name}");
+    print("Address-> ${school.address}");
+    print("Classes-> ${school.classes}");
+    print("Sections-> ${school.sections}");
+    print("Contact-> ${school.contact}");
+    print("Email-> ${school.email}");
+    print("<------>");
+
+    try {
+      isLoading(true);
+      var _newSchool = await _remoteServices.addSchool(school);
+      schools.value.schools.add(_newSchool);
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  School getSchoolById(String schoolId) {
+    print("School Id ---> ${schoolId}");
+    return schools.value.schools.firstWhere((school) => school.id == schoolId);
+  }
 }

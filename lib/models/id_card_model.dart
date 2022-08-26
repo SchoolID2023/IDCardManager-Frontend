@@ -12,6 +12,8 @@ String idCardModelToJson(IdCardModel data) => json.encode(data.toJson());
 
 class IdCardModel {
   IdCardModel({
+    required this.id,
+    required this.schoolId,
     required this.isDual,
     required this.foregroundImagePath,
     this.backgroundImagePath = "",
@@ -19,30 +21,34 @@ class IdCardModel {
     required this.height,
     required this.labels,
   });
-
+  String id;
+  String schoolId;
   bool isDual;
   String foregroundImagePath;
   String backgroundImagePath;
-  double width;
-  double height;
+  var width;
+  var height;
   List<Label> labels;
 
   factory IdCardModel.fromJson(Map<String, dynamic> json) => IdCardModel(
         isDual: json["isDual"],
         foregroundImagePath: json["foregroundImagePath"],
-        backgroundImagePath: json["backgroundImagePath"],
+        backgroundImagePath: json["backgroundImagePath"] ?? "",
         width: json["width"],
         height: json["height"],
         labels: List<Label>.from(json["labels"].map((x) => Label.fromJson(x))),
+        schoolId: json["schoolId"],
+        id: json["_id"],
       );
 
   Map<String, dynamic> toJson() => {
         "isDual": isDual,
-        "foregroundImagePath": foregroundImagePath,
-        "backgroundImagePath": backgroundImagePath,
+        // "foregroundImagePath": foregroundImagePath,
+        // "backgroundImagePath": backgroundImagePath,
         "width": width,
         "height": height,
         "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
+        "schoolId": schoolId,
       };
 }
 
@@ -51,25 +57,29 @@ class Label {
     required this.title,
     this.color = "ff000000",
     this.fontSize = 20,
-    this.x = 0,
-    this.y = 0,
-    this.width = 100,
-    this.height = 20,
+    this.x = 0.0,
+    this.y = 0.0,
+    this.width = 100.0,
+    this.height = 30.0,
     this.isPrinted = false,
     this.isFront = true,
     this.isPhoto = false,
+    this.fontName = "Amiko",
+    this.textAlign = "left",
   });
 
   String title;
   String color;
   int fontSize;
-  int x;
-  int y;
-  int width;
-  int height;
+  var x;
+  var y;
+  var width;
+  var height;
   bool isPrinted;
   bool isFront;
   bool isPhoto;
+  String fontName;
+  String textAlign;
 
   factory Label.fromJson(Map<String, dynamic> json) => Label(
         title: json["title"],
@@ -82,6 +92,8 @@ class Label {
         isPrinted: json["isPrinted"],
         isFront: json["isFront"],
         isPhoto: json["isPhoto"],
+        fontName: json["fontName"] ?? 'ABeeZee',
+        textAlign: json["textAlign"] ?? 'left',
       );
 
   Map<String, dynamic> toJson() => {
@@ -95,5 +107,7 @@ class Label {
         "isPrinted": isPrinted,
         "isFront": isFront,
         "isPhoto": isPhoto,
+        "fontName": fontName,
+        "textAlign": textAlign,
       };
 }

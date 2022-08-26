@@ -3,6 +3,7 @@ import 'package:idcard_maker_frontend/homepage.dart';
 import 'package:get/get.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
+import 'package:idcard_maker_frontend/pages/student_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -34,19 +35,37 @@ class LoginWrapper extends StatelessWidget {
   LoginWrapper({Key? key}) : super(key: key);
 
   String token = "";
+  String userType = "";
+  String schoolId = "";
 
   Future<void> getToken(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
     token = prefs.getString('token') ?? "";
+    userType = prefs.getString('userType') ?? "";
+    schoolId = prefs.getString('schoolId') ?? "";
     print("token: $token");
-    if (token == "") {
-      print("Heyy");
+    try {
+      if (token == "") {
+        print("Heyy");
+        Navigator.of(context)
+            .push(FluentPageRoute(builder: (context) => LoginPage()));
+      } else {
+        print("Byeee");
+        if (userType == "schoolAdmin") {
+          Navigator.of(context)
+              .push(FluentPageRoute(builder: (context) => LoginPage()));
+          // Navigator.of(context).push(FluentPageRoute(
+          //     builder: (context) => StudentDataScreen(schoolId: schoolId)));
+        } else {
+          Navigator.of(context)
+              .push(FluentPageRoute(builder: (context) => HomePage()));
+        }
+      }
+    } catch (e) {
       Navigator.of(context)
           .push(FluentPageRoute(builder: (context) => LoginPage()));
-    } else {
-      print("Byeee");
-      Navigator.of(context)
-          .push(FluentPageRoute(builder: (context) => HomePage()));
+
+      print(e);
     }
   }
 

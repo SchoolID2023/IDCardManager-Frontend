@@ -2,8 +2,9 @@ import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as material;
-import 'package:idcard_maker_frontend/home.dart';
+import 'package:idcard_maker_frontend/homepage.dart';
 import 'package:idcard_maker_frontend/pages/add_id_card.dart';
+import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 
 class LoginPage extends StatefulWidget {
@@ -42,14 +43,14 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.grey.withOpacity(0.1),
                 alignment: Alignment.center,
                 child: Center(
-                  child: new ClipRect(
-                    child: new BackdropFilter(
-                      filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      child: new Container(
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                      child: Container(
                         width: 500.0,
                         height: 300.0,
-                        decoration: new BoxDecoration(
-                            color: Colors.white.withOpacity(0.2)),
+                        decoration:
+                            BoxDecoration(color: Colors.white.withOpacity(0.2)),
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -59,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
+                                const Text(
                                   'Super Admin Login',
                                   style: TextStyle(
                                     fontSize: 24,
@@ -75,30 +76,55 @@ class _LoginPageState extends State<LoginPage> {
                                   obscureText: true,
                                   controller: _passwordController,
                                 ),
-                                Button(
-                                  child: Text("Log In"),
-                                  onPressed: () {
-                                    try {
-                                      _remoteServices.superAdminLogin(
-                                        _emailController.text,
-                                        _passwordController.text,
-                                      );
-                                      Navigator.push(
-                                        context,
-                                        FluentPageRoute(
-                                          builder: (context) => HomePage(),
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      print(e);
-                                    }
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Button(
+                                      child: Text("Log In"),
+                                      onPressed: () {
+                                        final navigator = Navigator.of(context);
 
-                                    // material.Navigator.push(
-                                    //     context,
-                                    //     FluentPageRoute(
-                                    //         builder: (context) =>
-                                    //             AddIdCardPage()));
-                                  },
+                                        try {
+                                          _remoteServices.login(
+                                            _emailController.text,
+                                            _passwordController.text,
+                                            true,
+                                          );
+                                          navigator.push(
+                                            FluentPageRoute(
+                                              builder: (context) => HomePage(),
+                                            ),
+                                          );
+                                          // Navigator.push(
+                                          //   context,
+                                          //   FluentPageRoute(
+                                          //     builder: (context) => HomePage(),
+                                          //   ),
+                                          // );
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      },
+                                    ),
+                                    Button(
+                                      child: Text(
+                                          "Log In As School Admin Instead"),
+                                      onPressed: () {
+                                        try {
+                                          Navigator.push(
+                                            context,
+                                            FluentPageRoute(
+                                              builder: (context) =>
+                                                  SchoolAdminLoginPage(),
+                                            ),
+                                          );
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

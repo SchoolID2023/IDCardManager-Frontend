@@ -5,72 +5,72 @@
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
-SchoolsModel schoolsModelFromJson(String str) => SchoolsModel.fromJson(json.decode(str));
+SchoolsModel schoolsModelFromJson(String str) =>
+    SchoolsModel.fromJson(json.decode(str));
 
 String schoolsModelToJson(SchoolsModel data) => json.encode(data.toJson());
 
 class SchoolsModel {
-    SchoolsModel({
-       required this.success,
-       required this.message,
-       required this.schools,
-    });
+  SchoolsModel({
+    required this.success,
+    required this.message,
+    required this.schools,
+  });
 
-    bool success;
-    String message;
-    List<School> schools;
+  bool success;
+  String message;
+  List<School> schools;
 
-    factory SchoolsModel.fromJson(Map<String, dynamic> json) => SchoolsModel(
+  factory SchoolsModel.fromJson(Map<String, dynamic> json) => SchoolsModel(
         success: json["success"],
         message: json["message"],
-        schools: List<School>.from(json["schools"].map((x) => School.fromJson(x))),
-    );
+        schools:
+            List<School>.from(json["schools"].map((x) => School.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "success": success,
         "message": message,
         "schools": List<dynamic>.from(schools.map((x) => x.toJson())),
-    };
+      };
 }
 
 class School {
-    School({
-       required this.id,
-       required this.name,
-       required this.address,
-       required this.classes,
-       required this.sections,
-       required this.contact,
-       required this.email,
-     
-    });
+  School({
+    required this.id,
+    required this.name,
+    required this.address,
+    required this.classes,
+    required this.sections,
+    required this.contact,
+    required this.email,
+  });
 
-    String id;
-    String name;
-    String address;
-    List<String> classes;
-    List<String> sections;
-    String contact;
-    String email;
-   
+  String id;
+  String name;
+  String address;
+  List<String> classes;
+  List<String> sections;
+  String contact;
+  String email;
 
-    factory School.fromJson(Map<String, dynamic> json) => School(
+  factory School.fromJson(Map<String, dynamic> json) => School(
         id: json["_id"],
         name: json["name"],
         address: json["address"],
         classes: List<String>.from(json["classes"].map((x) => x)),
         sections: List<String>.from(json["sections"].map((x) => x)),
         contact: json["contact"],
-        email: json["email"],        
-    );
+        email: json["email"],
+      );
 
-    Map<String, dynamic> toJson() => {
-        "_id": id,
+  Map<String, dynamic> toJson() => {
+        "schoolId": id,
         "name": name,
         "address": address,
         "classes": List<dynamic>.from(classes.map((x) => x)),
         "sections": List<dynamic>.from(sections.map((x) => x)),
         "contact": contact,
-        "email": email,        
-    };
+        "email": email,
+      };
 }

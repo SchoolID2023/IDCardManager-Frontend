@@ -4,6 +4,7 @@ import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'pages/add_id_card.dart';
 import 'pages/add_school.dart';
 import 'pages/manage_data.dart';
+import 'widgets/resizable_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -87,15 +88,14 @@ class _HomePageState extends State<HomePage> {
           ),
           Expanded(
             child: Container(
-              // width: 600,
-              child: PageView(
-                controller: page,
-                children: [
-                  AddSchoolPage(),
-                 
-                  ManageDataPage(),
-                ],
-              ),
+  //             child: ResizebleWidget(
+  //               child: Text(
+  //                 '''I've just did simple prototype to show main idea.
+  // 1. Draw size handlers with container;
+  // 2. Use GestureDetector to get new variables of sizes
+  // 3. Refresh the main container size.''',
+  //               ),
+  //             ), // width: 600,
             ),
           ),
         ],

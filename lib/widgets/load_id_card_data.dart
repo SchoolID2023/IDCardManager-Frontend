@@ -8,47 +8,54 @@ import '../models/id_card_model.dart';
 import '../pages/add_id_card.dart';
 
 class LoadIdCardData extends StatefulWidget {
+  final String schoolId;
+  final List<Label> labels;
+
+  const LoadIdCardData({super.key, required this.schoolId, required this.labels});
+
   @override
   State<LoadIdCardData> createState() => _LoadIdCardDataState();
 }
 
 class _LoadIdCardDataState extends State<LoadIdCardData> {
-  List<Label> labels = [];
+ 
   TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
   TextEditingController _idCardWidth = TextEditingController();
   TextEditingController _idCardHeight = TextEditingController();
 
-  Future<void> uploadExcel() async {
-    final result = await FilePicker.platform.pickFiles(
-      allowMultiple: false,
-      allowedExtensions: ['xls', 'xlsx'],
-    );
+  // Future<void> uploadExcel() async {
+  //   final result = await FilePicker.platform.pickFiles(
+  //     allowMultiple: false,
+  //     allowedExtensions: ['xls', 'xlsx'],
+  //   );
 
-    var file = result?.files.first;
+  //   var file = result?.files.first;
 
-    var bytes = File(file!.path.toString()).readAsBytesSync();
+  //   var bytes = File(file!.path.toString()).readAsBytesSync();
 
-    setState(() {
-      _excelPath.text = file!.path.toString();
-    });
+  //   setState(() {
+  //     _excelPath.text = file!.path.toString();
+  //   });
 
-    var excel = Excel.decodeBytes(bytes);
+  //   var excel = Excel.decodeBytes(bytes);
 
-    for (var table in excel.tables.keys) {
-      print(table); //sheet Name
-      print(excel.tables[table]?.maxCols);
-      print(excel.tables[table]?.maxRows);
-      for (var cell in excel.tables[table]!.rows[0]) {
-        print("${cell?.value}");
-        labels.add(
-          Label(
-            title: cell!.value.toString(),
-          ),
-        );
-      }
-    }
-  }
+  //   for (var table in excel.tables.keys) {
+  //     print(table); //sheet Name
+  //     print(excel.tables[table]?.maxCols);
+  //     print(excel.tables[table]?.maxRows);
+  //     for (var cell in excel.tables[table]!.rows[0]) {
+  //       print("${cell?.value}");
+  //       labels.add(
+  //         Label(
+  //           title: cell!.value.toString(),
+  //         ),
+  //       );
+  //     }
+
+  //     break;
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +67,13 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
             onPressed: () {
               Navigator.of(context).push(FluentPageRoute(
                   builder: (context) => AddIdCardPage(
-                        labels: labels,
+                        schoolId: widget.schoolId,
+                        labels: widget.labels,
                         isDual: isDual,
-                        idCardWidth: double.parse(_idCardWidth.text),
-                        idCardHeight: double.parse(_idCardHeight.text),
+                        idCardWidth:
+                            double.parse(_idCardWidth.text) * 3.7795275591,
+                        idCardHeight:
+                            double.parse(_idCardHeight.text) * 3.7795275591,
                         excelPath: _excelPath.text,
                       )));
             }),
@@ -74,23 +84,23 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
         height: 250,
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: TextBox(
-                    controller: _excelPath,
-                    header: "Excel Path",
-                    readOnly: true,
-                  ),
-                ),
-                Button(
-                  child: Text("Upload Excel"),
-                  onPressed: () async {
-                    await uploadExcel();
-                  },
-                ),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: TextBox(
+            //         controller: _excelPath,
+            //         header: "Excel Path",
+            //         readOnly: true,
+            //       ),
+            //     ),
+            //     Button(
+            //       child: Text("Upload Excel"),
+            //       onPressed: () async {
+            //         await uploadExcel();
+            //       },
+            //     ),
+            //   ],
+            // ),
             Row(
               children: [
                 Expanded(
