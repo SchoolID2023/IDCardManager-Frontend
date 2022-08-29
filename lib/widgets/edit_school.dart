@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
+import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 
 import '../controllers/student_controller.dart';
 import '../models/schools_model.dart';
@@ -15,6 +16,7 @@ class EditSchoolDialog extends StatefulWidget {
 class _EditSchoolDialogState extends State<EditSchoolDialog> {
   late School editSchool;
   late StudentController studentController;
+  late SchoolController schoolController;
 
   TextEditingController _schoolName = TextEditingController();
   TextEditingController _schoolAddress = TextEditingController();
@@ -35,6 +37,7 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
     _schoolContact.text = editSchool.contact;
     _schoolEmail.text = editSchool.email;
     studentController = Get.put(StudentController(editSchool.id));
+    schoolController = Get.put(SchoolController());
   }
 
   @override
@@ -45,6 +48,7 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
         Button(
           child: Text("Add Save"),
           onPressed: () {
+            Navigator.of(context).pop();
             studentController.editSchool(
               School(
                 id: editSchool.id,
@@ -56,7 +60,7 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
                 email: _schoolEmail.text,
               ),
             );
-            Navigator.of(context).pop();
+            schoolController.fetchSchools();
           },
         ),
         Button(

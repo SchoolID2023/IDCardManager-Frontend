@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           accentColor: Colors.blue,
           iconTheme: const IconThemeData(size: 24)),
       darkTheme: ThemeData(
-          scaffoldBackgroundColor: Colors.black,
+          scaffoldBackgroundColor: Colors.white,
           accentColor: Colors.blue,
           iconTheme: const IconThemeData(size: 24)),
       home: LoginWrapper(),
