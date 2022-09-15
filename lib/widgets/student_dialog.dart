@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:get/get.dart';
 
+import '../controllers/student_controller.dart';
 import '../models/student_model.dart';
 import 'edit_student.dart';
 
@@ -17,6 +19,9 @@ class StudentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    StudentController _studentController =
+        Get.put(StudentController(student.currentSchool));
+
     return ContentDialog(
       title: Text(student.name),
       content: Column(
@@ -39,6 +44,7 @@ class StudentDialog extends StatelessWidget {
         Button(
           child: Text('Delete'),
           onPressed: () {
+            _studentController.deleteStudent(student.id);
             Navigator.of(context).pop();
           },
         ),

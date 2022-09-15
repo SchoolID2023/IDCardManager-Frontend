@@ -407,7 +407,6 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-
     var headers = {
       'Authorization': 'Biatch $token',
     };
@@ -430,6 +429,79 @@ class RemoteServices {
 
       if (response.statusCode == 200) {
         print("Added Student Data");
+      } else {
+        print("Errorrrrr");
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    } catch (e) {
+      print("Error----->");
+      print(e);
+    }
+  }
+
+  Future<void> editStudent(Student newStudent) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var headers = {
+      'Authorization': 'Biatch $token',
+    };
+
+    var response;
+
+    print("Edited Student Data:- ${newStudent.toJson()}");
+
+    try {
+      response = await dio.post(
+        '${baseUrl}/superAdmin/editStudent',
+        data: newStudent.toJson(),
+        options: Options(
+          headers: headers,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print("Edited Student Data");
+      } else {
+        print("Errorrrrr");
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    } catch (e) {
+      print("Error----->");
+      print(e);
+    }
+  }
+
+  Future<void> deleteStudent(String studentId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var headers = {
+      'Authorization': 'Biatch $token',
+    };
+
+    var response;
+
+    print("Edited Student Data:- ${studentId}");
+
+    try {
+      response = await dio.post(
+        '${baseUrl}/superAdmin/deleteStudent',
+        data: {
+        "id": studentId,
+       
+      },
+        options: Options(
+          headers: headers,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print("Edited Student Data");
       } else {
         print("Errorrrrr");
         throw Exception(response.data);

@@ -15,6 +15,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:google_fonts/google_fonts.dart';
+
+import '../models/student_model.dart';
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class AddIdCardPage extends StatefulWidget {
@@ -105,7 +107,27 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   String _alignment = 'left';
   double scaleFactor = 100.0;
 
+  Student dummyStudent = Student(
+    name: 'Dummy Name',
+    contact: 'Dummy Contact',
+    currentSchool: 'currentSchool',
+    data: [],
+    id: 'id',
+    photo: [],
+    section: 'section',
+    studentClass: 'studentClass',
+    username: 'username',
+  );
+
   // Color _pickerColor = Color(0xffffffff);
+
+  Future<void> getDummyStudent() async {
+    await _studentController.fetchStudents(widget.schoolId);
+
+    if (_studentController.students.value.students.isNotEmpty) {
+      dummyStudent = _studentController.students.value.students[0];
+    }
+  }
 
   @override
   void initState() {
@@ -143,6 +165,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
       );
     });
 
+    getDummyStudent();
+
     super.initState();
   }
 
@@ -173,7 +197,6 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: SizedBox(
-              
               width: 100,
               child: Slider(
                 max: 400.0,
@@ -192,6 +215,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                   FluentPageRoute(
                     builder: (context) => PreviewIdCard(
                       idCard: _idCard,
+                      isEdit: false,
+                      dummyStudent: dummyStudent,
                     ),
                   ),
                 );
@@ -695,7 +720,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                               _idCard.labels[editableIndex].height =
                                   _heightController.text.isEmpty
                                       ? 0.0
-                                      : double.parse(_heightController.text);
+                                      : double.parse(_heightController.text)
+                                          .toPrecision(2);
                             });
                           },
                         ),
@@ -707,7 +733,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                               _idCard.labels[editableIndex].width =
                                   _widthController.text.isEmpty
                                       ? 0.0
-                                      : double.parse(_widthController.text);
+                                      : double.parse(_widthController.text)
+                                          .toPrecision(2);
                             });
                           },
                         ),

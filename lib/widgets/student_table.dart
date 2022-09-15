@@ -454,7 +454,7 @@ class MyData extends DataTableSource {
         students[index].contact
       ];
 
-      if (photoIndex != -1 && students[index].photo.length > 0) {
+      if (photoIndex != -1 && students[index].photo.length > photoIndex) {
         _studentData.add(students[index].photo[photoIndex].value);
       } else if (photoIndex != -1) {
         _studentData.add(

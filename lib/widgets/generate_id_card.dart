@@ -15,6 +15,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 
 class GenerateIdCard extends StatefulWidget {
   GenerateIdCard({

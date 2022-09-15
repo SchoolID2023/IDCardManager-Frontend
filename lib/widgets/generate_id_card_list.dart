@@ -259,21 +259,31 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                             final labelBackList = <Widget>[];
 
                             labelList.add(
-                              Image.memory(
-                                base64Decode(
-                                  _idCardGenerationModel
-                                      .idcard.foregroundImagePath,
+                              SizedBox(
+                                width: _idCardGenerationModel.idcard.width,
+                                height: _idCardGenerationModel.idcard.height,
+                                child: Image.memory(
+                                  base64Decode(
+                                    _idCardGenerationModel
+                                        .idcard.foregroundImagePath,
+                                  ),
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                             );
 
                             if (_idCardGenerationModel.idcard.isDual) {
                               labelBackList.add(
-                                Image.memory(
-                                  base64Decode(
-                                    _idCardGenerationModel
-                                            .idcard.backgroundImagePath ??
-                                        "",
+                                SizedBox(
+                                  width: _idCardGenerationModel.idcard.width,
+                                  height: _idCardGenerationModel.idcard.height,
+                                  child: Image.memory(
+                                    base64Decode(
+                                      _idCardGenerationModel
+                                              .idcard.backgroundImagePath ??
+                                          "",
+                                    ),
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
                               );

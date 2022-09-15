@@ -17,6 +17,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
+
+import '../models/student_model.dart';
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class EditIdCardPage extends StatefulWidget {
@@ -38,6 +41,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
   late IdCardModel _idCard;
   int nonPhotoLabels = 0;
   bool isInit = true;
+  ScrollController horizontalScroll = ScrollController();
+  ScrollController verticalScroll = ScrollController();
 
   int editableIndex = -1;
   String _pickedColor = "0xFF000000";
@@ -70,6 +75,40 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     setState(() {
       _idCard!.labels[pos].x = x as double;
       _idCard!.labels[pos].y = y as double;
+    });
+  }
+
+  Student dummyStudent = Student(
+    name: 'Dummy Name',
+    contact: 'Dummy Contact',
+    currentSchool: 'currentSchool',
+    data: [],
+    id: 'id',
+    photo: [],
+    section: 'section',
+    studentClass: 'studentClass',
+    username: 'username',
+  );
+
+  // Color _pickerColor = Color(0xffffffff);
+
+  Future<void> getDummyStudent() async {
+    await _studentController.fetchStudents(_idCard.schoolId);
+
+    if (_studentController.students.value.students.isNotEmpty) {
+      dummyStudent = _studentController.students.value.students[0];
+    }
+
+    print("Dummy Student:- ${dummyStudent.name}");
+
+    setState(() {
+      _idCard!.labels.forEach((label) {
+        if (!label.isPhoto) {
+          nonPhotoLabels++;
+        }
+      });
+
+      isLoading = false;
     });
   }
 
@@ -121,15 +160,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
         ),
       );
     });
-    setState(() {
-      _idCard!.labels.forEach((label) {
-        if (!label.isPhoto) {
-          nonPhotoLabels++;
-        }
-      });
 
-      isLoading = false;
-    });
+    await getDummyStudent();
   }
 
   TextEditingController _titleController = TextEditingController();
@@ -196,6 +228,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                     FluentPageRoute(
                       builder: (context) => PreviewIdCard(
                         idCard: _idCard,
+                        isEdit: true,
+                        dummyStudent: dummyStudent,
                       ),
                     ),
                   );
@@ -667,15 +701,49 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                       ),
                     ),
                   ),
+                  // Expanded(
+                  //   child: AdaptiveScrollbar(
+                  //     controller: verticalScroll,
+                  //     // width: verticalWidth,
+                  //     child: AdaptiveScrollbar(
+                  //       controller: horizontalScroll,
+                  //       // width: horizontalWidth,
+                  //       position: ScrollbarPosition.bottom,
+                  //       // underSpacing: EdgeInsets.only(bottom: verticalWidth),
+                  //       child: SingleChildScrollView(
+                  //         controller: horizontalScroll,
+                  //         scrollDirection: Axis.horizontal,
+                  //         child: Container(
+                  //           child: GenerateIdCard(
+                  //             idCard: _idCard,
+                  //             updateIdCardPosition: _updatePostion,
+                  //             updateEditIndex: updateEditIndex,
+                  //             scaleFactor: scaleFactor,
+                  //             isEdit: true,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(
-                    child: Container(
-                      height: cheight,
-                      child: GenerateIdCard(
-                        idCard: _idCard,
-                        updateIdCardPosition: _updatePostion,
-                        updateEditIndex: updateEditIndex,
-                        scaleFactor: scaleFactor,
-                        isEdit: true,
+                    child: SingleChildScrollView(
+                      controller: verticalScroll,
+                      child: Scrollbar(
+                        controller: horizontalScroll,
+                        child: SingleChildScrollView(
+                          controller: horizontalScroll,
+                          scrollDirection: Axis.horizontal,
+                          child: Container(
+                            child: GenerateIdCard(
+                              idCard: _idCard,
+                              updateIdCardPosition: _updatePostion,
+                              updateEditIndex: updateEditIndex,
+                              scaleFactor: scaleFactor,
+                              isEdit: true,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -712,7 +780,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         .height = _heightController
                                             .text.isEmpty
                                         ? 0.0
-                                        : double.parse(_heightController.text);
+                                        : double.parse(_heightController.text)
+                                            .toPrecision(2);
                                   });
                                 },
                               ),
@@ -725,7 +794,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         .width = _widthController
                                             .text.isEmpty
                                         ? 0.0
-                                        : double.parse(_widthController.text);
+                                        : double.parse(_widthController.text)
+                                            .toPrecision(2);
                                   });
                                 },
                               ),

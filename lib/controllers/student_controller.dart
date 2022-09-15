@@ -51,7 +51,7 @@ class StudentController extends GetxController {
     }
   }
 
-  void fetchStudents(String schoolId) async {
+  Future<void> fetchStudents(String schoolId) async {
     print("API -> ${schoolId}");
     try {
       var _students = await _remoteServices.getStudentData(schoolId);
@@ -125,6 +125,27 @@ class StudentController extends GetxController {
       print("Teachers Fetched");
     } finally {
       // isLoading(false);
+    }
+  }
+
+  void editStudent(Student student) async {
+    try {
+      students.value.students
+          .removeWhere((element) => element.id == student.id);
+      students.value.students.add(student);
+      await _remoteServices.editStudent(student);
+      fetchStudents(student.currentSchool);
+    } catch (e) {
+      print("Edit Student Error:- ${e}");
+    }
+  }
+
+  void deleteStudent(String studentId) async {
+    try {
+      students.value.students.removeWhere((element) => element.id == studentId);
+      await _remoteServices.deleteStudent(studentId);
+    } finally {
+      fetchStudents(schoolId);
     }
   }
 }
