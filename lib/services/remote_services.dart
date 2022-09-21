@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:idcard_maker_frontend/models/superadmin_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -42,6 +43,7 @@ class RemoteServices {
 
       return data['schoolId'];
     } else {
+      print("Login Errorrrrrrr---> ${response.statusCode}");
       throw Exception(response.statusCode);
     }
   }
@@ -49,6 +51,8 @@ class RemoteServices {
   Future<SchoolsModel> getSchools() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+
+    print("Schools token: $token");
     final response = await http.get(
       Uri.parse('${baseUrl}/superAdmin/viewSchools'),
       headers: {
@@ -492,9 +496,8 @@ class RemoteServices {
       response = await dio.post(
         '${baseUrl}/superAdmin/deleteStudent',
         data: {
-        "id": studentId,
-       
-      },
+          "id": studentId,
+        },
         options: Options(
           headers: headers,
         ),
@@ -839,6 +842,45 @@ class RemoteServices {
 
         print("Id Card Generation Model Added");
         return IdCardGenerationModel.fromJson(data);
+      } else {
+        print("Errorrrrr");
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      print(e.response);
+      throw Exception("Dio Error");
+    } catch (e) {
+      print("Error----->");
+      print(e);
+      throw Exception("Normal Error");
+    }
+  }
+
+  Future<void> addSuperAdmin(SuperAdmin superadmin) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var headers = {
+      'Authorization': 'Biatch $token',
+    };
+
+    Response<String> response;
+    try {
+      response = await dio.post(
+        '${baseUrl}/superAdmin/createSuperAdmin',
+        data: superadmin.toJson(),
+        options: Options(
+          headers: headers,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.data!);
+
+        print(data);
+
+        print("Super Admin Added");
+        return;
       } else {
         print("Errorrrrr");
         throw Exception(response.data);

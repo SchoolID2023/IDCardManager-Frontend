@@ -1,5 +1,6 @@
 import 'package:get/state_manager.dart';
 import '../models/schools_model.dart';
+import '../models/superadmin_model.dart';
 import '../services/remote_services.dart';
 
 class SchoolController extends GetxController {
@@ -41,6 +42,25 @@ class SchoolController extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  void addSuperAdmin(SuperAdmin superAdmin) async {
+    print("<------>");
+    print("Name-> ${superAdmin.name}");
+    print("Email-> ${superAdmin.email}");
+    print("Contact-> ${superAdmin.contact}");
+    print("Username-> ${superAdmin.username}");
+    print("Password-> ${superAdmin.password}");
+    print("<------>");
+
+    try {
+      isLoading(true);
+      await _remoteServices.addSuperAdmin(superAdmin);
+      // schools.value.schools.add(_newSuperAdmin);
+    } finally {
+      // isLoading(false);
+    }
+    
   }
 
   School getSchoolById(String schoolId) {

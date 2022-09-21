@@ -243,7 +243,7 @@ class PreviewIdCard extends StatelessWidget {
       content: Container(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
+          child: Row(
             children: <Widget>[
               frontWidget,
               backWidget,

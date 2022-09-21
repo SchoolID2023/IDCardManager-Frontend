@@ -164,7 +164,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     final Uint8List pngBytes = await screenshotController.captureFromWidget(
       idCard,
       pixelRatio: 3.0,
-      delay: Duration(seconds: 2),
     );
 
     await File('${path}\\${fileImage}.png').writeAsBytes(pngBytes);
@@ -258,6 +257,29 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                             final labelList = <Widget>[];
                             final labelBackList = <Widget>[];
 
+                            Map<String, List<int>> imageMap = {};
+
+                            for (int i = 0; i < student.photo.length; i++) {
+                              ByteData tempImage = (await NetworkAssetBundle(
+                                      Uri.parse(student.photo[i].value))
+                                  .load(student.photo[i].value));
+                              Uint8List audioUint8List = tempImage.buffer
+                                  .asUint8List(tempImage.offsetInBytes,
+                                      tempImage.lengthInBytes);
+                              imageMap[student.photo[i].field] =
+                                  audioUint8List.cast<int>();
+                              print(student.photo[i].field);
+                            }
+
+                            for (int i = 0;
+                                i < _idCardGenerationModel.idcard.labels.length;
+                                i++) {
+                              if (_idCardGenerationModel
+                                  .idcard.labels[i].isPhoto) {
+                                print(
+                                    "Photo--> ${_idCardGenerationModel.idcard.labels[i].title}");
+                              }
+                            }
                             labelList.add(
                               SizedBox(
                                 width: _idCardGenerationModel.idcard.width,
@@ -315,16 +337,24 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                         image: _idCardGenerationModel
                                                 .idcard.labels[i].isPhoto
                                             ? DecorationImage(
-                                                image: NetworkImage(
-                                                  getValue(
-                                                    student,
-                                                    _idCardGenerationModel
-                                                        .idcard
-                                                        .labels[i]
-                                                        .isPhoto,
-                                                    _idCardGenerationModel
-                                                        .idcard.labels[i].title,
-                                                  ),
+                                                // image: NetworkImage(
+                                                //   getValue(
+                                                //     student,
+                                                //     _idCardGenerationModel
+                                                //         .idcard
+                                                //         .labels[i]
+                                                //         .isPhoto,
+                                                // _idCardGenerationModel
+                                                //     .idcard.labels[i].title,
+                                                //   ),
+                                                // ),
+                                                image: MemoryImage(
+                                                  Uint8List.fromList(imageMap[
+                                                      _idCardGenerationModel
+                                                          .idcard
+                                                          .labels[i]
+                                                          .title
+                                                          .toLowerCase()]!),
                                                 ),
                                                 fit: BoxFit.cover,
                                               )

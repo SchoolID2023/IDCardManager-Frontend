@@ -82,20 +82,21 @@ class _LoginPageState extends State<LoginPage> {
                                   children: [
                                     Button(
                                       child: Text("Log In"),
-                                      onPressed: () {
-                                        final navigator = Navigator.of(context);
+                                      onPressed: () async {
+                                        // final navigator = Navigator.of(context);
+                                        bool isFailed = false;
 
                                         try {
-                                          _remoteServices.login(
+                                          await _remoteServices.login(
                                             _emailController.text,
                                             _passwordController.text,
                                             true,
                                           );
-                                          navigator.push(
-                                            FluentPageRoute(
-                                              builder: (context) => HomePage(),
-                                            ),
-                                          );
+                                          // navigator.push(
+                                          //   FluentPageRoute(
+                                          //     builder: (context) => HomePage(),
+                                          //   ),
+                                          // );
                                           // Navigator.push(
                                           //   context,
                                           //   FluentPageRoute(
@@ -103,7 +104,25 @@ class _LoginPageState extends State<LoginPage> {
                                           //   ),
                                           // );
                                         } catch (e) {
-                                          print(e);
+                                          isFailed = true;
+                                          showSnackbar(
+                                            context,
+                                            Snackbar(
+                                              
+                                              content: Text(
+                                                'Wrong email or password',
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        if (!isFailed) {
+                                          Navigator.push(
+                                            context,
+                                            FluentPageRoute(
+                                              builder: (context) => HomePage(),
+                                            ),
+                                          );
                                         }
                                       },
                                     ),
