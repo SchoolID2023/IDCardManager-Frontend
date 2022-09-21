@@ -1,5 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:get/get.dart';
+import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/pages/student_data.dart';
+import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:idcard_maker_frontend/widgets/student_table.dart';
 import '../models/schools_model.dart';
 import 'load_id_card_data.dart';
@@ -7,6 +10,7 @@ import 'load_id_card_data.dart';
 class SchoolTile extends StatelessWidget {
   final School school;
   SchoolTile({Key? key, required this.school}) : super(key: key);
+  final SchoolController _schoolController = Get.put(SchoolController());
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +40,6 @@ class SchoolTile extends StatelessWidget {
           Navigator.of(context).push(FluentPageRoute(builder: (context) {
             return StudentDataScreen(
               schoolId: school.id,
-              
             );
           }));
         },
@@ -46,78 +49,14 @@ class SchoolTile extends StatelessWidget {
               subtitle: Text(school.address),
               trailing: SizedBox(
                 width: 200,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    // TextButton(
-                    //   child: Text("Genrate"),
-                    //   onPressed: () {
-                    //     showDialog(
-                    //         context: context,
-                    //         builder: (context) => LoadIdCardData(
-                    //               schoolId: school.id,
-                    //             ));
-                    //   },
-                    // ),
-                    // IconButton(
-                    //   icon: Icon(FluentIcons.edit),
-                    //   onPressed: () {
-                    //     showDialog(
-                    //       context: context,
-                    //       builder: (context) {
-                    //         return ContentDialog(
-                    //           title: Text("School Details"),
-                    //           actions: [
-                    //             Button(
-                    //               child: Text("Update"),
-                    //               onPressed: () {},
-                    //             ),
-                    //             Button(
-                    //               child: Text("Save"),
-                    //               onPressed: () {
-                    //                 Navigator.of(context).pop();
-                    //               },
-                    //             )
-                    //           ],
-                    //           content: Column(
-                    //             mainAxisSize: MainAxisSize.min,
-                    //             children: [
-                    //               TextBox(
-                    //                 controller: _schoolName,
-                    //                 header: "School Name",
-                    //               ),
-                    //               TextBox(
-                    //                 controller: _schoolAddress,
-                    //                 header: "School Address",
-                    //               ),
-                    //               TextBox(
-                    //                 controller: _schoolClasses,
-                    //                 header: "Classes",
-                    //               ),
-                    //               TextBox(
-                    //                 controller: _schoolSections,
-                    //                 header: "Sections",
-                    //               ),
-                    //               TextBox(
-                    //                 controller: _schoolContact,
-                    //                 header: "Contact",
-                    //               ),
-                    //               TextBox(
-                    //                 controller: _schoolEmail,
-                    //                 header: "Email",
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         );
-                    //       },
-                    //     );
-                    //   },
-                    // ),
-                    // IconButton(
-                    //   icon: Icon(FluentIcons.delete),
-                    //   onPressed: () {},
-                    // ),
-                  ],
+                child: IconButton(
+                  icon: Icon(
+                    FluentIcons.delete,
+                    color: Colors.red,
+                  ),
+                  onPressed: () {
+                    _schoolController.deleteSchool(school.id);
+                  },
                 ),
               )),
         ),

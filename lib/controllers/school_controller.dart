@@ -44,6 +44,16 @@ class SchoolController extends GetxController {
     }
   }
 
+  void deleteSchool(String schoolId) async {
+    try {
+      isLoading(true);
+      var _deletedSchool = await _remoteServices.deleteSchool(schoolId);
+      schools.value.schools.removeWhere((element) => element.id == schoolId);
+    } finally {
+      isLoading(false);
+    }
+  }
+
   void addSuperAdmin(SuperAdmin superAdmin) async {
     print("<------>");
     print("Name-> ${superAdmin.name}");
@@ -58,9 +68,8 @@ class SchoolController extends GetxController {
       await _remoteServices.addSuperAdmin(superAdmin);
       // schools.value.schools.add(_newSuperAdmin);
     } finally {
-      // isLoading(false);
+      isLoading(false);
     }
-    
   }
 
   School getSchoolById(String schoolId) {
