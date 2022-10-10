@@ -1,9 +1,7 @@
 import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as material;
 import 'package:idcard_maker_frontend/homepage.dart';
-import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import '../services/logger.dart';
@@ -16,10 +14,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     Button(
-                                      child: Text("Log In"),
+                                      child: const Text("Log In"),
                                       onPressed: () async {
                                         // final navigator = Navigator.of(context);
                                         bool isFailed = false;
@@ -108,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                                           isFailed = true;
                                           showSnackbar(
                                             context,
-                                            Snackbar(
+                                            const Snackbar(
                                               content: Text(
                                                 'Wrong email or password',
                                               ),
@@ -127,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                                       },
                                     ),
                                     Button(
-                                      child: Text(
+                                      child: const Text(
                                           "Log In As School Admin Instead"),
                                       onPressed: () {
                                         try {
@@ -135,7 +133,7 @@ class _LoginPageState extends State<LoginPage> {
                                             context,
                                             FluentPageRoute(
                                               builder: (context) =>
-                                                  SchoolAdminLoginPage(),
+                                                  const SchoolAdminLoginPage(),
                                             ),
                                           );
                                         } catch (e) {

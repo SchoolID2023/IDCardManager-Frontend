@@ -1,8 +1,7 @@
-import 'dart:io';
+// ignore_for_file: prefer_const_constructors
 
-import 'package:file_picker/file_picker.dart';
+
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:excel/excel.dart';
 
 import '../models/id_card_model.dart';
 import '../pages/add_id_card.dart';
@@ -19,10 +18,10 @@ class LoadIdCardData extends StatefulWidget {
 }
 
 class _LoadIdCardDataState extends State<LoadIdCardData> {
-  TextEditingController _excelPath = TextEditingController();
+  final TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
-  TextEditingController _idCardWidth = TextEditingController();
-  TextEditingController _idCardHeight = TextEditingController();
+  final TextEditingController _idCardWidth = TextEditingController();
+  final TextEditingController _idCardHeight = TextEditingController();
 
   // Future<void> uploadExcel() async {
   //   final result = await FilePicker.platform.pickFiles(

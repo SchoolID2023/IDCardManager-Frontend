@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
-import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:idcard_maker_frontend/widgets/generate_id_card.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -10,9 +9,6 @@ import 'package:idcard_maker_frontend/widgets/preview_id_card.dart';
 import '../controllers/student_controller.dart';
 import '../models/id_card_model.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:get/route_manager.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,7 +49,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   int editableIndex = -1;
   String _pickedColor = "0xFF000000";
 
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
   late StudentController _studentController;
 
   void updateEditIndex(int index, bool isChecked) {
@@ -100,12 +96,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
     });
   }
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _fontSizeController = TextEditingController();
-  TextEditingController _widthController = TextEditingController();
-  TextEditingController _heightController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _fontSizeController = TextEditingController();
+  final TextEditingController _widthController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
   String _fontName = 'ABeeZee';
-  String _alignment = 'left';
+  final String _alignment = 'left';
   double scaleFactor = 100.0;
 
   Student dummyStudent = Student(
@@ -147,7 +143,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
 
     nonPhotoLabels = widget.labels.length;
 
-    widget.labels.forEach((element) {
+    for (var element in widget.labels) {
       dropDownButtons.add(
         MenuFlyoutItem(
           text: Text(element.title),
@@ -164,7 +160,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
           },
         ),
       );
-    });
+    }
 
     getDummyStudent();
 
@@ -210,7 +206,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
             ),
           ),
           Button(
-              child: Text("Preview"),
+              child: const Text("Preview"),
               onPressed: () {
                 Navigator.of(context).push(
                   FluentPageRoute(
@@ -227,665 +223,655 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
               }),
         ],
       ),
-      content: Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: 400,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Button(
-                              onPressed: uploadForegroundImage,
-                              child: const Text('Upload Front Image'),
-                            ),
-                            SizedBox(
-                              width: 50,
-                            ),
-                            frontfile == null
-                                ? const Text('No file selected')
-                                : Image.file(
-                                    File(
-                                      frontfile.path.toString(),
-                                    ),
-                                    width: 80,
-                                    height: 80,
+      content: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 400,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Button(
+                            onPressed: uploadForegroundImage,
+                            child: const Text('Upload Front Image'),
+                          ),
+                          const SizedBox(
+                            width: 50,
+                          ),
+                          frontfile == null
+                              ? const Text('No file selected')
+                              : Image.file(
+                                  File(
+                                    frontfile.path.toString(),
                                   ),
-                          ],
-                        ),
+                                  width: 80,
+                                  height: 80,
+                                ),
+                        ],
                       ),
+                    ),
 
-                      _idCard.isDual
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Button(
-                                    onPressed: uploadBackgroundImage,
-                                    child: const Text('Upload Back Image'),
-                                  ),
-                                  SizedBox(
-                                    width: 50,
-                                  ),
-                                  backfile == null
-                                      ? const Text('No file selected')
-                                      : Image.file(
-                                          File(
-                                            backfile.path.toString(),
-                                          ),
-                                          width: 80,
-                                          height: 80,
+                    _idCard.isDual
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Button(
+                                  onPressed: uploadBackgroundImage,
+                                  child: const Text('Upload Back Image'),
+                                ),
+                                const SizedBox(
+                                  width: 50,
+                                ),
+                                backfile == null
+                                    ? const Text('No file selected')
+                                    : Image.file(
+                                        File(
+                                          backfile.path.toString(),
                                         ),
-                                ],
+                                        width: 80,
+                                        height: 80,
+                                      ),
+                              ],
+                            ),
+                          )
+                        : Container(),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: SizedBox(
+                    //     width: 400,
+                    //     child: ToggleButton(
+                    //       checked: _idCard.isPhoto,
+                    //       onChanged: (value) {
+                    //         setState(() {
+                    //           _idCard.isPhoto = value;
+                    //           _idCard.photoHeight = 51.0;
+                    //           _idCard.photoWidth = 51.0;
+                    //           _photoHeight.text = '51.0';
+                    //           _photoWidth.text = '51.0';
+                    //         });
+                    //       },
+                    //       child: const Text('Is Photo'),
+                    //     ),
+                    //   ),
+                    // ),
+                    // _idCard.isPhoto
+                    //     ? Padding(
+                    //         padding: const EdgeInsets.all(8.0),
+                    //         child: Container(
+                    //           width: 400,
+                    //           child: Column(
+                    //             children: [
+                    //               TextBox(
+                    //                 controller: _photoHeight,
+                    //                 header: 'Photo Height',
+                    //                 onChanged: (String value) {
+                    //                   setState(() {
+                    //                     _idCard.photoHeight =
+                    //                         double.parse(value);
+                    //                   });
+                    //                 },
+                    //               ),
+                    //               TextBox(
+                    //                 controller: _photoWidth,
+                    //                 header: 'Photo Width',
+                    //                 onChanged: (String value) {
+                    //                   setState(() {
+                    //                     _idCard.photoWidth =
+                    //                         double.parse(value);
+                    //                   });
+                    //                 },
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       )
+                    //     : Container(),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: ListTile(
+                        title: Text('Labels'),
+                        // trailing: Button(
+                        //   child: Icon(FluentIcons.add),
+                        //   onPressed: () {
+                        //     showDialog(
+                        //       context: context,
+                        //       builder: (BuildContext context) {
+                        //         return ContentDialog(
+                        //           title: Text('Welcome'),
+                        //           content: SizedBox(
+                        //             // height: 400,
+                        //             width: 500,
+                        //             child: Row(
+                        //               children: [
+                        //                 SizedBox(
+                        //                   width: 150,
+                        //                   child: Column(
+                        //                     mainAxisSize: MainAxisSize.min,
+                        //                     children: [
+                        //                       SizedBox(
+                        //                         child: TextBox(
+                        //                           header: "Label Name",
+                        //                           controller: _titleController,
+                        //                         ),
+                        //                       ),
+                        //                       SizedBox(
+                        //                         child: TextBox(
+                        //                           header: "Font Size",
+                        //                           controller:
+                        //                               _fontSizeController,
+                        //                         ),
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //                 SizedBox(
+                        //                   width: 150,
+                        //                   height: 410,
+                        //                   child: ColorPicker(
+                        //                       colorPickerWidth: 150,
+                        //                       portraitOnly: true,
+                        //                       pickerColor: _pickerColor,
+                        //                       onColorChanged: (color) {
+                        //                         setState(() {
+                        //                           _pickerColor = color;
+                        //                         });
+                        //                       }),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //           actions: [
+                        //             Button(
+                        //               onPressed: () {
+                        //                 Navigator.of(context).pop();
+                        //               },
+                        //               child: Text('CANCEL'),
+                        //             ),
+                        //             Button(
+                        //               onPressed: () {
+                        //                 String colorString = _pickerColor
+                        //                     .toString(); // Color(0x12345678)
+                        //                 String valueString = colorString
+                        //                     .split('(0x')[1]
+                        //                     .split(')')[0]; // kind of hacky..
+                        //                 int value =
+                        //                     int.parse(valueString, radix: 16);
+                        //                 setState(() {
+                        //                   _idCard.labels.add(
+                        //                     Label(
+                        //                       title: _titleController.text,
+                        //                       fontSize: int.parse(
+                        //                           _fontSizeController.text),
+                        //                       color: valueString,
+                        //                       x: 0,
+                        //                       y: (_idCard.labels.length) * 50,
+                        //                     ),
+                        //                   );
+
+                        //                   logger.d(_idCard.labels.length);
+                        //                   _titleController.clear();
+                        //                   _fontSizeController.clear();
+                        //                   Navigator.of(context).pop();
+                        //                 });
+                        //               },
+                        //               child: Text('ACCEPT'),
+                        //             ),
+                        //           ],
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        // ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: ScrollController(),
+                        itemCount: nonPhotoLabels,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              // _fontSizeController.text =
+                              //     _idCard.labels[index].fontSize.toString();
+                              // _pickerColor = Color(
+                              //   int.parse(_idCard.labels[index].color,
+                              //       radix: 16),
+                              // );
+                              // _heightController.text =
+                              //     _idCard.labels[index].height.toString();
+                              // _widthController.text =
+                              //     _idCard.labels[index].width.toString();
+                              // setState(() {
+                              //   editableIndex = index;
+                              // });
+                              updateEditIndex(index, false);
+                            },
+                            child: ListTile(
+                              leading: Checkbox(
+                                checked: _idCard.labels[index].isPrinted,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _idCard.labels[index].isPrinted =
+                                        !_idCard.labels[index].isPrinted;
+                                  });
+                                  if (value ?? false) {
+                                    // editableIndex = index;
+                                    updateEditIndex(index, true);
+                                  }
+                                },
                               ),
-                            )
-                          : Container(),
-                      // Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: SizedBox(
-                      //     width: 400,
-                      //     child: ToggleButton(
-                      //       checked: _idCard.isPhoto,
-                      //       onChanged: (value) {
-                      //         setState(() {
-                      //           _idCard.isPhoto = value;
-                      //           _idCard.photoHeight = 51.0;
-                      //           _idCard.photoWidth = 51.0;
-                      //           _photoHeight.text = '51.0';
-                      //           _photoWidth.text = '51.0';
-                      //         });
-                      //       },
-                      //       child: const Text('Is Photo'),
-                      //     ),
-                      //   ),
-                      // ),
-                      // _idCard.isPhoto
-                      //     ? Padding(
-                      //         padding: const EdgeInsets.all(8.0),
-                      //         child: Container(
-                      //           width: 400,
-                      //           child: Column(
-                      //             children: [
-                      //               TextBox(
-                      //                 controller: _photoHeight,
-                      //                 header: 'Photo Height',
-                      //                 onChanged: (String value) {
-                      //                   setState(() {
-                      //                     _idCard.photoHeight =
-                      //                         double.parse(value);
-                      //                   });
-                      //                 },
-                      //               ),
-                      //               TextBox(
-                      //                 controller: _photoWidth,
-                      //                 header: 'Photo Width',
-                      //                 onChanged: (String value) {
-                      //                   setState(() {
-                      //                     _idCard.photoWidth =
-                      //                         double.parse(value);
-                      //                   });
-                      //                 },
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       )
-                      //     : Container(),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          title: Text('Labels'),
-                          // trailing: Button(
-                          //   child: Icon(FluentIcons.add),
-                          //   onPressed: () {
-                          //     showDialog(
-                          //       context: context,
-                          //       builder: (BuildContext context) {
-                          //         return ContentDialog(
-                          //           title: Text('Welcome'),
-                          //           content: SizedBox(
-                          //             // height: 400,
-                          //             width: 500,
-                          //             child: Row(
-                          //               children: [
-                          //                 SizedBox(
-                          //                   width: 150,
-                          //                   child: Column(
-                          //                     mainAxisSize: MainAxisSize.min,
-                          //                     children: [
-                          //                       SizedBox(
-                          //                         child: TextBox(
-                          //                           header: "Label Name",
-                          //                           controller: _titleController,
-                          //                         ),
-                          //                       ),
-                          //                       SizedBox(
-                          //                         child: TextBox(
-                          //                           header: "Font Size",
-                          //                           controller:
-                          //                               _fontSizeController,
-                          //                         ),
-                          //                       ),
-                          //                     ],
-                          //                   ),
-                          //                 ),
-                          //                 SizedBox(
-                          //                   width: 150,
-                          //                   height: 410,
-                          //                   child: ColorPicker(
-                          //                       colorPickerWidth: 150,
-                          //                       portraitOnly: true,
-                          //                       pickerColor: _pickerColor,
-                          //                       onColorChanged: (color) {
-                          //                         setState(() {
-                          //                           _pickerColor = color;
-                          //                         });
-                          //                       }),
-                          //                 ),
-                          //               ],
-                          //             ),
-                          //           ),
-                          //           actions: [
-                          //             Button(
-                          //               onPressed: () {
-                          //                 Navigator.of(context).pop();
-                          //               },
-                          //               child: Text('CANCEL'),
-                          //             ),
-                          //             Button(
-                          //               onPressed: () {
-                          //                 String colorString = _pickerColor
-                          //                     .toString(); // Color(0x12345678)
-                          //                 String valueString = colorString
-                          //                     .split('(0x')[1]
-                          //                     .split(')')[0]; // kind of hacky..
-                          //                 int value =
-                          //                     int.parse(valueString, radix: 16);
-                          //                 setState(() {
-                          //                   _idCard.labels.add(
-                          //                     Label(
-                          //                       title: _titleController.text,
-                          //                       fontSize: int.parse(
-                          //                           _fontSizeController.text),
-                          //                       color: valueString,
-                          //                       x: 0,
-                          //                       y: (_idCard.labels.length) * 50,
-                          //                     ),
-                          //                   );
-
-                          //                   logger.d(_idCard.labels.length);
-                          //                   _titleController.clear();
-                          //                   _fontSizeController.clear();
-                          //                   Navigator.of(context).pop();
-                          //                 });
-                          //               },
-                          //               child: Text('ACCEPT'),
-                          //             ),
-                          //           ],
-                          //         );
-                          //       },
-                          //     );
-                          //   },
-                          // ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          // height: 400,
-                          // width: 200,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            controller: ScrollController(),
-                            itemCount: nonPhotoLabels,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  // _fontSizeController.text =
-                                  //     _idCard.labels[index].fontSize.toString();
-                                  // _pickerColor = Color(
-                                  //   int.parse(_idCard.labels[index].color,
-                                  //       radix: 16),
-                                  // );
-                                  // _heightController.text =
-                                  //     _idCard.labels[index].height.toString();
-                                  // _widthController.text =
-                                  //     _idCard.labels[index].width.toString();
-                                  // setState(() {
-                                  //   editableIndex = index;
-                                  // });
-                                  updateEditIndex(index, false);
-                                },
-                                child: ListTile(
-                                  leading: Checkbox(
-                                    checked: _idCard.labels[index].isPrinted,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _idCard.labels[index].isPrinted =
-                                            !_idCard.labels[index].isPrinted;
-                                      });
-                                      if (value ?? false) {
-                                        // editableIndex = index;
-                                        updateEditIndex(index, true);
-                                      }
-                                    },
-                                  ),
-                                  title: Text(
-                                    _idCard.labels[index].title,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                  trailing: SizedBox(
-                                    width: 200,
-                                    child: Row(
-                                      children: [
-                                        _idCard.isDual
-                                            ? ToggleSwitch(
-                                                checked: _idCard
-                                                    .labels[index].isFront,
-                                                onChanged: (_) {
-                                                  setState(() {
-                                                    _idCard.labels[index]
-                                                            .isFront =
-                                                        !_idCard.labels[index]
-                                                            .isFront;
-                                                  });
-                                                },
-                                                content: _idCard
-                                                        .labels[index].isFront
-                                                    ? Text("On Front")
-                                                    : Text("On Back"),
-                                              )
-                                            : Container(),
-                                      ],
-                                    ),
-                                  ),
+                              title: Text(
+                                _idCard.labels[index].title,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Color(0xff000000),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      DropDownButton(
-                        leading: const Icon(FluentIcons.add),
-                        title: const Text('Add Photo Element'),
-                        items: dropDownButtons,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          // height: 400,
-                          // width: 200,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            controller: ScrollController(),
-                            itemCount: _idCard.labels.length - nonPhotoLabels,
-                            itemBuilder: (context, index) {
-                              // index = index + nonPhotoLabels;
-                              int ind = index + nonPhotoLabels;
-                              logger.d(ind);
-                              return GestureDetector(
-                                onTap: () {
-                                  // _fontSizeController.text =
-                                  //     _idCard.labels[ind].fontSize.toString();
-                                  // _pickerColor = Color(
-                                  //   int.parse(_idCard.labels[ind].color,
-                                  //       radix: 16),
-                                  // );
-                                  // _heightController.text =
-                                  //     _idCard.labels[ind].height.toString();
-                                  // _widthController.text =
-                                  //     _idCard.labels[ind].width.toString();
-                                  // setState(() {
-                                  //   editableIndex = ind;
-                                  // });
-                                  updateEditIndex(ind, false);
-                                },
-                                child: ListTile(
-                                  leading: Checkbox(
-                                    checked: _idCard.labels[ind].isPrinted,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _idCard.labels[ind].isPrinted =
-                                            !_idCard.labels[ind].isPrinted;
-                                      });
-
-                                      if (value ?? false) {
-                                        // editableIndex = ind;
-                                        updateEditIndex(ind, true);
-                                      }
-                                    },
-                                  ),
-                                  title: Text(
-                                    _idCard.labels[ind].title,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xff000000),
-                                    ),
-                                  ),
-                                  trailing: SizedBox(
-                                    width: 200,
-                                    child: Row(
-                                      children: [
-                                        _idCard.isDual
-                                            ? ToggleSwitch(
-                                                checked:
-                                                    _idCard.labels[ind].isFront,
-                                                onChanged: (_) {
-                                                  setState(() {
-                                                    _idCard.labels[ind]
-                                                            .isFront =
-                                                        !_idCard.labels[ind]
-                                                            .isFront;
-                                                  });
-                                                },
-                                                content:
-                                                    _idCard.labels[ind].isFront
-                                                        ? Text("On Front")
-                                                        : Text("On Back"),
-                                              )
-                                            : Container(),
-                                      ],
-                                    ),
-                                  ),
+                              ),
+                              trailing: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  children: [
+                                    _idCard.isDual
+                                        ? ToggleSwitch(
+                                            checked: _idCard
+                                                .labels[index].isFront,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _idCard.labels[index]
+                                                        .isFront =
+                                                    !_idCard.labels[index]
+                                                        .isFront;
+                                              });
+                                            },
+                                            content: _idCard
+                                                    .labels[index].isFront
+                                                ? const Text("On Front")
+                                                : const Text("On Back"),
+                                          )
+                                        : Container(),
+                                  ],
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Button(
-                            onPressed: () async {
-                              List<String> photoColumns = [];
-
-                              _idCard.labels.forEach((label) {
-                                if (label.isPrinted && label.isPhoto) {
-                                  photoColumns.add(
-                                      label.title.toString().toLowerCase());
-                                }
-                              });
-
-                              // logger.d(idCardModelToJson(_idCard));
-                              // String idCardId =
-                              //     await _remoteServices.addIdCard(_idCard);
-                              // logger.d(idCardId);
-
-                              String idCardId =
-                                  await _studentController.addIdCard(_idCard);
-
-                              // await _remoteServices.addStudentData(
-                              //     idCardId, widget.excelPath);
-
-                              // var pickedFile = await FilePicker.platform
-                              //     .pickFiles(
-                              //         allowMultiple: false,
-                              //         allowedExtensions: ['.zip']);
-
-                              // String? zipFile =
-                              //     pickedFile?.files.first.path.toString();
-
-                              // if (zipFile != null) {
-                              // await _remoteServices.uploadStudentPhotos(
-                              //   photoColumns,
-                              //   zipFile,
-                              //   widget.schoolId,
+                    ),
+                    DropDownButton(
+                      leading: const Icon(FluentIcons.add),
+                      title: const Text('Add Photo Element'),
+                      items: dropDownButtons,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        controller: ScrollController(),
+                        itemCount: _idCard.labels.length - nonPhotoLabels,
+                        itemBuilder: (context, index) {
+                          // index = index + nonPhotoLabels;
+                          int ind = index + nonPhotoLabels;
+                          logger.d(ind);
+                          return GestureDetector(
+                            onTap: () {
+                              // _fontSizeController.text =
+                              //     _idCard.labels[ind].fontSize.toString();
+                              // _pickerColor = Color(
+                              //   int.parse(_idCard.labels[ind].color,
+                              //       radix: 16),
                               // );
-                              // }
-
-                              Navigator.of(context).pop();
-
-                              // Navigator.of(context).push(
-                              //   FluentPageRoute(
-                              //     builder: (context) => GenerateIdCard(
-                              //         idCard: _idCard,
-                              //         updateIdCardPosition: _updatePostion),
-                              //   ),
-                              // );
-                              // Get.to(() => GenerateIdCard(
-                              //     idCard: _idCard,
-                              //     updateIdCardPosition: _updatePostion));
+                              // _heightController.text =
+                              //     _idCard.labels[ind].height.toString();
+                              // _widthController.text =
+                              //     _idCard.labels[ind].width.toString();
+                              // setState(() {
+                              //   editableIndex = ind;
+                              // });
+                              updateEditIndex(ind, false);
                             },
-                            child: const Text('Save')),
-                      ),
+                            child: ListTile(
+                              leading: Checkbox(
+                                checked: _idCard.labels[ind].isPrinted,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _idCard.labels[ind].isPrinted =
+                                        !_idCard.labels[ind].isPrinted;
+                                  });
 
-                      // SizedBox(
-                      //   width: 300,
-                      //   height: 100,
-                      //   child: MaterialColorPicker(
-                      //     onColorChange: (Color color) {
-                      //       // Handle color changes
-                      //     },
-                      //     selectedColor: Colors.red,
-                      //   ),
-                      // ),
-                    ],
-                  ),
+                                  if (value ?? false) {
+                                    // editableIndex = ind;
+                                    updateEditIndex(ind, true);
+                                  }
+                                },
+                              ),
+                              title: Text(
+                                _idCard.labels[ind].title,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xff000000),
+                                ),
+                              ),
+                              trailing: SizedBox(
+                                width: 200,
+                                child: Row(
+                                  children: [
+                                    _idCard.isDual
+                                        ? ToggleSwitch(
+                                            checked:
+                                                _idCard.labels[ind].isFront,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _idCard.labels[ind]
+                                                        .isFront =
+                                                    !_idCard.labels[ind]
+                                                        .isFront;
+                                              });
+                                            },
+                                            content:
+                                                _idCard.labels[ind].isFront
+                                                    ? const Text("On Front")
+                                                    : const Text("On Back"),
+                                          )
+                                        : Container(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Button(
+                          onPressed: () async {
+                            List<String> photoColumns = [];
+
+                            _idCard.labels.forEach((label) {
+                              if (label.isPrinted && label.isPhoto) {
+                                photoColumns.add(
+                                    label.title.toString().toLowerCase());
+                              }
+                            });
+
+                            // logger.d(idCardModelToJson(_idCard));
+                            // String idCardId =
+                            //     await _remoteServices.addIdCard(_idCard);
+                            // logger.d(idCardId);
+
+                            String idCardId =
+                                await _studentController.addIdCard(_idCard);
+
+                            // await _remoteServices.addStudentData(
+                            //     idCardId, widget.excelPath);
+
+                            // var pickedFile = await FilePicker.platform
+                            //     .pickFiles(
+                            //         allowMultiple: false,
+                            //         allowedExtensions: ['.zip']);
+
+                            // String? zipFile =
+                            //     pickedFile?.files.first.path.toString();
+
+                            // if (zipFile != null) {
+                            // await _remoteServices.uploadStudentPhotos(
+                            //   photoColumns,
+                            //   zipFile,
+                            //   widget.schoolId,
+                            // );
+                            // }
+
+                            Navigator.of(context).pop();
+
+                            // Navigator.of(context).push(
+                            //   FluentPageRoute(
+                            //     builder: (context) => GenerateIdCard(
+                            //         idCard: _idCard,
+                            //         updateIdCardPosition: _updatePostion),
+                            //   ),
+                            // );
+                            // Get.to(() => GenerateIdCard(
+                            //     idCard: _idCard,
+                            //     updateIdCardPosition: _updatePostion));
+                          },
+                          child: const Text('Save')),
+                    ),
+
+                    // SizedBox(
+                    //   width: 300,
+                    //   height: 100,
+                    //   child: MaterialColorPicker(
+                    //     onColorChange: (Color color) {
+                    //       // Handle color changes
+                    //     },
+                    //     selectedColor: Colors.red,
+                    //   ),
+                    // ),
+                  ],
                 ),
               ),
             ),
-            Expanded(
-              child: frontfile != null
-                  ? backfile != null || backfile == null && !_idCard.isDual
-                      ? Container(
-                          height: cheight,
-                          child: GenerateIdCard(
-                            idCard: _idCard,
-                            updateIdCardPosition: _updatePostion,
-                            updateEditIndex: updateEditIndex,
-                            scaleFactor: scaleFactor,
-                          ),
-                        )
-                      : Container()
-                  : Container(),
-            ),
-            Container(
-              width: 400,
-              height: cheight,
-              child: editableIndex == -1
-                  ? Center(
-                      child: Text(
-                        "Please Select a Label",
+          ),
+          Expanded(
+            child: frontfile != null
+                ? backfile != null || backfile == null && !_idCard.isDual
+                    ? Container(
+                        height: cheight,
+                        child: GenerateIdCard(
+                          idCard: _idCard,
+                          updateIdCardPosition: _updatePostion,
+                          updateEditIndex: updateEditIndex,
+                          scaleFactor: scaleFactor,
+                        ),
+                      )
+                    : Container()
+                : Container(),
+          ),
+          Container(
+            width: 400,
+            height: cheight,
+            child: editableIndex == -1
+                ? const Center(
+                    child: Text(
+                      "Please Select a Label",
+                    ),
+                  )
+                : Column(
+                    children: [
+                      TextBox(
+                        header: 'Font Size',
+                        controller: _fontSizeController,
+                        onChanged: (_) {
+                          setState(() {
+                            _idCard.labels[editableIndex].fontSize =
+                                _fontSizeController.text.isEmpty
+                                    ? 0
+                                    : int.parse(_fontSizeController.text);
+                          });
+                        },
                       ),
-                    )
-                  : Column(
-                      children: [
-                        TextBox(
-                          header: 'Font Size',
-                          controller: _fontSizeController,
-                          onChanged: (_) {
-                            setState(() {
-                              _idCard.labels[editableIndex].fontSize =
-                                  _fontSizeController.text.isEmpty
-                                      ? 0
-                                      : int.parse(_fontSizeController.text);
-                            });
-                          },
-                        ),
-                        TextBox(
-                          header: 'Height',
-                          controller: _heightController,
-                          onChanged: (_) {
-                            setState(() {
-                              _idCard.labels[editableIndex].height =
-                                  _heightController.text.isEmpty
-                                      ? 0.0
-                                      : double.parse(_heightController.text)
-                                          .toPrecision(2);
-                            });
-                          },
-                        ),
-                        TextBox(
-                          header: 'Width',
-                          controller: _widthController,
-                          onChanged: (_) {
-                            setState(() {
-                              _idCard.labels[editableIndex].width =
-                                  _widthController.text.isEmpty
-                                      ? 0.0
-                                      : double.parse(_widthController.text)
-                                          .toPrecision(2);
-                            });
-                          },
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "Selected Color",
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => ContentDialog(
-                                    actions: [
-                                      Button(
-                                          child: Text("OK"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          }),
-                                    ],
-                                    title: Text('Select Color'),
-                                    content: mat.Card(
-                                      child: ColorPicker(
-                                        portraitOnly: true,
-                                        onColorChanged: (Color color) {
-                                          setState(() {
-                                            _pickedColor = color
-                                                .toString()
-                                                .split('(0x')[1]
-                                                .split(')')[0];
-                                            _idCard.labels[editableIndex]
-                                                    .color =
-                                                color
-                                                    .toString()
-                                                    .split('(0x')[1]
-                                                    .split(')')[0];
-                                          });
-                                        },
-                                        pickerColor: Color(
-                                          int.parse(
-                                            _idCard.labels[editableIndex].color,
-                                            radix: 16,
-                                          ),
+                      TextBox(
+                        header: 'Height',
+                        controller: _heightController,
+                        onChanged: (_) {
+                          setState(() {
+                            _idCard.labels[editableIndex].height =
+                                _heightController.text.isEmpty
+                                    ? 0.0
+                                    : double.parse(_heightController.text)
+                                        .toPrecision(2);
+                          });
+                        },
+                      ),
+                      TextBox(
+                        header: 'Width',
+                        controller: _widthController,
+                        onChanged: (_) {
+                          setState(() {
+                            _idCard.labels[editableIndex].width =
+                                _widthController.text.isEmpty
+                                    ? 0.0
+                                    : double.parse(_widthController.text)
+                                        .toPrecision(2);
+                          });
+                        },
+                      ),
+                      Row(
+                        children: [
+                          const Text(
+                            "Selected Color",
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => ContentDialog(
+                                  actions: [
+                                    Button(
+                                        child: const Text("OK"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }),
+                                  ],
+                                  title: const Text('Select Color'),
+                                  content: mat.Card(
+                                    child: ColorPicker(
+                                      portraitOnly: true,
+                                      onColorChanged: (Color color) {
+                                        setState(() {
+                                          _pickedColor = color
+                                              .toString()
+                                              .split('(0x')[1]
+                                              .split(')')[0];
+                                          _idCard.labels[editableIndex]
+                                                  .color =
+                                              color
+                                                  .toString()
+                                                  .split('(0x')[1]
+                                                  .split(')')[0];
+                                        });
+                                      },
+                                      pickerColor: Color(
+                                        int.parse(
+                                          _idCard.labels[editableIndex].color,
+                                          radix: 16,
                                         ),
                                       ),
                                     ),
                                   ),
-                                );
-                              },
-                              child: SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: Container(
-                                  color: Color(
-                                    int.parse(
-                                      _idCard.labels[editableIndex].color,
-                                      radix: 16,
-                                    ),
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: Container(
+                                color: Color(
+                                  int.parse(
+                                    _idCard.labels[editableIndex].color,
+                                    radix: 16,
                                   ),
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        mat.Card(
-                          child: mat.DropdownButton(
-                            items: GoogleFonts.asMap()
-                                .map((key, value) {
-                                  return MapEntry(
-                                    key,
-                                    mat.DropdownMenuItem<String>(
-                                      value: key,
-                                      child: Text(key),
-                                    ),
-                                  );
-                                })
-                                .values
-                                .toList(),
-                            value: _fontName,
-                            onChanged: (fontName) {
-                              setState(() {
-                                _fontName = fontName.toString();
-                                _idCard.labels[editableIndex].fontName =
-                                    _fontName;
-                                logger.d('Helooooooo $_fontName');
-                                logger.d('Helooooooo2 $_fontName');
-                              });
-                            },
                           ),
+                        ],
+                      ),
+                      mat.Card(
+                        child: mat.DropdownButton(
+                          items: GoogleFonts.asMap()
+                              .map((key, value) {
+                                return MapEntry(
+                                  key,
+                                  mat.DropdownMenuItem<String>(
+                                    value: key,
+                                    child: Text(key),
+                                  ),
+                                );
+                              })
+                              .values
+                              .toList(),
+                          value: _fontName,
+                          onChanged: (fontName) {
+                            setState(() {
+                              _fontName = fontName.toString();
+                              _idCard.labels[editableIndex].fontName =
+                                  _fontName;
+                              logger.d('Helooooooo $_fontName');
+                              logger.d('Helooooooo2 $_fontName');
+                            });
+                          },
                         ),
-                        Row(
-                          children: [
-                            SizedBox(
-                              height: 25.0,
-                              child: Button(
-                                child: Container(
-                                  height: 24,
-                                  width: 24,
-                                  color: FluentTheme.of(context).accentColor,
-                                  child: const Icon(FluentIcons.align_left),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _idCard.labels[editableIndex].textAlign =
-                                        "left";
-                                  });
-                                },
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 25.0,
+                            child: Button(
+                              child: Container(
+                                height: 24,
+                                width: 24,
+                                color: FluentTheme.of(context).accentColor,
+                                child: const Icon(FluentIcons.align_left),
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _idCard.labels[editableIndex].textAlign =
+                                      "left";
+                                });
+                              },
                             ),
-                            SizedBox(
-                              height: 25.0,
-                              child: Button(
-                                child: Container(
-                                  height: 24,
-                                  width: 24,
-                                  color: FluentTheme.of(context).accentColor,
-                                  child: const Icon(FluentIcons.align_center),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _idCard.labels[editableIndex].textAlign =
-                                        "center";
-                                  });
-                                },
+                          ),
+                          SizedBox(
+                            height: 25.0,
+                            child: Button(
+                              child: Container(
+                                height: 24,
+                                width: 24,
+                                color: FluentTheme.of(context).accentColor,
+                                child: const Icon(FluentIcons.align_center),
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _idCard.labels[editableIndex].textAlign =
+                                      "center";
+                                });
+                              },
                             ),
-                            SizedBox(
-                              height: 25.0,
-                              child: Button(
-                                child: Container(
-                                  height: 24,
-                                  width: 24,
-                                  color: FluentTheme.of(context).accentColor,
-                                  child: const Icon(FluentIcons.align_right),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _idCard.labels[editableIndex].textAlign =
-                                        "right";
-                                  });
-                                },
+                          ),
+                          SizedBox(
+                            height: 25.0,
+                            child: Button(
+                              child: Container(
+                                height: 24,
+                                width: 24,
+                                color: FluentTheme.of(context).accentColor,
+                                child: const Icon(FluentIcons.align_right),
                               ),
+                              onPressed: () {
+                                setState(() {
+                                  _idCard.labels[editableIndex].textAlign =
+                                      "right";
+                                });
+                              },
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
-            )
-          ],
-        ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+          )
+        ],
       ),
     );
   }

@@ -38,7 +38,7 @@ class StudentController extends GetxController {
   void addStudents(String schoolId, String excelFile) async {
     try {
       isLoading(true);
-      var students = await _remoteServices.addStudentData(schoolId, excelFile);
+      await _remoteServices.addStudentData(schoolId, excelFile);
     } finally {
       fetchStudents(schoolId);
       isLoading(false);

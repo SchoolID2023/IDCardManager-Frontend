@@ -1,21 +1,17 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:idcard_maker_frontend/widgets/resizable_widget.dart';
-import 'package:string_to_hex/string_to_hex.dart';
 
 import '../models/id_card_model.dart';
-import 'package:get/get.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:file_saver/file_saver.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import '../services/logger.dart';
 
 class GenerateIdCard extends StatefulWidget {
@@ -39,8 +35,8 @@ class GenerateIdCard extends StatefulWidget {
 }
 
 class _GenerateIdCardState extends State<GenerateIdCard> {
-  GlobalKey _globalFrontKey = GlobalKey();
-  GlobalKey _globalBackKey = GlobalKey();
+  final GlobalKey _globalFrontKey = GlobalKey();
+  final GlobalKey _globalBackKey = GlobalKey();
   final labelList = <Widget>[];
   final labelBackList = <Widget>[];
   double myScale = 1.0;
@@ -67,7 +63,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
     outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
     logger.d(outputFile);
 
-    Directory destinationFolder = Directory('${outputFile}${folder}');
+    Directory destinationFolder = Directory('$outputFile${folder}');
     String path = "";
     if (await destinationFolder.exists()) {
       path = destinationFolder.path;

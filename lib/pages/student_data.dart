@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:get/get.dart';
-import 'package:idcard_maker_frontend/controllers/school_controller.dart';
-import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/widgets/edit_school.dart';
 import 'package:idcard_maker_frontend/widgets/generate_id_card_list.dart';
 import 'package:idcard_maker_frontend/widgets/load_excel.dart';
@@ -19,7 +17,6 @@ import '../services/remote_services.dart';
 import '../widgets/add_school_admin.dart';
 import '../widgets/add_school_teacher.dart';
 import '../widgets/load_id_card_data.dart';
-import '../widgets/preview_id_card.dart';
 import '../services/logger.dart';
 import 'edit_id_card.dart';
 import 'school_admin_login.dart';
@@ -31,8 +28,8 @@ class StudentDataScreen extends StatelessWidget {
   final RemoteServices _remoteServices = RemoteServices();
   bool isSchoolAdmin = false;
 
-  List<String> _photos = ["Name", "Class", "Section", "Contact"];
-  List<Label> _labels = [
+  final List<String> _photos = ["Name", "Class", "Section", "Contact"];
+  final List<Label> _labels = [
     Label(title: "Name"),
     Label(title: "Class"),
     Label(title: "Section"),
@@ -75,7 +72,7 @@ class StudentDataScreen extends StatelessWidget {
             isSchoolAdmin
                 ? Container()
                 : Button(
-                    child: Icon(FluentIcons.arrow_tall_up_left),
+                    child: const Icon(FluentIcons.arrow_tall_up_left),
                     onPressed: () {
                       Navigator.of(context).pop();
                     }),
@@ -94,20 +91,20 @@ class StudentDataScreen extends StatelessWidget {
                           await SharedPreferences.getInstance();
                       prefs.remove('token');
                       Navigator.of(context).push(FluentPageRoute(
-                          builder: (context) => SchoolAdminLoginPage()));
+                          builder: (context) => const SchoolAdminLoginPage()));
                     },
                   )
                 : Container(),
           ],
         ),
         content: Obx(() {
-          School _school = studentController.school.value;
-          var _idCards = studentController.idCardList.value.idCards;
-          var _students = studentController.students.value.students;
-          var _admins = studentController.admins.value.schoolAdmins;
-          var _teachers = studentController.teachers.value.teachers;
+          School school = studentController.school.value;
+          var idCards = studentController.idCardList.value.idCards;
+          var students = studentController.students.value.students;
+          var admins = studentController.admins.value.schoolAdmins;
+          var teachers = studentController.teachers.value.teachers;
           return studentController.isLoading.value
-              ? Center(
+              ? const Center(
                   child: ProgressBar(),
                 )
               : Padding(
@@ -139,7 +136,7 @@ class StudentDataScreen extends StatelessWidget {
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "School Details",
                                                         style: TextStyle(
                                                           fontSize: 18,
@@ -154,55 +151,55 @@ class StudentDataScreen extends StatelessWidget {
                                                             builder: (context) =>
                                                                 EditSchoolDialog(
                                                                     school:
-                                                                        _school),
+                                                                        school),
                                                           );
                                                         },
-                                                        icon: Icon(
+                                                        icon: const Icon(
                                                           FluentIcons.edit,
                                                         ),
                                                       )
                                                     ],
                                                   ),
                                                   Text(
-                                                    "School Name: ${_school.name}",
+                                                    "School Name: ${school.name}",
                                                     maxLines: 2,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                     ),
                                                   ),
-                                                  Divider(),
+                                                  const Divider(),
                                                   Text(
-                                                    "School Address: ${_school.address}",
+                                                    "School Address: ${school.address}",
                                                     maxLines: 2,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                     ),
                                                   ),
-                                                  Divider(),
+                                                  const Divider(),
                                                   Text(
-                                                    "School Classes: ${_school.classes}",
+                                                    "School Classes: ${school.classes}",
                                                     maxLines: 2,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                     ),
                                                   ),
-                                                  Divider(),
+                                                  const Divider(),
                                                   Text(
-                                                    "School Contact: ${_school.contact}",
+                                                    "School Contact: ${school.contact}",
                                                     maxLines: 2,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                     ),
                                                   ),
-                                                  Divider(),
+                                                  const Divider(),
                                                   Text(
-                                                    "School Email: ${_school.email}",
+                                                    "School Email: ${school.email}",
                                                     maxLines: 2,
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                       fontSize: 16,
                                                     ),
                                                   ),
-                                                  Divider(),
+                                                  const Divider(),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
@@ -213,7 +210,7 @@ class StudentDataScreen extends StatelessWidget {
                                                               .spaceBetween,
                                                       children: [
                                                         Button(
-                                                          child: Text(
+                                                          child: const Text(
                                                               "Upload Excel"),
                                                           onPressed: () {
                                                             showDialog(
@@ -228,16 +225,14 @@ class StudentDataScreen extends StatelessWidget {
                                                           },
                                                         ),
                                                         Button(
-                                                          child: Text(
+                                                          child: const Text(
                                                               "Upload Photos"),
                                                           onPressed: () {
-                                                            _students[0]
-                                                                .data
-                                                                .forEach(
-                                                                    (data) {
+                                                            for (var data in students[0]
+                                                                .data) {
                                                               _photos.add(
                                                                   data.field);
-                                                            });
+                                                            }
                                                             showDialog(
                                                               context: context,
                                                               builder:
@@ -277,7 +272,7 @@ class StudentDataScreen extends StatelessWidget {
                                                     ),
                                                   ),
                                                   Button(
-                                                    child: Text("Download"),
+                                                    child: const Text("Download"),
                                                     onPressed: () {
                                                       _remoteServices
                                                           .generateExcel(
@@ -310,23 +305,21 @@ class StudentDataScreen extends StatelessWidget {
                                                           FontWeight.bold,
                                                     ),
                                                   ),
-                                                  _students.length > 0 &&
-                                                          _students[0]
-                                                                  .photo
-                                                                  .length >
-                                                              0
+                                                  students.isNotEmpty &&
+                                                          students[0]
+                                                                  .photo.isNotEmpty
                                                       ? DropDownButton(
-                                                          title: Text(
+                                                          title: const Text(
                                                               'Select Photo Column'),
                                                           items: List<
                                                               MenuFlyoutItem>.generate(
-                                                            _students[0]
+                                                            students[0]
                                                                 .photo
                                                                 .length,
                                                             (index) =>
                                                                 MenuFlyoutItem(
                                                               text: Text(
-                                                                  _students[0]
+                                                                  students[0]
                                                                       .photo[
                                                                           index]
                                                                       .field),
@@ -336,7 +329,7 @@ class StudentDataScreen extends StatelessWidget {
                                                                   schoolId,
                                                                   'all',
                                                                   'all',
-                                                                  _students[0]
+                                                                  students[0]
                                                                       .photo[
                                                                           index]
                                                                       .field,
@@ -365,8 +358,8 @@ class StudentDataScreen extends StatelessWidget {
                                       ],
                                     ),
                                     Text(
-                                      "ID Cards Designs of ${_school.name}",
-                                      style: TextStyle(
+                                      "ID Cards Designs of ${school.name}",
+                                      style: const TextStyle(
                                           fontSize: 20,
                                           color: Colors.black,
                                           fontWeight: mat.FontWeight.bold),
@@ -381,7 +374,7 @@ class StudentDataScreen extends StatelessWidget {
                                             controller: _scrollController,
                                             shrinkWrap: true,
                                             itemBuilder: ((context, index) {
-                                              if (index == _idCards.length) {
+                                              if (index == idCards.length) {
                                                 return Padding(
                                                   padding:
                                                       const EdgeInsets.all(8.0),
@@ -389,11 +382,11 @@ class StudentDataScreen extends StatelessWidget {
                                                     onTap: () {
                                                       for (int i = 0;
                                                           i <
-                                                              (_students[0]
+                                                              (students[0]
                                                                       .data)
                                                                   .length;
                                                           i++) {
-                                                        if (_students[0]
+                                                        if (students[0]
                                                                 .data[i]
                                                                 .field[0] ==
                                                             '_') {
@@ -402,7 +395,7 @@ class StudentDataScreen extends StatelessWidget {
                                                         _labels.add(
                                                           Label(
                                                               title:
-                                                                  _students[0]
+                                                                  students[0]
                                                                       .data[i]
                                                                       .field),
                                                         );
@@ -416,7 +409,7 @@ class StudentDataScreen extends StatelessWidget {
                                                         ),
                                                       );
                                                     },
-                                                    child: SizedBox(
+                                                    child: const SizedBox(
                                                       height: 200,
                                                       width: 200,
                                                       child: Card(
@@ -443,7 +436,7 @@ class StudentDataScreen extends StatelessWidget {
                                                                       .min,
                                                               children: [
                                                                 Button(
-                                                                  child: Text(
+                                                                  child: const Text(
                                                                       "Generate ID Card"),
                                                                   onPressed:
                                                                       () {
@@ -455,9 +448,9 @@ class StudentDataScreen extends StatelessWidget {
                                                                             (context) =>
                                                                                 GenerateIdCardList(
                                                                           idCardId:
-                                                                              _idCards[index].id,
+                                                                              idCards[index].id,
                                                                           students:
-                                                                              _students,
+                                                                              students,
                                                                           isSelected:
                                                                               _selectedStudents,
                                                                         ),
@@ -466,23 +459,23 @@ class StudentDataScreen extends StatelessWidget {
                                                                   },
                                                                 ),
                                                                 Button(
-                                                                    child: Text(
+                                                                    child: const Text(
                                                                         "Edit Id Card"),
                                                                     onPressed:
                                                                         () {
                                                                       Navigator.of(context).pushReplacement(FluentPageRoute(
                                                                           builder: (context) => EditIdCardPage(
-                                                                                idCardId: _idCards[index].id,
+                                                                                idCardId: idCards[index].id,
                                                                               )));
                                                                     }),
                                                                 Button(
-                                                                    child: Text(
+                                                                    child: const Text(
                                                                         "Delete"),
                                                                     onPressed:
                                                                         () {
                                                                       studentController
                                                                           .deleteIdCard(
-                                                                        _idCards[index]
+                                                                        idCards[index]
                                                                             .id,
                                                                       );
                                                                       Navigator.of(
@@ -503,7 +496,7 @@ class StudentDataScreen extends StatelessWidget {
                                                   child: Card(
                                                     child: Image.memory(
                                                       base64Decode(
-                                                        _idCards[index]
+                                                        idCards[index]
                                                             .foregroundImagePath,
                                                       ),
                                                       height: 200,
@@ -514,7 +507,7 @@ class StudentDataScreen extends StatelessWidget {
                                                 ),
                                               );
                                             }),
-                                            itemCount: _idCards.length + 1,
+                                            itemCount: idCards.length + 1,
                                             scrollDirection: Axis.horizontal,
                                           ),
                                         ),
@@ -523,17 +516,17 @@ class StudentDataScreen extends StatelessWidget {
                                     SizedBox(
                                       width: cwidth,
                                       height: 800,
-                                      child: _students.isNotEmpty
+                                      child: students.isNotEmpty
                                           ? InteractiveViewer(
                                               scaleEnabled: false,
                                               constrained: false,
                                               child: StudentTable(
-                                                students: _students,
+                                                students: students,
                                                 isSelected: _selectedStudents,
                                                 onSelected:
                                                     updateSelectedStudents,
-                                                classes: _school.classes,
-                                                sections: _school.sections,
+                                                classes: school.classes,
+                                                sections: school.sections,
                                               ),
                                             )
                                           : const Text("No Students"),
@@ -547,80 +540,76 @@ class StudentDataScreen extends StatelessWidget {
                                     width: cwidth * 0.2,
                                     height: cheight * 0.5,
                                     child: Card(
-                                      child: Container(
-                                        child: Column(
-                                          children: [
-                                            Text("Manage Admins"),
-                                            TextButton(
-                                              child: Text("Add Admin"),
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AddSchoolAdmin(
-                                                          schoolId: schoolId),
+                                      child: Column(
+                                        children: [
+                                          const Text("Manage Admins"),
+                                          TextButton(
+                                            child: const Text("Add Admin"),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AddSchoolAdmin(
+                                                        schoolId: schoolId),
+                                              );
+                                            },
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    admins[index].name,
+                                                  ),
+                                                  subtitle: Text(
+                                                    admins[index].email,
+                                                  ),
                                                 );
                                               },
+                                              itemCount: admins.length,
                                             ),
-                                            Expanded(
-                                              child: ListView.builder(
-                                                itemBuilder: (context, index) {
-                                                  return ListTile(
-                                                    title: Text(
-                                                      _admins[index].name,
-                                                    ),
-                                                    subtitle: Text(
-                                                      _admins[index].email,
-                                                    ),
-                                                  );
-                                                },
-                                                itemCount: _admins.length,
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 30,
                                   ),
                                   SizedBox(
                                     width: cwidth * 0.2,
                                     height: cheight * 0.5,
                                     child: Card(
-                                      child: Container(
-                                        child: Column(
-                                          children: [
-                                            Text("Manage Teachers"),
-                                            TextButton(
-                                              child: Text("Add Teacher"),
-                                              onPressed: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) =>
-                                                      AddSchoolTeacher(
-                                                          schoolId: schoolId),
+                                      child: Column(
+                                        children: [
+                                          const Text("Manage Teachers"),
+                                          TextButton(
+                                            child: const Text("Add Teacher"),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AddSchoolTeacher(
+                                                        schoolId: schoolId),
+                                              );
+                                            },
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemBuilder: (context, index) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    teachers[index].name,
+                                                  ),
+                                                  subtitle: Text(
+                                                    "${teachers[index].teacherClass} - ${teachers[index].section}",
+                                                  ),
                                                 );
                                               },
+                                              itemCount: teachers.length,
                                             ),
-                                            Expanded(
-                                              child: ListView.builder(
-                                                itemBuilder: (context, index) {
-                                                  return ListTile(
-                                                    title: Text(
-                                                      _teachers[index].name,
-                                                    ),
-                                                    subtitle: Text(
-                                                      "${_teachers[index].teacherClass} - ${_teachers[index].section}",
-                                                    ),
-                                                  );
-                                                },
-                                                itemCount: _teachers.length,
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                                          )
+                                        ],
                                       ),
                                     ),
                                   ),

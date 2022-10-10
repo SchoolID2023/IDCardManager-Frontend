@@ -3,14 +3,10 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:excel/excel.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 
 import '../controllers/student_controller.dart';
-import '../models/id_card_model.dart';
-import '../pages/add_id_card.dart';
-import 'package:archive/archive.dart';
 
 class LoadPhotos extends StatefulWidget {
   final String schoolId;
@@ -60,13 +56,13 @@ class _LoadPhotosState extends State<LoadPhotos> {
     StudentController _studentController =
         Get.put(StudentController(widget.schoolId));
     return ContentDialog(
-      title: Text("Upload Photos"),
+      title: const Text("Upload Photos"),
       actions: [
         // Button(
         //   child: Text("OK"),
         //   onPressed: () {},
         // ),
-        Button(child: Text("CANCEL"), onPressed: () => Navigator.pop(context)),
+        Button(child: const Text("CANCEL"), onPressed: () => Navigator.pop(context)),
       ],
       content: SizedBox(
         width: 500,
@@ -83,7 +79,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                 // ),
                 Expanded(
                   child: DropDownButton(
-                    title: Text("Select Columns"),
+                    title: const Text("Select Columns"),
                     items: List<MenuFlyoutItem>.generate(
                       widget.fields.length,
                       (index) => MenuFlyoutItem(
@@ -114,7 +110,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                   ),
                 ),
                 Button(
-                  child: Text("Upload Photos"),
+                  child: const Text("Upload Photos"),
                   onPressed: () async {
                     await uploadPhotos();
                   },

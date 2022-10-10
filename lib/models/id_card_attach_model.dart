@@ -2,7 +2,6 @@
 //
 //     final idCardAttachModel = idCardAttachModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import './student_model.dart';
 import 'dart:convert';
 

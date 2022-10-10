@@ -1,9 +1,6 @@
 import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as material;
-import 'package:idcard_maker_frontend/home.dart';
-import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
 import 'package:idcard_maker_frontend/pages/student_data.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
@@ -17,10 +14,10 @@ class SchoolAdminLoginPage extends StatefulWidget {
 }
 
 class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
 
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +80,7 @@ class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     Button(
-                                      child: Text("Log In"),
+                                      child: const Text("Log In"),
                                       onPressed: () async {
                                         try {
                                           final navigator =
@@ -116,13 +113,13 @@ class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
                                     ),
                                     Button(
                                       child:
-                                          Text("Log In As Super Admin Instead"),
+                                          const Text("Log In As Super Admin Instead"),
                                       onPressed: () {
                                         try {
                                           Navigator.push(
                                             context,
                                             FluentPageRoute(
-                                              builder: (context) => LoginPage(),
+                                              builder: (context) => const LoginPage(),
                                             ),
                                           );
                                         } catch (e) {

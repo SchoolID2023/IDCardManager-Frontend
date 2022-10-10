@@ -7,7 +7,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 // import 'package:flutter/material.dart';
 
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:idcard_maker_frontend/models/id_card_attach_model.dart';
@@ -35,7 +34,7 @@ class GenerateIdCardList extends StatefulWidget {
 
 class _GenerateIdCardListState extends State<GenerateIdCardList> {
   late IdCardGenerationModel _idCardGenerationModel;
-  TextEditingController _outputPath = TextEditingController();
+  final TextEditingController _outputPath = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
   bool _isLoading = true;
   bool _isGenerating = false;
@@ -47,7 +46,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   int currentCount = 0;
   bool isStop = false;
 
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
   late IdCardAttachModel _idCardAttachModel;
 
   void fetchIdCardGenerationModel() async {
@@ -170,7 +169,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     logger.d("SS Png Captured --> $path\\$fileImage.png");
   }
 
-  Widget _widget = const Text("Start");
+  final Widget _widget = const Text("Start");
 
   int index = 0;
 

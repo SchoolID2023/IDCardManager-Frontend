@@ -13,13 +13,13 @@ class AddSchoolTeacher extends StatefulWidget {
 }
 
 class _AddSchoolTeacherState extends State<AddSchoolTeacher> {
-  RemoteServices _remoteServices = RemoteServices();
-  TextEditingController _teacherNameController = TextEditingController();
-  TextEditingController _teacherEmailController = TextEditingController();
-  TextEditingController _teacherPasswordController = TextEditingController();
-  TextEditingController _teacherContactController = TextEditingController();
-  TextEditingController _teacherClassController = TextEditingController();
-  TextEditingController _teacherSectionController = TextEditingController();
+  final RemoteServices _remoteServices = RemoteServices();
+  final TextEditingController _teacherNameController = TextEditingController();
+  final TextEditingController _teacherEmailController = TextEditingController();
+  final TextEditingController _teacherPasswordController = TextEditingController();
+  final TextEditingController _teacherContactController = TextEditingController();
+  final TextEditingController _teacherClassController = TextEditingController();
+  final TextEditingController _teacherSectionController = TextEditingController();
 
 
   @override
@@ -28,10 +28,10 @@ class _AddSchoolTeacherState extends State<AddSchoolTeacher> {
     final StudentController studentController =
         Get.put(StudentController(widget.schoolId));
     return ContentDialog(
-      title: Text("Add SchoolAdmin"),
+      title: const Text("Add SchoolAdmin"),
       actions: [
         Button(
-          child: Text("Add"),
+          child: const Text("Add"),
           onPressed: () async {
 
             await _remoteServices.addSchoolTeacher(
@@ -49,7 +49,7 @@ class _AddSchoolTeacherState extends State<AddSchoolTeacher> {
           },
         ),
         Button(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () => Navigator.pop(context),
         ),
       ],

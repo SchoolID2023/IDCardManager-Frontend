@@ -86,8 +86,8 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
               ),
               color: Colors.lightBlue[100],
               image: _label.isPhoto
-                  ? DecorationImage(
-                      image: NetworkImage(
+                  ? const DecorationImage(
+                      image: const NetworkImage(
                         "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
                       ),
                       fit: BoxFit.cover,
@@ -292,7 +292,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
 }
 
 class ManipulatingBall extends StatefulWidget {
-  ManipulatingBall({Key? key, required this.onDrag, required this.scale});
+  const ManipulatingBall({Key? key, required this.onDrag, required this.scale});
 
   final Function onDrag;
   final double scale;

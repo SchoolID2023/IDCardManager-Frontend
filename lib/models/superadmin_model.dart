@@ -2,7 +2,6 @@
 //
 //     final superAdmin = superAdminFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 SuperAdmin superAdminFromJson(String str) => SuperAdmin.fromJson(json.decode(str));

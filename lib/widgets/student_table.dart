@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
-import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:idcard_maker_frontend/widgets/student_dialog.dart';
 import '../services/logger.dart';
 
@@ -35,7 +34,7 @@ class _StudentTableState extends State<StudentTable> {
   int filterIndex = -1;
   String classFilter = 'All';
   String sectionFilter = 'All';
-  TextEditingController _filter = TextEditingController();
+  final TextEditingController _filter = TextEditingController();
 
   Set<String> filteredStudents = Set<String>();
 
@@ -51,7 +50,7 @@ class _StudentTableState extends State<StudentTable> {
     widget.onSelected(studentId, isSelected);
   }
 
-  Map<int, bool> _isVisible = <int, bool>{};
+  final Map<int, bool> _isVisible = <int, bool>{};
 
   @override
   void initState() {
@@ -70,9 +69,9 @@ class _StudentTableState extends State<StudentTable> {
   Widget build(BuildContext context) {
     isSelected.value = widget.isSelected;
 
-    List<DataColumn> _columnName = [
+    List<DataColumn> columnName = [
       DataColumn(
-        label: Text('S. No.'),
+        label: const Text('S. No.'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 0) {
@@ -86,7 +85,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: Text('Name'),
+        label: const Text('Name'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 1) {
@@ -100,7 +99,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: Text('Class'),
+        label: const Text('Class'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 2) {
@@ -115,7 +114,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: Text('Section'),
+        label: const Text('Section'),
         onSort: (int columnIndex, bool ascending) {
           setState(
             () {
@@ -130,13 +129,13 @@ class _StudentTableState extends State<StudentTable> {
           );
         },
       ),
-      DataColumn(
+      const DataColumn(
         label: Text('Contact'),
       ),
     ];
 
     if (photoIndex != -1) {
-      _columnName.add(
+      columnName.add(
         DataColumn(
           label: Text(
             widget.students[0].photo[photoIndex].field,
@@ -149,7 +148,7 @@ class _StudentTableState extends State<StudentTable> {
       // logger.d("Field--> ${element.field}");
 
       if (_isVisible[i] ?? false) {
-        _columnName.add(
+        columnName.add(
           DataColumn(
             label: Text(widget.students[0].data[i].field),
             onSort: (int columnIndex, bool ascending) {
@@ -158,13 +157,7 @@ class _StudentTableState extends State<StudentTable> {
                   widget.students.sort((a, b) => a.data[i].value
                       .toString()
                       .compareTo(b.data[i].value.toString()));
-                } else {
-                  // widget.students.sort((a, b) => a.data[columnIndex - 1].value
-                  //     .toString()
-                  //     .compareTo(b.data[columnIndex - 1].value.toString()));
-                  logger.d(columnIndex);
-                  logger.d(i);
-                }
+                } 
               });
             },
           ),
@@ -178,7 +171,7 @@ class _StudentTableState extends State<StudentTable> {
       // ),
 
     }
-    final DataTableSource _data = MyData(
+    final DataTableSource data = MyData(
       widget.students,
       context,
       onSelectingRow,
@@ -192,7 +185,7 @@ class _StudentTableState extends State<StudentTable> {
       sectionFilter,
     );
     return SizedBox(
-      width: _columnName.length * 150,
+      width: columnName.length * 150,
       child: fluent.Column(
         children: [
           Padding(
@@ -208,7 +201,7 @@ class _StudentTableState extends State<StudentTable> {
                         child: fluent.DropDownButton(
                           title: filterIndex != -1
                               ? Text(widget.students[0].data[filterIndex].field)
-                              : Text('Search Data by'),
+                              : const Text('Search Data by'),
                           items: List<fluent.MenuFlyoutItem>.generate(
                             widget.students[0].data.length,
                             (index) => fluent.MenuFlyoutItem(
@@ -238,7 +231,7 @@ class _StudentTableState extends State<StudentTable> {
                         ),
                       ),
                       fluent.Button(
-                          child: Text("Filter"),
+                          child: const Text("Filter"),
                           onPressed: () {
                             setState(() {
                               isFiltering = true;
@@ -248,7 +241,7 @@ class _StudentTableState extends State<StudentTable> {
                             });
                           }),
                       fluent.Button(
-                          child: Text("Clear Filter"),
+                          child: const Text("Clear Filter"),
                           onPressed: () {
                             setState(() {
                               isFiltering = false;
@@ -268,9 +261,8 @@ class _StudentTableState extends State<StudentTable> {
                         width: 250,
                         child: fluent.DropDownButton(
                           title: classFilter != 'All'
-                              ? Text('Students of Class ' +
-                                  classFilter.toUpperCase())
-                              : Text('All Classes'),
+                              ? Text('Students of Class ${classFilter.toUpperCase()}')
+                              : const Text('All Classes'),
                           items: List<fluent.MenuFlyoutItem>.generate(
                             widget.classes.length,
                             (index) => fluent.MenuFlyoutItem(
@@ -291,9 +283,8 @@ class _StudentTableState extends State<StudentTable> {
                         width: 250,
                         child: fluent.DropDownButton(
                           title: sectionFilter != 'All'
-                              ? Text('Students of Section ' +
-                                  sectionFilter.toUpperCase())
-                              : Text('All Sections'),
+                              ? Text('Students of Section ${sectionFilter.toUpperCase()}')
+                              : const Text('All Sections'),
                           items: List<fluent.MenuFlyoutItem>.generate(
                             widget.sections.length,
                             (index) => fluent.MenuFlyoutItem(
@@ -328,16 +319,16 @@ class _StudentTableState extends State<StudentTable> {
               logger.d(isAllSelected);
             },
             sortColumnIndex: 2,
-            source: _data,
+            source: data,
             header: Row(
               children: [
-                Text('Students'),
+                const Text('Students'),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
                     width: 150,
                     child: fluent.DropDownButton(
-                      title: Text('View Data'),
+                      title: const Text('View Data'),
                       items: List<fluent.MenuFlyoutItem>.generate(
                         widget.students[0].data.length,
                         (index) => fluent.MenuFlyoutItem(
@@ -361,14 +352,14 @@ class _StudentTableState extends State<StudentTable> {
                     ),
                   ),
                 ),
-                widget.students[0].photo.length == 0
+                widget.students[0].photo.isEmpty
                     ? Container()
                     : Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
                           width: 150,
                           child: fluent.DropDownButton(
-                            title: Text('View Photo'),
+                            title: const Text('View Photo'),
                             items: List<fluent.MenuFlyoutItem>.generate(
                               widget.students[0].photo.length,
                               (index) => fluent.MenuFlyoutItem(
@@ -386,7 +377,7 @@ class _StudentTableState extends State<StudentTable> {
                       ),
               ],
             ),
-            columns: _columnName,
+            columns: columnName,
             columnSpacing: 50,
             horizontalMargin: 10,
             rowsPerPage: isFiltering
@@ -413,7 +404,7 @@ class MyData extends DataTableSource {
   final String sectionFilter;
 
   BuildContext context;
-  List<List<String>> _data = [];
+  final List<List<String>> _data = [];
   MyData(
     this.students,
     this.context,
@@ -447,7 +438,7 @@ class MyData extends DataTableSource {
         continue;
       }
 
-      List<String> _studentData = [
+      List<String> studentData = [
         index.toString(),
         students[index].name,
         students[index].studentClass,
@@ -456,19 +447,19 @@ class MyData extends DataTableSource {
       ];
 
       if (photoIndex != -1 && students[index].photo.length > photoIndex) {
-        _studentData.add(students[index].photo[photoIndex].value);
+        studentData.add(students[index].photo[photoIndex].value);
       } else if (photoIndex != -1) {
-        _studentData.add(
+        studentData.add(
             'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png');
       }
 
       for (int i = 0; i < students[index].data.length; i++) {
         if (_isVisible[i] ?? false) {
-          _studentData.add(students[index].data[i].value.toString());
+          studentData.add(students[index].data[i].value.toString());
         }
       }
 
-      _data.add(_studentData);
+      _data.add(studentData);
     }
 
     // _data = List.generate(

@@ -2,7 +2,6 @@
 //
 //     final schoolsModel = schoolsModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 SchoolsModel schoolsModelFromJson(String str) =>

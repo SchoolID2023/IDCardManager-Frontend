@@ -42,7 +42,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
   int editableIndex = -1;
   String _pickedColor = "0xFF000000";
 
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
   late StudentController _studentController;
 
   void updateEditIndex(int index, bool isChecked) {
@@ -164,7 +164,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
   String _fontName = 'Aldrich';
-  String _alignment = 'left';
+  final String _alignment = 'left';
   double scaleFactor = 100.0;
 
   // Color _pickerColor = Color(0xffffffff);
@@ -343,7 +343,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                             //     : Container(),
                             const Padding(
                               padding: EdgeInsets.all(8.0),
-                              child: const ListTile(
+                              child: ListTile(
                                 title: Text('Labels'),
                                 // trailing: Button(
                                 //   child: Icon(FluentIcons.add),
@@ -582,7 +582,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                           _idCard.labels[ind].title,
                                           style: const TextStyle(
                                             fontSize: 16,
-                                            color: const Color(0xff000000),
+                                            color: Color(0xff000000),
                                           ),
                                         ),
                                         trailing: SizedBox(
@@ -743,7 +743,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                     height: cheight,
                     child: editableIndex == -1
                         ? const Center(
-                            child: const Text(
+                            child: Text(
                               "Please Select a Label",
                             ),
                           )

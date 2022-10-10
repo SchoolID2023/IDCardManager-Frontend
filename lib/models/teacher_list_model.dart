@@ -2,7 +2,6 @@
 //
 //     final teacherListModel = teacherListModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 TeacherListModel teacherListModelFromJson(String str) => TeacherListModel.fromJson(json.decode(str));

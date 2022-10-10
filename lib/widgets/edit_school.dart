@@ -18,12 +18,12 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
   late StudentController studentController;
   late SchoolController schoolController;
 
-  TextEditingController _schoolName = TextEditingController();
-  TextEditingController _schoolAddress = TextEditingController();
-  TextEditingController _schoolClasses = TextEditingController();
-  TextEditingController _schoolSections = TextEditingController();
-  TextEditingController _schoolContact = TextEditingController();
-  TextEditingController _schoolEmail = TextEditingController();
+  final TextEditingController _schoolName = TextEditingController();
+  final TextEditingController _schoolAddress = TextEditingController();
+  final TextEditingController _schoolClasses = TextEditingController();
+  final TextEditingController _schoolSections = TextEditingController();
+  final TextEditingController _schoolContact = TextEditingController();
+  final TextEditingController _schoolEmail = TextEditingController();
 
   @override
   void initState() {
@@ -43,10 +43,10 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
-      title: Text("School Details"),
+      title: const Text("School Details"),
       actions: [
         Button(
-          child: Text("Add Save"),
+          child: const Text("Add Save"),
           onPressed: () {
             Navigator.of(context).pop();
             studentController.editSchool(
@@ -64,7 +64,7 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
           },
         ),
         Button(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();
           },

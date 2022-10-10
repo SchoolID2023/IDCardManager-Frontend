@@ -2,7 +2,6 @@
 //
 //     final idCardListModel = idCardListModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 IdCardListModel idCardListModelFromJson(String str) =>

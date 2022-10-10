@@ -2,10 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/pages/student_data.dart';
-import 'package:idcard_maker_frontend/services/remote_services.dart';
-import 'package:idcard_maker_frontend/widgets/student_table.dart';
 import '../models/schools_model.dart';
-import 'load_id_card_data.dart';
 
 class SchoolTile extends StatelessWidget {
   final School school;
@@ -14,21 +11,21 @@ class SchoolTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _classes = school.classes.join(',');
-    var _sections = school.sections.join(',');
+    // var classes = school.classes.join(',');
+    // var sections = school.sections.join(',');
 
-    TextEditingController _schoolName =
-        TextEditingController(text: school.name);
-    TextEditingController _schoolAddress =
-        TextEditingController(text: school.address);
-    TextEditingController _schoolClasses =
-        TextEditingController(text: _classes.toString());
-    TextEditingController _schoolSections =
-        TextEditingController(text: _sections.toString());
-    TextEditingController _schoolContact =
-        TextEditingController(text: school.contact);
-    TextEditingController _schoolEmail =
-        TextEditingController(text: school.email);
+    // TextEditingController schoolName =
+    //     TextEditingController(text: school.name);
+    // TextEditingController schoolAddress =
+    //     TextEditingController(text: school.address);
+    // TextEditingController schoolClasses =
+    //     TextEditingController(text: classes.toString());
+    // TextEditingController schoolSections =
+    //     TextEditingController(text: sections.toString());
+    // TextEditingController schoolContact =
+    //     TextEditingController(text: school.contact);
+    // TextEditingController schoolEmail =
+    //     TextEditingController(text: school.email);
 
     return Padding(
       padding: const EdgeInsets.symmetric(

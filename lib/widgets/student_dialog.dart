@@ -33,7 +33,7 @@ class StudentDialog extends StatelessWidget {
       ),
       actions: [
         Button(
-          child: Text('Edit'),
+          child: const Text('Edit'),
           onPressed: () {
             Navigator.of(context).pop();
             showDialog(
@@ -42,14 +42,14 @@ class StudentDialog extends StatelessWidget {
           },
         ),
         Button(
-          child: Text('Delete'),
+          child: const Text('Delete'),
           onPressed: () {
             _studentController.deleteStudent(student.id);
             Navigator.of(context).pop();
           },
         ),
         Button(
-          child: Text('Close'),
+          child: const Text('Close'),
           onPressed: () {
             Navigator.of(context).pop();
           },

@@ -53,13 +53,13 @@ class PreviewIdCard extends StatelessWidget {
             .firstWhere((element) => element.field == field,
                 orElse: () => Datum(
                       field: field,
-                      value: "test ${field}",
+                      value: "test $field",
                     ))
             .value;
       }
     }
 
-    logger.d("Value--> ${value}");
+    logger.d("Value--> $value");
     return value;
   }
 
@@ -183,7 +183,7 @@ class PreviewIdCard extends StatelessWidget {
               width: idCard.labels[i].width.toDouble(),
               decoration: BoxDecoration(
                 image: idCard.labels[i].isPhoto
-                    ? DecorationImage(
+                    ? const DecorationImage(
                         image: NetworkImage(
                           "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
                         ),
@@ -249,7 +249,7 @@ class PreviewIdCard extends StatelessWidget {
               frontWidget,
               backWidget,
               Button(
-                  child: Text("Close"),
+                  child: const Text("Close"),
                   onPressed: () => Navigator.pop(context)),
             ],
           ),

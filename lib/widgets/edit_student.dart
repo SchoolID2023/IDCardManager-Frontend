@@ -39,13 +39,13 @@ class _EditStudentState extends State<EditStudent> {
     return ContentDialog(
       actions: [
         Button(
-          child: Text("Cancel"),
+          child: const Text("Cancel"),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         Button(
-          child: Text("Save"),
+          child: const Text("Save"),
           onPressed: () {
             Navigator.of(context).pop();
             _studentController.editStudent(student);

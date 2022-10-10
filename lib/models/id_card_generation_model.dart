@@ -2,7 +2,6 @@
 //
 //     final idCardGenerationModel = idCardGenerationModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 import './id_card_model.dart';
 

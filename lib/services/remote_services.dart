@@ -30,7 +30,7 @@ class RemoteServices {
     String userType = isSuperAdmin ? 'superAdmin' : 'schoolAdmin';
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/${userType}/login'),
+      Uri.parse('$baseUrl/$userType/login'),
       body: {
         'email': email,
         'password': password,
@@ -58,7 +58,7 @@ class RemoteServices {
 
     try {
       final response = await http.get(
-        Uri.parse('${baseUrl}/superAdmin/viewSchools'),
+        Uri.parse('$baseUrl/superAdmin/viewSchools'),
         headers: {
           'Authorization': 'Biatch $token',
         },
@@ -83,7 +83,7 @@ class RemoteServices {
     logger.d("<####>");
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/superAdmin/addSchool'),
+      Uri.parse('$baseUrl/superAdmin/addSchool'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -94,7 +94,7 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       data = data['school'];
-      logger.d("Data--> ${data}");
+      logger.d("Data--> $data");
       return School.fromJson(data);
     } else {
       throw Exception(response.body);
@@ -110,7 +110,7 @@ class RemoteServices {
     logger.d("<####>");
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/superAdmin/editSchool'),
+      Uri.parse('$baseUrl/superAdmin/editSchool'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -121,7 +121,7 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       data = data['school'];
-      logger.d("Data--> ${data}");
+      logger.d("Data--> $data");
       return School.fromJson(data);
     } else {
       throw Exception(response.body);
@@ -148,7 +148,7 @@ class RemoteServices {
     ]);
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/superAdmin/addSchoolAdmin'),
+      Uri.parse('$baseUrl/superAdmin/addSchoolAdmin'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -190,7 +190,7 @@ class RemoteServices {
     );
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/${userType}/addTeacher'),
+      Uri.parse('$baseUrl/$userType/addTeacher'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -215,7 +215,7 @@ class RemoteServices {
     final userType = prefs.getString('userType');
 
     final response = await http.post(
-      Uri.parse('${baseUrl}/${userType}/deleteIdCard'),
+      Uri.parse('$baseUrl/$userType/deleteIdCard'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -240,8 +240,8 @@ class RemoteServices {
     final userType = prefs.getString('userType');
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/viewSchoolAdmins/${schoolId}'
-        : '${baseUrl}/${userType}/viewSchoolAdmins';
+        ? '$baseUrl/$userType/viewSchoolAdmins/$schoolId'
+        : '$baseUrl/$userType/viewSchoolAdmins';
 
     final response = await http.get(
       Uri.parse(url),
@@ -269,8 +269,8 @@ class RemoteServices {
     final userType = prefs.getString('userType');
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/getAllTeachers/${schoolId}'
-        : '${baseUrl}/${userType}/getAllTeachers';
+        ? '$baseUrl/$userType/getAllTeachers/$schoolId'
+        : '$baseUrl/$userType/getAllTeachers';
 
     final response = await http.get(
       Uri.parse(url),
@@ -298,7 +298,7 @@ class RemoteServices {
     final userType = prefs.getString('userType');
 
     final response = await http.get(
-      Uri.parse('${baseUrl}/${userType}/viewSchoolById/${schoolId}'),
+      Uri.parse('$baseUrl/$userType/viewSchoolById/$schoolId'),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -344,7 +344,7 @@ class RemoteServices {
 
     try {
       Response<String> response = await dio.post(
-        '${baseUrl}/superAdmin/addIdCard',
+        '$baseUrl/superAdmin/addIdCard',
         data: formData,
         options: Options(
           headers: headers,
@@ -353,7 +353,7 @@ class RemoteServices {
       if (response.statusCode == 200) {
         var data = json.decode(response.data ?? "") as Map<String, dynamic>;
         var idCardId = data['idCard']['_id'];
-        logger.d("Id--> ${idCardId}");
+        logger.d("Id--> $idCardId");
         return idCardId;
       } else {
         throw Exception(response.data);
@@ -390,10 +390,10 @@ class RemoteServices {
 
     // var formData = FormData.fromMap(formMap);
 
-    logger.d('Edit Id Card Id-> ${idCardId}');
+    logger.d('Edit Id Card Id-> $idCardId');
 
     Response<String> response = await dio.post(
-      '${baseUrl}/superAdmin/editIdCard',
+      '$baseUrl/superAdmin/editIdCard',
       data: {
         "_id": idCardId,
         "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
@@ -406,7 +406,7 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.data ?? "") as Map<String, dynamic>;
 
-      logger.d("Id--> ${idCardId}");
+      logger.d("Id--> $idCardId");
       logger.d("ID Card edited");
       return idCardId;
     } else {
@@ -427,11 +427,11 @@ class RemoteServices {
       'student_list': await MultipartFile.fromFile(excelPath),
     });
 
-    var response;
+    Response<String> response;
 
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/upload',
+        '$baseUrl/superAdmin/upload',
         data: formData,
         options: Options(
           headers: headers,
@@ -466,7 +466,7 @@ class RemoteServices {
 
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/editStudent',
+        '$baseUrl/superAdmin/editStudent',
         data: newStudent.toJson(),
         options: Options(
           headers: headers,
@@ -497,11 +497,11 @@ class RemoteServices {
 
     var response;
 
-    logger.d("Edited Student Data:- ${studentId}");
+    logger.d("Edited Student Data:- $studentId");
 
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/deleteStudent',
+        '$baseUrl/superAdmin/deleteStudent',
         data: {
           "id": studentId,
         },
@@ -529,7 +529,7 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    logger.d("Column-> ${columns}");
+    logger.d("Column-> $columns");
 
     var headers = {
       'Authorization': 'Biatch $token',
@@ -552,7 +552,7 @@ class RemoteServices {
 
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/addStudentPhotos',
+        '$baseUrl/superAdmin/addStudentPhotos',
         data: formData,
         options: Options(
           headers: headers,
@@ -584,13 +584,13 @@ class RemoteServices {
 
     Response<String> response;
 
-    logger.d("School ID-> ${schoolId}");
+    logger.d("School ID-> $schoolId");
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/getStudentData/${schoolId}'
-        : '${baseUrl}/${userType}/getStudentData';
+        ? '$baseUrl/$userType/getStudentData/$schoolId'
+        : '$baseUrl/$userType/getStudentData';
 
-    logger.d("School URL- ${url}");
+    logger.d("School URL- $url");
     try {
       response = await dio.get(
         url,
@@ -617,7 +617,7 @@ class RemoteServices {
   }
 
   Future<IdCardListModel> getIdCardList(String schoolId) async {
-    logger.d("School ID-> ${schoolId}");
+    logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -627,8 +627,8 @@ class RemoteServices {
     };
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/getIdCardsBySchool/${schoolId}'
-        : '${baseUrl}/${userType}/getIdCardsBySchool';
+        ? '$baseUrl/$userType/getIdCardsBySchool/$schoolId'
+        : '$baseUrl/$userType/getIdCardsBySchool';
 
     Response<String> response;
     try {
@@ -661,14 +661,14 @@ class RemoteServices {
 
   Future<void> generateExcel(
       String schoolId, String className, String section) async {
-    logger.d("School ID-> ${schoolId}");
+    logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
 
     String? outputFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select an output destination:',
-      fileName: "students_${schoolId}_${className}_${section}.xlsx",
+      fileName: "students_${schoolId}_${className}_$section.xlsx",
     );
     logger.d('Excell Token-> $token');
     var headers = {
@@ -681,8 +681,8 @@ class RemoteServices {
     };
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/generateExcel'
-        : '${baseUrl}/${userType}/generateExcel';
+        ? '$baseUrl/$userType/generateExcel'
+        : '$baseUrl/$userType/generateExcel';
 
     final response;
     try {
@@ -727,7 +727,7 @@ class RemoteServices {
       'Authorization': 'Biatch $token',
     };
 
-    var url = '${baseUrl}/${userType}/attachId';
+    var url = '$baseUrl/$userType/attachId';
 
     final response;
 
@@ -765,7 +765,7 @@ class RemoteServices {
 
   Future<void> downloadPhotos(
       String schoolId, String className, String section, String label) async {
-    logger.d("School ID-> ${schoolId}");
+    logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -786,8 +786,8 @@ class RemoteServices {
     };
 
     var url = userType == "superAdmin"
-        ? '${baseUrl}/${userType}/downloadPhotos'
-        : '${baseUrl}/${userType}/downloadPhotos';
+        ? '$baseUrl/$userType/downloadPhotos'
+        : '$baseUrl/$userType/downloadPhotos';
 
     final response;
     try {
@@ -825,7 +825,7 @@ class RemoteServices {
 
   Future<IdCardGenerationModel> getIdCardGenerationModel(
       String schoolId) async {
-    logger.d("School ID-> ${schoolId}");
+    logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -836,7 +836,7 @@ class RemoteServices {
     Response<String> response;
     try {
       response = await dio.get(
-        '${baseUrl}/superAdmin/getIdDetails/${schoolId}',
+        '$baseUrl/superAdmin/getIdDetails/$schoolId',
         options: Options(
           headers: headers,
         ),
@@ -874,7 +874,7 @@ class RemoteServices {
     Response<String> response;
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/createSuperAdmin',
+        '$baseUrl/superAdmin/createSuperAdmin',
         data: superadmin.toJson(),
         options: Options(
           headers: headers,
@@ -913,7 +913,7 @@ class RemoteServices {
     Response<String> response;
     try {
       response = await dio.post(
-        '${baseUrl}/superAdmin/deleteSchool',
+        '$baseUrl/superAdmin/deleteSchool',
         data: {"schoolId": schoolId},
         options: Options(
           headers: headers,
