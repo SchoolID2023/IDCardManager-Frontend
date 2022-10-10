@@ -228,8 +228,9 @@ class StudentDataScreen extends StatelessWidget {
                                                           child: const Text(
                                                               "Upload Photos"),
                                                           onPressed: () {
-                                                            for (var data in students[0]
-                                                                .data) {
+                                                            for (var data
+                                                                in students[0]
+                                                                    .data) {
                                                               _photos.add(
                                                                   data.field);
                                                             }
@@ -272,7 +273,8 @@ class StudentDataScreen extends StatelessWidget {
                                                     ),
                                                   ),
                                                   Button(
-                                                    child: const Text("Download"),
+                                                    child:
+                                                        const Text("Download"),
                                                     onPressed: () {
                                                       _remoteServices
                                                           .generateExcel(
@@ -307,7 +309,8 @@ class StudentDataScreen extends StatelessWidget {
                                                   ),
                                                   students.isNotEmpty &&
                                                           students[0]
-                                                                  .photo.isNotEmpty
+                                                              .photo
+                                                              .isNotEmpty
                                                       ? DropDownButton(
                                                           title: const Text(
                                                               'Select Photo Column'),
@@ -382,8 +385,7 @@ class StudentDataScreen extends StatelessWidget {
                                                     onTap: () {
                                                       for (int i = 0;
                                                           i <
-                                                              (students[0]
-                                                                      .data)
+                                                              (students[0].data)
                                                                   .length;
                                                           i++) {
                                                         if (students[0]
@@ -394,10 +396,9 @@ class StudentDataScreen extends StatelessWidget {
                                                         }
                                                         _labels.add(
                                                           Label(
-                                                              title:
-                                                                  students[0]
-                                                                      .data[i]
-                                                                      .field),
+                                                              title: students[0]
+                                                                  .data[i]
+                                                                  .field),
                                                         );
                                                       }
                                                       showDialog(
@@ -430,6 +431,8 @@ class StudentDataScreen extends StatelessWidget {
                                                         context: context,
                                                         builder: (context) {
                                                           return ContentDialog(
+                                                            backgroundDismiss:
+                                                                true,
                                                             content: Column(
                                                               mainAxisSize:
                                                                   MainAxisSize
@@ -482,6 +485,15 @@ class StudentDataScreen extends StatelessWidget {
                                                                               context)
                                                                           .pop();
                                                                     }),
+                                                                Button(
+                                                                    child: const Text(
+                                                                        "Cancel"),
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    })
                                                                 // Button(
                                                                 //   child: Text(
                                                                 //       "Edit"),

@@ -107,24 +107,6 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     });
   }
 
-  // void uploadForegroundImage() async {
-  //   final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-  //   if (result == null) return;
-  //   setState(() {
-  //     frontfile = result.files.first;
-  //     _idCard!.foregroundImagePath = frontfile.path.toString();
-  //   });
-  // }
-
-  // void uploadBackgroundImage() async {
-  //   final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-  //   if (result == null) return;
-  //   setState(() {
-  //     backfile = result.files.first;
-  //     _idCard.backgroundImagePath = backfile.path.toString();
-  //   });
-  // }
-
   bool isLoading = true;
 
   void fetchIdCard() async {
@@ -184,57 +166,79 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     return ScaffoldPage(
       header: Row(
         children: [
-          IconButton(
-            icon: const Icon(FluentIcons.back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Edit ID Card',
-              style: TextStyle(
-                fontSize: 40,
-                color: Colors.blue,
-              ),
+          Expanded(
+              child: Container(
+            color: Colors.red,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(FluentIcons.back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                Text(
+                  "Edit tour ID Card",
+                ),
+              ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SizedBox(
-              width: 100,
-              child: Slider(
-                max: 400.0,
-                min: 100.0,
-                value: scaleFactor,
-                onChanged: (v) => setState(() => scaleFactor = v),
-                // Label is the text displayed above the slider when the user is interacting with it.
-                label: '${scaleFactor.toInt()}',
-              ),
-            ),
-          ),
-          Button(
-              child: const Text("Preview"),
-              onPressed: () {
-                if (_idCard != null) {
-                  Navigator.of(context).push(
-                    FluentPageRoute(
-                      builder: (context) => PreviewIdCard(
-                        idCard: _idCard,
-                        isEdit: true,
-                        dummyStudent: dummyStudent,
-                      ),
-                    ),
-                  );
-                }
-
-                // Navigator.of(context).push(
-
-                // );
-              }),
+          ))
         ],
       ),
+
+      // header: Row(
+      //   children: [
+      // IconButton(
+      //   icon: const Icon(FluentIcons.back),
+      //   onPressed: () {
+      //     Navigator.of(context).pop();
+      //   },
+      // ),
+      //     Padding(
+      //       padding: const EdgeInsets.all(8.0),
+      //       child: Text(
+      //         'Edit ID Card',
+      //         style: TextStyle(
+      //           fontSize: 40,
+      //           color: Colors.blue,
+      //         ),
+      //       ),
+      //     ),
+      //     Padding(
+      //       padding: const EdgeInsets.all(8.0),
+      //       child: SizedBox(
+      //         width: 100,
+      //         child: Slider(
+      //           max: 400.0,
+      //           min: 100.0,
+      //           value: scaleFactor,
+      //           onChanged: (v) => setState(() => scaleFactor = v),
+      //           // Label is the text displayed above the slider when the user is interacting with it.
+      //           label: '${scaleFactor.toInt()}',
+      //         ),
+      //       ),
+      //     ),
+      //     Button(
+      //         child: const Text("Preview"),
+      //         onPressed: () {
+      //           if (_idCard != null) {
+      //             Navigator.of(context).push(
+      //               FluentPageRoute(
+      //                 builder: (context) => PreviewIdCard(
+      //                   idCard: _idCard,
+      //                   isEdit: true,
+      //                   dummyStudent: dummyStudent,
+      //                 ),
+      //               ),
+      //             );
+      //           }
+
+      //           // Navigator.of(context).push(
+
+      //           // );
+      //         }),
+      //   ],
+      // ),
       content: isLoading
           ? const Center(
               child: ProgressRing(),
@@ -255,14 +259,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
                                 children: [
-                                  // Button(
-                                  //   onPressed: uploadForegroundImage,
-                                  //   child: const Text('Upload Front Image'),
-                                  // ),
                                   const SizedBox(
                                     width: 50,
                                   ),
-
                                   Image.memory(
                                     base64Decode(_idCard.foregroundImagePath),
                                     width: 80,
@@ -271,7 +270,6 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                 ],
                               ),
                             ),
-
                             _idCard.isDual
                                 ? Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -282,7 +280,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         ),
                                         Image.memory(
                                           base64Decode(
-                                              _idCard.foregroundImagePath),
+                                              _idCard.backgroundImagePath),
                                           width: 80,
                                           height: 80,
                                         ),
@@ -290,153 +288,10 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                     ),
                                   )
                                 : Container(),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: SizedBox(
-                            //     width: 400,
-                            //     child: ToggleButton(
-                            //       checked: _idCard.isPhoto,
-                            //       onChanged: (value) {
-                            //         setState(() {
-                            //           _idCard.isPhoto = value;
-                            //           _idCard.photoHeight = 51.0;
-                            //           _idCard.photoWidth = 51.0;
-                            //           _photoHeight.text = '51.0';
-                            //           _photoWidth.text = '51.0';
-                            //         });
-                            //       },
-                            //       child: const Text('Is Photo'),
-                            //     ),
-                            //   ),
-                            // ),
-                            // _idCard.isPhoto
-                            //     ? Padding(
-                            //         padding: const EdgeInsets.all(8.0),
-                            //         child: Container(
-                            //           width: 400,
-                            //           child: Column(
-                            //             children: [
-                            //               TextBox(
-                            //                 controller: _photoHeight,
-                            //                 header: 'Photo Height',
-                            //                 onChanged: (String value) {
-                            //                   setState(() {
-                            //                     _idCard.photoHeight =
-                            //                         double.parse(value);
-                            //                   });
-                            //                 },
-                            //               ),
-                            //               TextBox(
-                            //                 controller: _photoWidth,
-                            //                 header: 'Photo Width',
-                            //                 onChanged: (String value) {
-                            //                   setState(() {
-                            //                     _idCard.photoWidth =
-                            //                         double.parse(value);
-                            //                   });
-                            //                 },
-                            //               ),
-                            //             ],
-                            //           ),
-                            //         ),
-                            //       )
-                            //     : Container(),
                             const Padding(
                               padding: EdgeInsets.all(8.0),
                               child: ListTile(
                                 title: Text('Labels'),
-                                // trailing: Button(
-                                //   child: Icon(FluentIcons.add),
-                                //   onPressed: () {
-                                //     showDialog(
-                                //       context: context,
-                                //       builder: (BuildContext context) {
-                                //         return ContentDialog(
-                                //           title: Text('Welcome'),
-                                //           content: SizedBox(
-                                //             // height: 400,
-                                //             width: 500,
-                                //             child: Row(
-                                //               children: [
-                                //                 SizedBox(
-                                //                   width: 150,
-                                //                   child: Column(
-                                //                     mainAxisSize: MainAxisSize.min,
-                                //                     children: [
-                                //                       SizedBox(
-                                //                         child: TextBox(
-                                //                           header: "Label Name",
-                                //                           controller: _titleController,
-                                //                         ),
-                                //                       ),
-                                //                       SizedBox(
-                                //                         child: TextBox(
-                                //                           header: "Font Size",
-                                //                           controller:
-                                //                               _fontSizeController,
-                                //                         ),
-                                //                       ),
-                                //                     ],
-                                //                   ),
-                                //                 ),
-                                //                 SizedBox(
-                                //                   width: 150,
-                                //                   height: 410,
-                                //                   child: ColorPicker(
-                                //                       colorPickerWidth: 150,
-                                //                       portraitOnly: true,
-                                //                       pickerColor: _pickerColor,
-                                //                       onColorChanged: (color) {
-                                //                         setState(() {
-                                //                           _pickerColor = color;
-                                //                         });
-                                //                       }),
-                                //                 ),
-                                //               ],
-                                //             ),
-                                //           ),
-                                //           actions: [
-                                //             Button(
-                                //               onPressed: () {
-                                //                 Navigator.of(context).pop();
-                                //               },
-                                //               child: Text('CANCEL'),
-                                //             ),
-                                //             Button(
-                                //               onPressed: () {
-                                //                 String colorString = _pickerColor
-                                //                     .toString(); // Color(0x12345678)
-                                //                 String valueString = colorString
-                                //                     .split('(0x')[1]
-                                //                     .split(')')[0]; // kind of hacky..
-                                //                 int value =
-                                //                     int.parse(valueString, radix: 16);
-                                //                 setState(() {
-                                //                   _idCard.labels.add(
-                                //                     Label(
-                                //                       title: _titleController.text,
-                                //                       fontSize: int.parse(
-                                //                           _fontSizeController.text),
-                                //                       color: valueString,
-                                //                       x: 0,
-                                //                       y: (_idCard.labels.length) * 50,
-                                //                     ),
-                                //                   );
-
-                                //                   logger.d(_idCard.labels.length);
-                                //                   _titleController.clear();
-                                //                   _fontSizeController.clear();
-                                //                   Navigator.of(context).pop();
-                                //                 });
-                                //               },
-                                //               child: Text('ACCEPT'),
-                                //             ),
-                                //           ],
-                                //         );
-                                //       },
-                                //     );
-                                //   },
-                                // ),
                               ),
                             ),
                             Padding(
@@ -451,19 +306,6 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                   }
                                   return GestureDetector(
                                     onTap: () {
-                                      // _fontSizeController.text =
-                                      //     _idCard.labels[index].fontSize.toString();
-                                      // _pickerColor = Color(
-                                      //   int.parse(_idCard.labels[index].color,
-                                      //       radix: 16),
-                                      // );
-                                      // _heightController.text =
-                                      //     _idCard.labels[index].height.toString();
-                                      // _widthController.text =
-                                      //     _idCard.labels[index].width.toString();
-                                      // setState(() {
-                                      //   editableIndex = index;
-                                      // });
                                       updateEditIndex(index, false);
                                     },
                                     child: ListTile(
@@ -642,81 +484,15 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                     RemoteServices().editIdCard(_idCard.labels,
                                         _idCard.id, _idCard.schoolId);
 
-                                    // await _remoteServices.addStudentData(
-                                    //     idCardId, widget.excelPath);
-
-                                    // var pickedFile = await FilePicker.platform
-                                    //     .pickFiles(
-                                    //         allowMultiple: false,
-                                    //         allowedExtensions: ['.zip']);
-
-                                    // String? zipFile =
-                                    //     pickedFile?.files.first.path.toString();
-
-                                    // if (zipFile != null) {
-                                    // await _remoteServices.uploadStudentPhotos(
-                                    //   photoColumns,
-                                    //   zipFile,
-                                    //   widget.schoolId,
-                                    // );
-                                    // }
-
                                     Navigator.of(context).pop();
-
-                                    // Navigator.of(context).push(
-                                    //   FluentPageRoute(
-                                    //     builder: (context) => GenerateIdCard(
-                                    //         idCard: _idCard,
-                                    //         updateIdCardPosition: _updatePostion),
-                                    //   ),
-                                    // );
-                                    // Get.to(() => GenerateIdCard(
-                                    //     idCard: _idCard,
-                                    //     updateIdCardPosition: _updatePostion));
                                   },
                                   child: const Text('Edit and Save')),
                             ),
-
-                            // SizedBox(
-                            //   width: 300,
-                            //   height: 100,
-                            //   child: MaterialColorPicker(
-                            //     onColorChange: (Color color) {
-                            //       // Handle color changes
-                            //     },
-                            //     selectedColor: Colors.red,
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  // Expanded(
-                  //   child: AdaptiveScrollbar(
-                  //     controller: verticalScroll,
-                  //     // width: verticalWidth,
-                  //     child: AdaptiveScrollbar(
-                  //       controller: horizontalScroll,
-                  //       // width: horizontalWidth,
-                  //       position: ScrollbarPosition.bottom,
-                  //       // underSpacing: EdgeInsets.only(bottom: verticalWidth),
-                  //       child: SingleChildScrollView(
-                  //         controller: horizontalScroll,
-                  //         scrollDirection: Axis.horizontal,
-                  //         child: Container(
-                  //           child: GenerateIdCard(
-                  //             idCard: _idCard,
-                  //             updateIdCardPosition: _updatePostion,
-                  //             updateEditIndex: updateEditIndex,
-                  //             scaleFactor: scaleFactor,
-                  //             isEdit: true,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                   Expanded(
                     child: SingleChildScrollView(
                       controller: verticalScroll,

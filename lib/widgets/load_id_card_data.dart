@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-
 import 'package:fluent_ui/fluent_ui.dart';
 
 import '../models/id_card_model.dart';
@@ -59,6 +58,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
+      backgroundDismiss: true,
       title: Text("Generate ID Card"),
       actions: [
         Button(
@@ -78,55 +78,35 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
             }),
         Button(child: Text("CANCEL"), onPressed: () => Navigator.pop(context)),
       ],
-      content: SizedBox(
-        width: 500,
-        height: 250,
-        child: Column(
-          children: [
-            // Row(
-            //   children: [
-            //     Expanded(
-            //       child: TextBox(
-            //         controller: _excelPath,
-            //         header: "Excel Path",
-            //         readOnly: true,
-            //       ),
-            //     ),
-            //     Button(
-            //       child: Text("Upload Excel"),
-            //       onPressed: () async {
-            //         await uploadExcel();
-            //       },
-            //     ),
-            //   ],
-            // ),
-            Row(
-              children: [
-                Expanded(
-                  child: TextBox(
-                    controller: _idCardWidth,
-                    header: "ID Card Width",
-                  ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextBox(
+                  controller: _idCardWidth,
+                  header: "ID Card Width",
                 ),
-                Expanded(
-                  child: TextBox(
-                    controller: _idCardHeight,
-                    header: "ID Card Height",
-                  ),
+              ),
+              Expanded(
+                child: TextBox(
+                  controller: _idCardHeight,
+                  header: "ID Card Height",
                 ),
-                ToggleSwitch(
-                  checked: isDual,
-                  onChanged: (_) {
-                    setState(() {
-                      isDual = !isDual;
-                    });
-                  },
-                  content: Text("Is Dual"),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              ToggleSwitch(
+                checked: isDual,
+                onChanged: (_) {
+                  setState(() {
+                    isDual = !isDual;
+                  });
+                },
+                content: Text("Is Dual"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

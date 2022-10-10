@@ -1,7 +1,10 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/models/superadmin_model.dart';
+import 'package:idcard_maker_frontend/widgets/titlebar/navigation_app_bar.dart';
+import 'package:idcard_maker_frontend/widgets/titlebar/window_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/schools_model.dart';
@@ -29,24 +32,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
-      appBar: NavigationAppBar(
-        title: const Text('Id Card Maker'),
-        actions: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Button(
-              child: const Text("Log Out"),
-              onPressed: () async {
-                final SharedPreferences prefs =
-                    await SharedPreferences.getInstance();
-                prefs.remove('token').then((value) => Navigator.of(context)
-                    .push(FluentPageRoute(
-                        builder: (context) => const LoginPage())));
-              },
-            )
-          ],
-        ),
-      ),
+      appBar: customNavigationAppBar("All Schools", context),     
       content: ScaffoldPage(
         header: Padding(
           padding: const EdgeInsets.symmetric(

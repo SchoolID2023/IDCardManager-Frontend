@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:idcard_maker_frontend/homepage.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
@@ -6,6 +7,13 @@ import '../services/logger.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
+  doWhenWindowReady(() {
+    const initialSize = Size(1200, 450);
+    appWindow.minSize = initialSize;
+    appWindow.size = initialSize;
+    appWindow.alignment = Alignment.center;
+    appWindow.show();
+  });
 }
 
 class MyApp extends StatelessWidget {
@@ -15,15 +23,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FluentApp(
+      debugShowCheckedModeBanner: false,
       title: 'ID Card Maker',
-      theme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          accentColor: Colors.blue,
-          iconTheme: const IconThemeData(size: 24)),
-      darkTheme: ThemeData(
-          scaffoldBackgroundColor: Colors.white,
-          accentColor: Colors.blue,
-          iconTheme: const IconThemeData(size: 24)),
+      theme: ThemeData(brightness: Brightness.light, accentColor: Colors.blue),
+      darkTheme:
+          ThemeData(brightness: Brightness.dark, accentColor: Colors.blue),
       home: LoginWrapper(),
     );
   }
@@ -52,7 +56,6 @@ class LoginWrapper extends StatelessWidget {
           if (userType == "schoolAdmin") {
             Navigator.of(context)
                 .push(FluentPageRoute(builder: (context) => const LoginPage()));
-            
           } else {
             Navigator.of(context)
                 .push(FluentPageRoute(builder: (context) => HomePage()));
