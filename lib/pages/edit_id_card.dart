@@ -1,25 +1,20 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
-import 'package:idcard_maker_frontend/controllers/school_controller.dart';
-import 'package:idcard_maker_frontend/models/id_card_generation_model.dart';
+
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:idcard_maker_frontend/widgets/generate_id_card.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:idcard_maker_frontend/widgets/preview_id_card.dart';
 import '../controllers/student_controller.dart';
 import '../models/id_card_model.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:get/route_manager.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_material_color_picker/flutter_material_color_picker.dart';
+
 import 'package:flutter/material.dart' as mat;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 
 import '../models/student_model.dart';
+import '../services/logger.dart';
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class EditIdCardPage extends StatefulWidget {
@@ -51,7 +46,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
   late StudentController _studentController;
 
   void updateEditIndex(int index, bool isChecked) {
-    print("Update Edit Font:- ${_fontName}");
+    logger.d("Update Edit Font:- ${_fontName}");
     if (isInit || !isChecked) {
       _fontSizeController.text = _idCard.labels[index].fontSize.toString();
       _pickedColor = _idCard.labels[index].color;
@@ -61,9 +56,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
 
       isInit = false;
     } else {
-      _idCard!.labels[index].color = _pickedColor;
-      _idCard!.labels[index].fontName = _fontName;
-      _idCard!.labels[index].fontSize = int.parse(_fontSizeController.text);
+      _idCard.labels[index].color = _pickedColor;
+      _idCard.labels[index].fontName = _fontName;
+      _idCard.labels[index].fontSize = int.parse(_fontSizeController.text);
     }
 
     setState(() {
@@ -73,8 +68,8 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
 
   void _updatePostion(int pos, int x, int y, int height, int width) {
     setState(() {
-      _idCard!.labels[pos].x = x as double;
-      _idCard!.labels[pos].y = y as double;
+      _idCard.labels[pos].x = x as double;
+      _idCard.labels[pos].y = y as double;
     });
   }
 
@@ -99,14 +94,14 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
       dummyStudent = _studentController.students.value.students[0];
     }
 
-    print("Dummy Student:- ${dummyStudent.name}");
+    logger.d("Dummy Student:- ${dummyStudent.name}");
 
     setState(() {
-      _idCard!.labels.forEach((label) {
+      for (var label in _idCard.labels) {
         if (!label.isPhoto) {
           nonPhotoLabels++;
         }
-      });
+      }
 
       isLoading = false;
     });
@@ -142,14 +137,14 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
 
     // nonPhotoLabels = widget.labels.length;
 
-    _idCard.labels.forEach((element) {
+    for (var element in _idCard.labels) {
       dropDownButtons.add(
         MenuFlyoutItem(
           text: Text(element.title),
           onPressed: () {
             setState(() {
-              print("Label Name--> ${element.title}");
-              _idCard!.labels.add(
+              logger.d("Label Name--> ${element.title}");
+              _idCard.labels.add(
                 Label(
                   title: element.title,
                   isPhoto: true,
@@ -159,15 +154,15 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
           },
         ),
       );
-    });
+    }
 
     await getDummyStudent();
   }
 
-  TextEditingController _titleController = TextEditingController();
-  TextEditingController _fontSizeController = TextEditingController();
-  TextEditingController _widthController = TextEditingController();
-  TextEditingController _heightController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _fontSizeController = TextEditingController();
+  final TextEditingController _widthController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
   String _fontName = 'Aldrich';
   String _alignment = 'left';
   double scaleFactor = 100.0;
@@ -176,7 +171,6 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     fetchIdCard();
 
     super.initState();
@@ -221,7 +215,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
             ),
           ),
           Button(
-              child: Text("Preview"),
+              child: const Text("Preview"),
               onPressed: () {
                 if (_idCard != null) {
                   Navigator.of(context).push(
@@ -242,7 +236,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
         ],
       ),
       content: isLoading
-          ? Center(
+          ? const Center(
               child: ProgressRing(),
             )
           : Container(
@@ -265,7 +259,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                   //   onPressed: uploadForegroundImage,
                                   //   child: const Text('Upload Front Image'),
                                   // ),
-                                  SizedBox(
+                                  const SizedBox(
                                     width: 50,
                                   ),
 
@@ -283,7 +277,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       children: [
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 50,
                                         ),
                                         Image.memory(
@@ -347,9 +341,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                             //         ),
                             //       )
                             //     : Container(),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ListTile(
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: const ListTile(
                                 title: Text('Labels'),
                                 // trailing: Button(
                                 //   child: Icon(FluentIcons.add),
@@ -429,7 +423,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                 //                     ),
                                 //                   );
 
-                                //                   print(_idCard.labels.length);
+                                //                   logger.d(_idCard.labels.length);
                                 //                   _titleController.clear();
                                 //                   _fontSizeController.clear();
                                 //                   Navigator.of(context).pop();
@@ -447,89 +441,84 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                // height: 400,
-                                // width: 200,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  controller: ScrollController(),
-                                  itemCount: _idCard.labels.length,
-                                  itemBuilder: (context, index) {
-                                    if (_idCard.labels[index].isPhoto) {
-                                      return Container();
-                                    }
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // _fontSizeController.text =
-                                        //     _idCard.labels[index].fontSize.toString();
-                                        // _pickerColor = Color(
-                                        //   int.parse(_idCard.labels[index].color,
-                                        //       radix: 16),
-                                        // );
-                                        // _heightController.text =
-                                        //     _idCard.labels[index].height.toString();
-                                        // _widthController.text =
-                                        //     _idCard.labels[index].width.toString();
-                                        // setState(() {
-                                        //   editableIndex = index;
-                                        // });
-                                        updateEditIndex(index, false);
-                                      },
-                                      child: ListTile(
-                                        leading: Checkbox(
-                                          checked:
-                                              _idCard.labels[index].isPrinted,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _idCard.labels[index].isPrinted =
-                                                  !_idCard
-                                                      .labels[index].isPrinted;
-                                            });
-                                            if (value ?? false) {
-                                              // editableIndex = index;
-                                              updateEditIndex(index, true);
-                                            }
-                                          },
-                                        ),
-                                        title: Text(
-                                          _idCard.labels[index].title,
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: Color(0xff000000),
-                                          ),
-                                        ),
-                                        trailing: SizedBox(
-                                          width: 200,
-                                          child: Row(
-                                            children: [
-                                              _idCard.isDual
-                                                  ? ToggleSwitch(
-                                                      checked: _idCard
-                                                          .labels[index]
-                                                          .isFront,
-                                                      onChanged: (_) {
-                                                        setState(() {
-                                                          _idCard.labels[index]
-                                                                  .isFront =
-                                                              !_idCard
-                                                                  .labels[index]
-                                                                  .isFront;
-                                                        });
-                                                      },
-                                                      content: _idCard
-                                                              .labels[index]
-                                                              .isFront
-                                                          ? Text("On Front")
-                                                          : Text("On Back"),
-                                                    )
-                                                  : Container(),
-                                            ],
-                                          ),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                controller: ScrollController(),
+                                itemCount: _idCard.labels.length,
+                                itemBuilder: (context, index) {
+                                  if (_idCard.labels[index].isPhoto) {
+                                    return Container();
+                                  }
+                                  return GestureDetector(
+                                    onTap: () {
+                                      // _fontSizeController.text =
+                                      //     _idCard.labels[index].fontSize.toString();
+                                      // _pickerColor = Color(
+                                      //   int.parse(_idCard.labels[index].color,
+                                      //       radix: 16),
+                                      // );
+                                      // _heightController.text =
+                                      //     _idCard.labels[index].height.toString();
+                                      // _widthController.text =
+                                      //     _idCard.labels[index].width.toString();
+                                      // setState(() {
+                                      //   editableIndex = index;
+                                      // });
+                                      updateEditIndex(index, false);
+                                    },
+                                    child: ListTile(
+                                      leading: Checkbox(
+                                        checked:
+                                            _idCard.labels[index].isPrinted,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _idCard.labels[index].isPrinted =
+                                                !_idCard
+                                                    .labels[index].isPrinted;
+                                          });
+                                          if (value ?? false) {
+                                            // editableIndex = index;
+                                            updateEditIndex(index, true);
+                                          }
+                                        },
+                                      ),
+                                      title: Text(
+                                        _idCard.labels[index].title,
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Color(0xff000000),
                                         ),
                                       ),
-                                    );
-                                  },
-                                ),
+                                      trailing: SizedBox(
+                                        width: 200,
+                                        child: Row(
+                                          children: [
+                                            _idCard.isDual
+                                                ? ToggleSwitch(
+                                                    checked: _idCard
+                                                        .labels[index].isFront,
+                                                    onChanged: (_) {
+                                                      setState(() {
+                                                        _idCard.labels[index]
+                                                                .isFront =
+                                                            !_idCard
+                                                                .labels[index]
+                                                                .isFront;
+                                                      });
+                                                    },
+                                                    content: _idCard
+                                                            .labels[index]
+                                                            .isFront
+                                                        ? const Text("On Front")
+                                                        : const Text("On Back"),
+                                                  )
+                                                : Container(),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                             DropDownButton(
@@ -554,7 +543,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                       return Container();
                                     }
 
-                                    // print(ind);
+                                    // logger.d(ind);
                                     return GestureDetector(
                                       onTap: () {
                                         // _fontSizeController.text =
@@ -591,9 +580,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         ),
                                         title: Text(
                                           _idCard.labels[ind].title,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 16,
-                                            color: Color(0xff000000),
+                                            color: const Color(0xff000000),
                                           ),
                                         ),
                                         trailing: SizedBox(
@@ -616,8 +605,10 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                       content: _idCard
                                                               .labels[ind]
                                                               .isFront
-                                                          ? Text("On Front")
-                                                          : Text("On Back"),
+                                                          ? const Text(
+                                                              "On Front")
+                                                          : const Text(
+                                                              "On Back"),
                                                     )
                                                   : Container(),
                                             ],
@@ -635,18 +626,18 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                   onPressed: () async {
                                     List<String> photoColumns = [];
 
-                                    _idCard.labels.forEach((label) {
+                                    for (var label in _idCard.labels) {
                                       if (label.isPrinted && label.isPhoto) {
                                         photoColumns.add(label.title
                                             .toString()
                                             .toLowerCase());
                                       }
-                                    });
+                                    }
 
-                                    // print(idCardModelToJson(_idCard));
+                                    // logger.d(idCardModelToJson(_idCard));
                                     // String idCardId =
                                     //     await _remoteServices.addIdCard(_idCard);
-                                    // print(idCardId);
+                                    // logger.d(idCardId);
 
                                     RemoteServices().editIdCard(_idCard.labels,
                                         _idCard.id, _idCard.schoolId);
@@ -747,12 +738,12 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                       ),
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     width: 400,
                     height: cheight,
                     child: editableIndex == -1
-                        ? Center(
-                            child: Text(
+                        ? const Center(
+                            child: const Text(
                               "Please Select a Label",
                             ),
                           )
@@ -801,7 +792,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                               ),
                               Row(
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Selected Color",
                                   ),
                                   GestureDetector(
@@ -811,12 +802,12 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         builder: (context) => ContentDialog(
                                           actions: [
                                             Button(
-                                                child: Text("OK"),
+                                                child: const Text("OK"),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 }),
                                           ],
-                                          title: Text('Select Color'),
+                                          title: const Text('Select Color'),
                                           content: mat.Card(
                                             child: ColorPicker(
                                               portraitOnly: true,
@@ -881,10 +872,10 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                       _fontName = fontName.toString();
                                       _idCard.labels[editableIndex].fontName =
                                           _fontName;
-                                      print('Helooooooo $_fontName');
-                                      print(
+                                      logger.d('Helooooooo $_fontName');
+                                      logger.d(
                                           "Helloo3___${_idCard.labels[editableIndex].fontName}");
-                                      print("Hiiiiiiiiiii");
+                                      logger.d("Hiiiiiiiiiii");
                                     });
                                   },
                                 ),

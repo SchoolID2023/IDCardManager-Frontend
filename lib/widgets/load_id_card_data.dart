@@ -11,14 +11,14 @@ class LoadIdCardData extends StatefulWidget {
   final String schoolId;
   final List<Label> labels;
 
-  const LoadIdCardData({super.key, required this.schoolId, required this.labels});
+  const LoadIdCardData(
+      {super.key, required this.schoolId, required this.labels});
 
   @override
   State<LoadIdCardData> createState() => _LoadIdCardDataState();
 }
 
 class _LoadIdCardDataState extends State<LoadIdCardData> {
- 
   TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
   TextEditingController _idCardWidth = TextEditingController();
@@ -41,11 +41,11 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
   //   var excel = Excel.decodeBytes(bytes);
 
   //   for (var table in excel.tables.keys) {
-  //     print(table); //sheet Name
-  //     print(excel.tables[table]?.maxCols);
-  //     print(excel.tables[table]?.maxRows);
+  //     logger.d(table); //sheet Name
+  //     logger.d(excel.tables[table]?.maxCols);
+  //     logger.d(excel.tables[table]?.maxRows);
   //     for (var cell in excel.tables[table]!.rows[0]) {
-  //       print("${cell?.value}");
+  //       logger.d("${cell?.value}");
   //       labels.add(
   //         Label(
   //           title: cell!.value.toString(),

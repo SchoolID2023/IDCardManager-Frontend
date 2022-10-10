@@ -2,10 +2,12 @@ import 'package:get/state_manager.dart';
 import '../models/schools_model.dart';
 import '../models/superadmin_model.dart';
 import '../services/remote_services.dart';
+import '../services/logger.dart';
 
 class SchoolController extends GetxController {
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
   var isLoading = true.obs;
+  // var isError = false.obs;
   var schools =
       SchoolsModel(success: false, message: "Schools List", schools: []).obs;
 
@@ -18,27 +20,29 @@ class SchoolController extends GetxController {
   void fetchSchools() async {
     try {
       isLoading(true);
-      var _schools = await _remoteServices.getSchools();
-      schools.value = _schools;
+      var schools = await _remoteServices.getSchools();
+      this.schools.value = schools;
+    } catch (e) {
+      throw Exception(e);
     } finally {
       isLoading(false);
     }
   }
 
   void addSchool(School school) async {
-    print("<------>");
-    print("Name-> ${school.name}");
-    print("Address-> ${school.address}");
-    print("Classes-> ${school.classes}");
-    print("Sections-> ${school.sections}");
-    print("Contact-> ${school.contact}");
-    print("Email-> ${school.email}");
-    print("<------>");
+    logger.d("<------>");
+    logger.d("Name-> ${school.name}");
+    logger.d("Address-> ${school.address}");
+    logger.d("Classes-> ${school.classes}");
+    logger.d("Sections-> ${school.sections}");
+    logger.d("Contact-> ${school.contact}");
+    logger.d("Email-> ${school.email}");
+    logger.d("<------>");
 
     try {
       isLoading(true);
-      var _newSchool = await _remoteServices.addSchool(school);
-      schools.value.schools.add(_newSchool);
+      var newSchool = await _remoteServices.addSchool(school);
+      schools.value.schools.add(newSchool);
     } finally {
       isLoading(false);
     }
@@ -47,7 +51,7 @@ class SchoolController extends GetxController {
   void deleteSchool(String schoolId) async {
     try {
       isLoading(true);
-      var _deletedSchool = await _remoteServices.deleteSchool(schoolId);
+      await _remoteServices.deleteSchool(schoolId);
       schools.value.schools.removeWhere((element) => element.id == schoolId);
     } finally {
       isLoading(false);
@@ -55,13 +59,13 @@ class SchoolController extends GetxController {
   }
 
   void addSuperAdmin(SuperAdmin superAdmin) async {
-    print("<------>");
-    print("Name-> ${superAdmin.name}");
-    print("Email-> ${superAdmin.email}");
-    print("Contact-> ${superAdmin.contact}");
-    print("Username-> ${superAdmin.username}");
-    print("Password-> ${superAdmin.password}");
-    print("<------>");
+    logger.d("<------>");
+    logger.d("Name-> ${superAdmin.name}");
+    logger.d("Email-> ${superAdmin.email}");
+    logger.d("Contact-> ${superAdmin.contact}");
+    logger.d("Username-> ${superAdmin.username}");
+    logger.d("Password-> ${superAdmin.password}");
+    logger.d("<------>");
 
     try {
       isLoading(true);
@@ -73,7 +77,7 @@ class SchoolController extends GetxController {
   }
 
   School getSchoolById(String schoolId) {
-    print("School Id ---> ${schoolId}");
+    logger.d("School Id ---> $schoolId");
     return schools.value.schools.firstWhere((school) => school.id == schoolId);
   }
 }

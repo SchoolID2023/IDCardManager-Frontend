@@ -17,6 +17,7 @@ import 'package:flutter/material.dart' as mat;
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/student_model.dart';
+import '../services/logger.dart';
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class AddIdCardPage extends StatefulWidget {
@@ -152,7 +153,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
           text: Text(element.title),
           onPressed: () {
             setState(() {
-              print("Label Name--> ${element.title}");
+              logger.d("Label Name--> ${element.title}");
               _idCard.labels.add(
                 Label(
                   title: element.title,
@@ -420,7 +421,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                           //                     ),
                           //                   );
 
-                          //                   print(_idCard.labels.length);
+                          //                   logger.d(_idCard.labels.length);
                           //                   _titleController.clear();
                           //                   _fontSizeController.clear();
                           //                   Navigator.of(context).pop();
@@ -532,7 +533,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                             itemBuilder: (context, index) {
                               // index = index + nonPhotoLabels;
                               int ind = index + nonPhotoLabels;
-                              print(ind);
+                              logger.d(ind);
                               return GestureDetector(
                                 onTap: () {
                                   // _fontSizeController.text =
@@ -616,10 +617,10 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 }
                               });
 
-                              // print(idCardModelToJson(_idCard));
+                              // logger.d(idCardModelToJson(_idCard));
                               // String idCardId =
                               //     await _remoteServices.addIdCard(_idCard);
-                              // print(idCardId);
+                              // logger.d(idCardId);
 
                               String idCardId =
                                   await _studentController.addIdCard(_idCard);
@@ -819,8 +820,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 _fontName = fontName.toString();
                                 _idCard.labels[editableIndex].fontName =
                                     _fontName;
-                                print('Helooooooo $_fontName');
-                                print('Helooooooo2 $_fontName');
+                                logger.d('Helooooooo $_fontName');
+                                logger.d('Helooooooo2 $_fontName');
                               });
                             },
                           ),

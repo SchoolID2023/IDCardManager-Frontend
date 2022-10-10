@@ -16,11 +16,13 @@ import '../models/admins_model.dart';
 import '../models/id_card_generation_model.dart';
 import '../models/schools_model.dart';
 
+import '../services/logger.dart';
+
 class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  final String baseUrl = 'https://idcardmaker-1.herokuapp.com';
+  final String baseUrl = 'http://13.126.239.219:3000';
 
   Future<String> login(String email, String password, bool isSuperAdmin) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -36,14 +38,14 @@ class RemoteServices {
     );
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
+      logger.d(data);
       prefs.setString('token', data['token']);
       prefs.setString('userType', userType);
       prefs.setString('schoolId', data['schoolId']);
 
       return data['schoolId'];
     } else {
-      print("Login Errorrrrrrr---> ${response.statusCode}");
+      logger.d("Login Errorrrrrrr---> ${response.statusCode}");
       throw Exception(response.statusCode);
     }
   }
@@ -52,18 +54,23 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    print("Schools token: $token");
-    final response = await http.get(
-      Uri.parse('${baseUrl}/superAdmin/viewSchools'),
-      headers: {
-        'Authorization': 'Biatch $token',
-      },
-    );
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return SchoolsModel.fromJson(data);
-    } else {
-      throw Exception(response.statusCode);
+    logger.d("Schools token: $token");
+
+    try {
+      final response = await http.get(
+        Uri.parse('${baseUrl}/superAdmin/viewSchools'),
+        headers: {
+          'Authorization': 'Biatch $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return SchoolsModel.fromJson(data);
+      } else {
+        throw Exception(response.statusCode);
+      }
+    } catch (e) {
+      throw Exception(e);
     }
   }
 
@@ -71,9 +78,9 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    print("<########>");
-    print(json.encode(newSchool.toJson()));
-    print("<####>");
+    logger.d("<########>");
+    logger.d(json.encode(newSchool.toJson()));
+    logger.d("<####>");
 
     final response = await http.post(
       Uri.parse('${baseUrl}/superAdmin/addSchool'),
@@ -87,7 +94,7 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       data = data['school'];
-      print("Data--> ${data}");
+      logger.d("Data--> ${data}");
       return School.fromJson(data);
     } else {
       throw Exception(response.body);
@@ -98,9 +105,9 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    print("<########>");
-    print(json.encode(editSchool.toJson()));
-    print("<####>");
+    logger.d("<########>");
+    logger.d(json.encode(editSchool.toJson()));
+    logger.d("<####>");
 
     final response = await http.post(
       Uri.parse('${baseUrl}/superAdmin/editSchool'),
@@ -114,7 +121,7 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.body);
       data = data['school'];
-      print("Data--> ${data}");
+      logger.d("Data--> ${data}");
       return School.fromJson(data);
     } else {
       throw Exception(response.body);
@@ -149,11 +156,11 @@ class RemoteServices {
       body: json.encode(_admins.toJson()),
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
+      logger.d(data);
     } else {
       throw Exception(response.statusCode);
     }
@@ -191,12 +198,12 @@ class RemoteServices {
       body: json.encode(_teacher.toJson()),
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
-      print('Teacher Added');
+      logger.d(data);
+      logger.d('Teacher Added');
     } else {
       throw Exception(response.statusCode);
     }
@@ -216,12 +223,12 @@ class RemoteServices {
       body: json.encode({'idCardId': idCardId}),
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
-      print('ID Card Deleted');
+      logger.d(data);
+      logger.d('ID Card Deleted');
     } else {
       throw Exception(response.statusCode);
     }
@@ -244,11 +251,11 @@ class RemoteServices {
       },
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
+      logger.d(data);
 
       return AdminsModel.fromJson(data);
     } else {
@@ -273,11 +280,11 @@ class RemoteServices {
       },
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data);
+      logger.d(data);
 
       return TeacherListModel.fromJson(data);
     } else {
@@ -298,11 +305,11 @@ class RemoteServices {
       },
     );
 
-    print(response);
+    logger.d(response);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-      print(data["school"]);
+      logger.d(data["school"]);
 
       return School.fromJson(data["school"]);
     } else {
@@ -314,21 +321,21 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    print('<########>');
-    print(idCard.toJson());
-    print('<########>');
+    logger.d('<########>');
+    logger.d(idCard.toJson());
+    logger.d('<########>');
 
     var headers = {
       'Authorization': 'Biatch $token',
     };
 
     var formMap = idCard.toJson();
-    print(idCard.foregroundImagePath);
+    logger.d(idCard.foregroundImagePath);
 
     formMap['foregroundImagePath'] =
         await MultipartFile.fromFile(idCard.foregroundImagePath);
     if (idCard.isDual) {
-      print(idCard.backgroundImagePath);
+      logger.d(idCard.backgroundImagePath);
       formMap['backgroundImagePath'] =
           await MultipartFile.fromFile(idCard.backgroundImagePath);
     }
@@ -346,13 +353,13 @@ class RemoteServices {
       if (response.statusCode == 200) {
         var data = json.decode(response.data ?? "") as Map<String, dynamic>;
         var idCardId = data['idCard']['_id'];
-        print("Id--> ${idCardId}");
+        logger.d("Id--> ${idCardId}");
         return idCardId;
       } else {
         throw Exception(response.data);
       }
     } catch (e) {
-      print(e);
+      logger.d(e);
       return "Error";
     }
   }
@@ -362,28 +369,28 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    // print('<########>');
-    // print(idCard.toJson());
-    // print('<########>');
+    // logger.d('<########>');
+    // logger.d(idCard.toJson());
+    // logger.d('<########>');
 
     var headers = {
       'Authorization': 'Biatch $token',
     };
 
     // var formMap = idCard.toJson();
-    // print(idCard.foregroundImagePath);
+    // logger.d(idCard.foregroundImagePath);
 
     // formMap['foregroundImagePath'] =
     //     await MultipartFile.fromFile(idCard.foregroundImagePath);
     // if (idCard.isDual) {
-    //   print(idCard.backgroundImagePath);
+    //   logger.d(idCard.backgroundImagePath);
     //   formMap['backgroundImagePath'] =
     //       await MultipartFile.fromFile(idCard.backgroundImagePath);
     // }
 
     // var formData = FormData.fromMap(formMap);
 
-    print('Edit Id Card Id-> ${idCardId}');
+    logger.d('Edit Id Card Id-> ${idCardId}');
 
     Response<String> response = await dio.post(
       '${baseUrl}/superAdmin/editIdCard',
@@ -399,8 +406,8 @@ class RemoteServices {
     if (response.statusCode == 200) {
       var data = json.decode(response.data ?? "") as Map<String, dynamic>;
 
-      print("Id--> ${idCardId}");
-      print("ID Card edited");
+      logger.d("Id--> ${idCardId}");
+      logger.d("ID Card edited");
       return idCardId;
     } else {
       throw Exception(response.statusCode);
@@ -432,16 +439,16 @@ class RemoteServices {
       );
 
       if (response.statusCode == 200) {
-        print("Added Student Data");
+        logger.d("Added Student Data");
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
     }
   }
 
@@ -455,7 +462,7 @@ class RemoteServices {
 
     var response;
 
-    print("Edited Student Data:- ${newStudent.toJson()}");
+    logger.d("Edited Student Data:- ${newStudent.toJson()}");
 
     try {
       response = await dio.post(
@@ -467,16 +474,16 @@ class RemoteServices {
       );
 
       if (response.statusCode == 200) {
-        print("Edited Student Data");
+        logger.d("Edited Student Data");
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
     }
   }
 
@@ -490,7 +497,7 @@ class RemoteServices {
 
     var response;
 
-    print("Edited Student Data:- ${studentId}");
+    logger.d("Edited Student Data:- ${studentId}");
 
     try {
       response = await dio.post(
@@ -504,16 +511,16 @@ class RemoteServices {
       );
 
       if (response.statusCode == 200) {
-        print("Edited Student Data");
+        logger.d("Edited Student Data");
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
     }
   }
 
@@ -522,7 +529,7 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    print("Column-> ${columns}");
+    logger.d("Column-> ${columns}");
 
     var headers = {
       'Authorization': 'Biatch $token',
@@ -537,7 +544,7 @@ class RemoteServices {
       ),
     };
 
-    print(formMap);
+    logger.d(formMap);
 
     var formData = FormData.fromMap(formMap);
 
@@ -553,16 +560,16 @@ class RemoteServices {
       );
 
       if (response.statusCode == 200) {
-        print("Added Student Photos");
+        logger.d("Added Student Photos");
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
     }
   }
 
@@ -577,13 +584,13 @@ class RemoteServices {
 
     Response<String> response;
 
-    print("School ID-> ${schoolId}");
+    logger.d("School ID-> ${schoolId}");
 
     var url = userType == "superAdmin"
         ? '${baseUrl}/${userType}/getStudentData/${schoolId}'
         : '${baseUrl}/${userType}/getStudentData';
 
-    print("School URL- ${url}");
+    logger.d("School URL- ${url}");
     try {
       response = await dio.get(
         url,
@@ -596,21 +603,21 @@ class RemoteServices {
         final data = json.decode(response.data!);
         return StudentModel.fromJson(data);
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
 
   Future<IdCardListModel> getIdCardList(String schoolId) async {
-    print("School ID-> ${schoolId}");
+    logger.d("School ID-> ${schoolId}");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -634,27 +641,27 @@ class RemoteServices {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
-        // print(data);
+        // logger.d(data);
 
-        print("Id Card List Added");
+        logger.d("Id Card List Added");
         return IdCardListModel.fromJson(data);
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
 
   Future<void> generateExcel(
       String schoolId, String className, String section) async {
-    print("School ID-> ${schoolId}");
+    logger.d("School ID-> ${schoolId}");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -663,7 +670,7 @@ class RemoteServices {
       dialogTitle: 'Please select an output destination:',
       fileName: "students_${schoolId}_${className}_${section}.xlsx",
     );
-    print('Excell Token-> $token');
+    logger.d('Excell Token-> $token');
     var headers = {
       'Authorization': 'Biatch $token',
     };
@@ -688,25 +695,25 @@ class RemoteServices {
         ),
         data: body,
       );
-      print(response);
+      logger.d(response);
 
       if (response.statusCode == 200) {
         // final data = json.decode(response.data!);
-        // print(data);
-        print(response.toString());
+        // logger.d(data);
+        logger.d(response.toString());
 
-        print("Excel added");
+        logger.d("Excel added");
         return;
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
@@ -733,32 +740,32 @@ class RemoteServices {
         ),
         data: json.encode(idCard.toJson()),
       );
-      print(response);
+      logger.d(response);
 
       if (response.statusCode == 200) {
         // final data = json.decode(response.data!);
-        // print(data);
-        print(response.toString());
+        // logger.d(data);
+        logger.d(response.toString());
 
-        print("Students Attached");
+        logger.d("Students Attached");
         return;
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
 
   Future<void> downloadPhotos(
       String schoolId, String className, String section, String label) async {
-    print("School ID-> ${schoolId}");
+    logger.d("School ID-> ${schoolId}");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -767,7 +774,7 @@ class RemoteServices {
       dialogTitle: 'Please select an output destination:',
       fileName: "students_${schoolId}_${className}_${section}_photos.zip",
     );
-    print('Excell Token-> $token');
+    logger.d('Excell Token-> $token');
     var headers = {
       'Authorization': 'Biatch $token',
     };
@@ -793,32 +800,32 @@ class RemoteServices {
         ),
         data: body,
       );
-      print(response);
+      logger.d(response);
 
       if (response.statusCode == 200) {
         // final data = json.decode(response.data!);
-        // print(data);
-        print(response.toString());
+        // logger.d(data);
+        logger.d(response.toString());
 
-        print("Excel added");
+        logger.d("Excel added");
         return;
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
 
   Future<IdCardGenerationModel> getIdCardGenerationModel(
       String schoolId) async {
-    print("School ID-> ${schoolId}");
+    logger.d("School ID-> ${schoolId}");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -838,20 +845,20 @@ class RemoteServices {
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
 
-        print(data);
+        logger.d(data);
 
-        print("Id Card Generation Model Added");
+        logger.d("Id Card Generation Model Added");
         return IdCardGenerationModel.fromJson(data);
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
@@ -877,20 +884,20 @@ class RemoteServices {
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
 
-        print(data);
+        logger.d(data);
 
-        print("Super Admin Added");
+        logger.d("Super Admin Added");
         return;
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }
@@ -916,20 +923,20 @@ class RemoteServices {
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
 
-        print(data);
+        logger.d(data);
 
-        print("School Deleted");
+        logger.d("School Deleted");
         return;
       } else {
-        print("Errorrrrr");
+        logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
-      print(e.response);
+      logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      print("Error----->");
-      print(e);
+      logger.d("Error----->");
+      logger.d(e);
       throw Exception("Normal Error");
     }
   }

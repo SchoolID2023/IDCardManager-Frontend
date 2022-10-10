@@ -7,6 +7,7 @@ import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
 import 'package:idcard_maker_frontend/pages/student_data.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
+import '../services/logger.dart';
 
 class SchoolAdminLoginPage extends StatefulWidget {
   const SchoolAdminLoginPage({Key? key}) : super(key: key);
@@ -109,7 +110,7 @@ class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
                                           // ),
                                           // );
                                         } catch (e) {
-                                          print(e);
+                                          logger.d(e);
                                         }
                                       },
                                     ),
@@ -125,7 +126,7 @@ class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
                                             ),
                                           );
                                         } catch (e) {
-                                          print(e);
+                                          logger.d(e);
                                         }
                                       },
                                     ),

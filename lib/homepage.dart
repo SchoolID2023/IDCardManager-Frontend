@@ -2,8 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/school_controller.dart';
 import 'package:idcard_maker_frontend/models/superadmin_model.dart';
-import 'package:idcard_maker_frontend/pages/add_id_card.dart';
-import 'package:idcard_maker_frontend/widgets/load_id_card_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/schools_model.dart';
@@ -13,25 +11,20 @@ import 'widgets/school_tile.dart';
 class HomePage extends StatelessWidget {
   final SchoolController schoolController = Get.put(SchoolController());
 
-  TextEditingController _schoolName = TextEditingController();
-  TextEditingController _schoolAddress = TextEditingController();
-  TextEditingController _schoolClasses = TextEditingController();
-  TextEditingController _schoolSections = TextEditingController();
-  TextEditingController _schoolContact = TextEditingController();
-  TextEditingController _schoolEmail = TextEditingController();
+  final TextEditingController _schoolName = TextEditingController();
+  final TextEditingController _schoolAddress = TextEditingController();
+  final TextEditingController _schoolClasses = TextEditingController();
+  final TextEditingController _schoolSections = TextEditingController();
+  final TextEditingController _schoolContact = TextEditingController();
+  final TextEditingController _schoolEmail = TextEditingController();
 
-  TextEditingController _superAdminName = TextEditingController();
-  TextEditingController _superAdminUsername = TextEditingController();
-  TextEditingController _superAdminPassword = TextEditingController();
-  TextEditingController _superAdminContact = TextEditingController();
-  TextEditingController _superAdminEmail = TextEditingController();
+  final TextEditingController _superAdminName = TextEditingController();
+  final TextEditingController _superAdminUsername = TextEditingController();
+  final TextEditingController _superAdminPassword = TextEditingController();
+  final TextEditingController _superAdminContact = TextEditingController();
+  final TextEditingController _superAdminEmail = TextEditingController();
 
-  // Future<void> logOut() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   prefs.remove('token');
-  //   Navigator.of(context)
-  //       .push(FluentPageRoute(builder: (context) => LoginPage()));
-  // }
+  HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,40 +35,18 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Button(
-              child: Text("Log Out"),
+              child: const Text("Log Out"),
               onPressed: () async {
                 final SharedPreferences prefs =
                     await SharedPreferences.getInstance();
-                prefs.remove('token');
-                Navigator.of(context)
-                    .push(FluentPageRoute(builder: (context) => LoginPage()));
+                prefs.remove('token').then((value) => Navigator.of(context)
+                    .push(FluentPageRoute(
+                        builder: (context) => const LoginPage())));
               },
             )
           ],
         ),
       ),
-      // pane: NavigationPane(
-      //   onChanged: (value) async {
-      //     if (value == 1) {
-      //       final SharedPreferences prefs =
-      //           await SharedPreferences.getInstance();
-      //       prefs.remove('token');
-      //       Navigator.of(context)
-      //           .push(FluentPageRoute(builder: (context) => LoginPage()));
-      //     }
-      //   },
-      //   items: [
-      //     PaneItem(
-      //       icon: Icon(FluentIcons.home),
-      //       title: const Text('Home'),
-      //     ),
-      //     PaneItem(
-      //       icon: Icon(FluentIcons.log_remove),
-      //       title: const Text('Log Out'),
-      //     )
-      //   ],
-      //   displayMode: PaneDisplayMode.top,
-      // ),
       content: ScaffoldPage(
         header: Padding(
           padding: const EdgeInsets.symmetric(
@@ -91,20 +62,20 @@ class HomePage extends StatelessWidget {
                   color: Colors.blue,
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Button(
-                  child: Text("Add Super Admin"),
+                  child: const Text("Add Super Admin"),
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) {
                         return ContentDialog(
-                          title: Text("Super Admin Details"),
+                          title: const Text("Super Admin Details"),
                           actions: [
                             Button(
-                              child: Text("Add Super Admin"),
+                              child: const Text("Add Super Admin"),
                               onPressed: () {
                                 schoolController.addSuperAdmin(SuperAdmin(
                                   email: _superAdminEmail.text,
@@ -118,7 +89,7 @@ class HomePage extends StatelessWidget {
                               },
                             ),
                             Button(
-                              child: Text("Cancel"),
+                              child: const Text("Cancel"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -158,16 +129,16 @@ class HomePage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Button(
-                  child: Text("Add School"),
+                  child: const Text("Add School"),
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (context) {
                         return ContentDialog(
-                          title: Text("School Details"),
+                          title: const Text("School Details"),
                           actions: [
                             Button(
-                              child: Text("Add Save"),
+                              child: const Text("Add Save"),
                               onPressed: () {
                                 schoolController.addSchool(
                                   School(
@@ -184,7 +155,7 @@ class HomePage extends StatelessWidget {
                               },
                             ),
                             Button(
-                              child: Text("Cancel"),
+                              child: const Text("Cancel"),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -244,7 +215,7 @@ class HomePage extends StatelessWidget {
         // ),
         content: Obx(() {
           return schoolController.isLoading.value
-              ? Center(
+              ? const Center(
                   child: ProgressRing(),
                 )
               : ListView.builder(

@@ -1,10 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:idcard_maker_frontend/homepage.dart';
-import 'package:get/get.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
-import 'package:idcard_maker_frontend/pages/student_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/logger.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
@@ -39,44 +37,41 @@ class LoginWrapper extends StatelessWidget {
   String schoolId = "";
 
   Future<void> getToken(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token') ?? "";
-    userType = prefs.getString('userType') ?? "";
-    schoolId = prefs.getString('schoolId') ?? "";
-    print("token: $token");
-    try {
-      if (token == "") {
-        print("Heyy");
-        Navigator.of(context)
-            .push(FluentPageRoute(builder: (context) => LoginPage()));
-      } else {
-        print("Byeee");
-        if (userType == "schoolAdmin") {
+    await SharedPreferences.getInstance().then((value) {
+      token = value.getString('token') ?? "";
+      userType = value.getString('userType') ?? "";
+      schoolId = value.getString('schoolId') ?? "";
+      logger.d("token: $token");
+      try {
+        if (token == "") {
+          logger.d("Heyy");
           Navigator.of(context)
-              .push(FluentPageRoute(builder: (context) => LoginPage()));
-          // Navigator.of(context).push(FluentPageRoute(
-          //     builder: (context) => StudentDataScreen(schoolId: schoolId)));
+              .push(FluentPageRoute(builder: (context) => const LoginPage()));
         } else {
-          Navigator.of(context)
-              .push(FluentPageRoute(builder: (context) => HomePage()));
+          logger.d("Byeee");
+          if (userType == "schoolAdmin") {
+            Navigator.of(context)
+                .push(FluentPageRoute(builder: (context) => const LoginPage()));
+            
+          } else {
+            Navigator.of(context)
+                .push(FluentPageRoute(builder: (context) => HomePage()));
+          }
         }
-      }
-    } catch (e) {
-      Navigator.of(context)
-          .push(FluentPageRoute(builder: (context) => LoginPage()));
+      } catch (e) {
+        Navigator.of(context)
+            .push(FluentPageRoute(builder: (context) => const LoginPage()));
 
-      print(e);
-    }
+        logger.d(e);
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // getToken().then((value) {
-
-    // });
     getToken(context);
 
-    return ScaffoldPage(
+    return const ScaffoldPage(
       content: Center(
         child: ProgressRing(),
       ),

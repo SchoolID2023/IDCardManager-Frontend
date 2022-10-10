@@ -20,6 +20,7 @@ import '../widgets/add_school_admin.dart';
 import '../widgets/add_school_teacher.dart';
 import '../widgets/load_id_card_data.dart';
 import '../widgets/preview_id_card.dart';
+import '../services/logger.dart';
 import 'edit_id_card.dart';
 import 'school_admin_login.dart';
 
@@ -50,7 +51,7 @@ class StudentDataScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Screen-> ${schoolId}");
+    logger.d("Screen-> ${schoolId}");
     final StudentController studentController =
         Get.put(StudentController(schoolId));
     // final SchoolController schoolController = Get.put(SchoolController());

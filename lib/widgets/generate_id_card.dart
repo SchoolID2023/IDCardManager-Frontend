@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
+import '../services/logger.dart';
 
 class GenerateIdCard extends StatefulWidget {
   GenerateIdCard({
@@ -46,8 +47,8 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
 
   @override
   void initState() {
-    print(widget.idCard.backgroundImagePath);
-    print(widget.idCard.foregroundImagePath);
+    logger.d(widget.idCard.backgroundImagePath);
+    logger.d(widget.idCard.foregroundImagePath);
     super.initState();
   }
 
@@ -64,7 +65,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
       fileName: "1",
     );
     outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    print(outputFile);
+    logger.d(outputFile);
 
     Directory destinationFolder = Directory('${outputFile}${folder}');
     String path = "";
@@ -77,7 +78,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
 
     await File('${path}\\1.png').writeAsBytes(pngBytes);
 
-    print(destinationFolder.path);
+    logger.d(destinationFolder.path);
 
     var destinationFile =
         await File(outputFile! + '1' + '.png').writeAsBytes(pngBytes);

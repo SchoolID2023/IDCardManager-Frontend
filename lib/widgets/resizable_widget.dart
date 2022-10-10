@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../models/id_card_model.dart';
+import '../services/logger.dart';
 
 class ResizebleWidget extends StatefulWidget {
   ResizebleWidget({required this.label, required this.myScale});
@@ -30,7 +31,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("Scale->${widget.myScale}");
+    logger.d("Scale->${widget.myScale}");
     Label temp = widget.label;
     _label = Label(
         title: temp.title,

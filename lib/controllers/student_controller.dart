@@ -6,11 +6,12 @@ import '../models/id_card_list_model.dart';
 import '../models/student_model.dart';
 import '../models/schools_model.dart';
 import '../services/remote_services.dart';
+import '../services/logger.dart';
 
 class StudentController extends GetxController {
   StudentController(this.schoolId);
 
-  RemoteServices _remoteServices = RemoteServices();
+  final RemoteServices _remoteServices = RemoteServices();
   String schoolId;
   var isLoading = false.obs;
   var idCardList =
@@ -33,18 +34,11 @@ class StudentController extends GetxController {
     id: "",
   ).obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // fetchIdCardList(schoolId);
-    // fetchStudents(schoolId);
-    // fetchSchool(schoolId);
-  }
 
   void addStudents(String schoolId, String excelFile) async {
     try {
       isLoading(true);
-      var _students = await _remoteServices.addStudentData(schoolId, excelFile);
+      var students = await _remoteServices.addStudentData(schoolId, excelFile);
     } finally {
       fetchStudents(schoolId);
       isLoading(false);
@@ -52,10 +46,10 @@ class StudentController extends GetxController {
   }
 
   Future<void> fetchStudents(String schoolId) async {
-    print("API -> ${schoolId}");
+    logger.d("API -> $schoolId");
     try {
-      var _students = await _remoteServices.getStudentData(schoolId);
-      students.value = _students;
+      var students = await _remoteServices.getStudentData(schoolId);
+      this.students.value = students;
     } finally {
       // isLoading(false);
     }
@@ -64,8 +58,8 @@ class StudentController extends GetxController {
   void fetchIdCardList(String schoolId) async {
     try {
       // isLoading(true);
-      var _idCardList = await _remoteServices.getIdCardList(schoolId);
-      idCardList.value = _idCardList;
+      var idCardList = await _remoteServices.getIdCardList(schoolId);
+      this.idCardList.value = idCardList;
     } finally {
       // isLoading(false);
     }
@@ -92,8 +86,8 @@ class StudentController extends GetxController {
 
   void fetchAdmins(String schoolId) async {
     try {
-      var _admins = await _remoteServices.getSchoolAdmins(schoolId);
-      admins.value = _admins;
+      var admins = await _remoteServices.getSchoolAdmins(schoolId);
+      this.admins.value = admins;
     } finally {
       // isLoading(false);
     }
@@ -101,8 +95,8 @@ class StudentController extends GetxController {
 
   void fetchSchool(String schoolId) async {
     try {
-      var _school = await _remoteServices.getSchoolById(schoolId);
-      school.value = _school;
+      var school = await _remoteServices.getSchoolById(schoolId);
+      this.school.value = school;
     } finally {
       // isLoading(false);
     }
@@ -113,16 +107,16 @@ class StudentController extends GetxController {
       school.value = editSchool;
       await _remoteServices.editSchool(editSchool);
     } catch (e) {
-      print("Edit School Error:- ${e}");
+      logger.d("Edit School Error:- $e");
     }
   }
 
   void fetchTeachers(String schoolId) async {
     try {
-      var _teachers = await _remoteServices.getSchoolTeachers(schoolId);
-      teachers.value = _teachers;
+      var teachers = await _remoteServices.getSchoolTeachers(schoolId);
+      this.teachers.value = teachers;
 
-      print("Teachers Fetched");
+      logger.d("Teachers Fetched");
     } finally {
       // isLoading(false);
     }
@@ -136,7 +130,7 @@ class StudentController extends GetxController {
       await _remoteServices.editStudent(student);
       fetchStudents(student.currentSchool);
     } catch (e) {
-      print("Edit Student Error:- ${e}");
+      logger.d("Edit Student Error:- $e");
     }
   }
 

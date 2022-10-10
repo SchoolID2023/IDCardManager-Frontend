@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:idcard_maker_frontend/widgets/student_dialog.dart';
+import '../services/logger.dart';
 
 import '../models/student_model.dart';
 
@@ -57,11 +58,11 @@ class _StudentTableState extends State<StudentTable> {
     // TODO: implement initState
     super.initState();
 
-    print("Length-> ${widget.students[0].data.length}");
+    logger.d("Length-> ${widget.students[0].data.length}");
 
     for (int i = 0; i < widget.students[0].data.length; i++) {
       _isVisible[i] = false;
-      // print("Field--> ${widget.students[0].data[i].field}");
+      // logger.d("Field--> ${widget.students[0].data[i].field}");
     }
   }
 
@@ -145,7 +146,7 @@ class _StudentTableState extends State<StudentTable> {
     }
 
     for (int i = 0; i < widget.students[0].data.length; i++) {
-      // print("Field--> ${element.field}");
+      // logger.d("Field--> ${element.field}");
 
       if (_isVisible[i] ?? false) {
         _columnName.add(
@@ -161,8 +162,8 @@ class _StudentTableState extends State<StudentTable> {
                   // widget.students.sort((a, b) => a.data[columnIndex - 1].value
                   //     .toString()
                   //     .compareTo(b.data[columnIndex - 1].value.toString()));
-                  print(columnIndex);
-                  print(i);
+                  logger.d(columnIndex);
+                  logger.d(i);
                 }
               });
             },
@@ -243,7 +244,7 @@ class _StudentTableState extends State<StudentTable> {
                               isFiltering = true;
                               filteredStudents =
                                   _filter.text.split(',').toSet();
-                              print(filteredStudents);
+                              logger.d(filteredStudents);
                             });
                           }),
                       fluent.Button(
@@ -324,7 +325,7 @@ class _StudentTableState extends State<StudentTable> {
                 isAllSelected = selectedValue!;
               });
 
-              print(isAllSelected);
+              logger.d(isAllSelected);
             },
             sortColumnIndex: 2,
             source: _data,
@@ -430,7 +431,7 @@ class MyData extends DataTableSource {
       if (isFiltering && filteredStudents.isNotEmpty) {
         if (!filteredStudents
             .contains(students[index].data[filterIndex].value.toString())) {
-          print(
+          logger.d(
               "##-> ${students[index].data[filterIndex].value} -- ${filteredStudents}");
           continue;
         }
@@ -517,10 +518,10 @@ class MyData extends DataTableSource {
     return DataRow(
       selected: isSelected.value[students[index].id] ?? true,
       onSelectChanged: (value) {
-        print("Selected Row: $value");
+        logger.d("Selected Row: $value");
         onSelected(students[index].id, value!);
 
-        print("Previous Value--> ${isSelected.value[students[index].id]}");
+        logger.d("Previous Value--> ${isSelected.value[students[index].id]}");
         isSelected.value[students[index].id] = value;
       },
       cells: List<DataCell>.generate(_data[index].length, (value) {
@@ -537,7 +538,7 @@ class MyData extends DataTableSource {
         return DataCell(
           // showEditIcon: value == 0 ? true : false,
           onTap: () {
-            print(students[index].id);
+            logger.d(students[index].id);
             showDialog(
               context: context,
               builder: (context) => StudentDialog(

@@ -5,6 +5,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/id_card_model.dart';
 import '../models/student_model.dart';
+import '../services/logger.dart';
 
 class PreviewIdCard extends StatelessWidget {
   PreviewIdCard(
@@ -26,7 +27,7 @@ class PreviewIdCard extends StatelessWidget {
 
     String value = "";
 
-    print("<---Field --> $field $isPhoto <---${student.name}--->");
+    logger.d("<---Field --> $field $isPhoto <---${student.name}--->");
     if (isPhoto) {
       // field = field.substring(0, field.length - 6);
 
@@ -58,14 +59,14 @@ class PreviewIdCard extends StatelessWidget {
       }
     }
 
-    print("Value--> ${value}");
+    logger.d("Value--> ${value}");
     return value;
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
-    // print("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
+    // logger.d("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
+    // logger.d("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
     labelList.add(
       SizedBox(
         height: idCard.height.toDouble(),

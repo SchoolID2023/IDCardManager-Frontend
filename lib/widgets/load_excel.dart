@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 
 import '../controllers/student_controller.dart';
 import '../models/id_card_model.dart';
-import '../pages/add_id_card.dart';
+import '../services/logger.dart';
 
 class LoadExcel extends StatefulWidget {
   final String schoolId;
@@ -19,10 +19,10 @@ class LoadExcel extends StatefulWidget {
 
 class _LoadExcelState extends State<LoadExcel> {
   List<Label> labels = [];
-  TextEditingController _excelPath = TextEditingController();
+  final TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
-  TextEditingController _idCardWidth = TextEditingController();
-  TextEditingController _idCardHeight = TextEditingController();
+  final TextEditingController _idCardWidth = TextEditingController();
+  final TextEditingController _idCardHeight = TextEditingController();
 
   Future<void> uploadExcel() async {
     final result = await FilePicker.platform.pickFiles(
@@ -35,7 +35,7 @@ class _LoadExcelState extends State<LoadExcel> {
     var bytes = File(file!.path.toString()).readAsBytesSync();
 
     setState(() {
-      _excelPath.text = file!.path.toString();
+      _excelPath.text = file.path.toString();
     });
 
     Excel excel = Excel.decodeBytes(bytes);
@@ -43,12 +43,12 @@ class _LoadExcelState extends State<LoadExcel> {
     Sheet sheet = excel["Sheet1"];
 
     for (var table in excel.tables.keys) {
-      print(table); //sheet Name
-      print(excel.tables[table]?.maxCols);
-      print(excel.tables[table]?.maxRows);
+      logger.d(table); //sheet Name
+      logger.d(excel.tables[table]?.maxCols);
+      logger.d(excel.tables[table]?.maxRows);
       for (var cell in excel.tables[table]!.rows[0]) {
         cell!.value = cell.value.toString().replaceAll(".", "");
-        print("${cell.value}");
+        logger.d("${cell.value}");
         labels.add(
           Label(
             title: cell.value.toString(),
@@ -62,22 +62,20 @@ class _LoadExcelState extends State<LoadExcel> {
 
   @override
   Widget build(BuildContext context) {
-
-    StudentController _studentController = Get.put(StudentController(widget.schoolId));
+    StudentController studentController =
+        Get.put(StudentController(widget.schoolId));
     return ContentDialog(
-      title: Text("Upload Excel"),
+      title: const Text("Upload Excel"),
       actions: [
         Button(
-          child: Text("OK"),
+          child: const Text("OK"),
           onPressed: () {
-           
-            _studentController.addStudents(widget.schoolId, _excelPath.text);
-
-
-
+            studentController.addStudents(widget.schoolId, _excelPath.text);
           },
         ),
-        Button(child: Text("CANCEL"), onPressed: () => Navigator.pop(context)),
+        Button(
+            child: const Text("CANCEL"),
+            onPressed: () => Navigator.pop(context)),
       ],
       content: SizedBox(
         width: 500,
@@ -92,7 +90,7 @@ class _LoadExcelState extends State<LoadExcel> {
               ),
             ),
             Button(
-              child: Text("Upload Excel"),
+              child: const Text("Upload Excel"),
               onPressed: () async {
                 await uploadExcel();
               },

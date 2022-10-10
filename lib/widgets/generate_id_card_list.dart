@@ -15,6 +15,7 @@ import 'package:idcard_maker_frontend/models/id_card_generation_model.dart';
 import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:screenshot/screenshot.dart';
+import '../services/logger.dart';
 import 'dart:ui' as ui;
 
 class GenerateIdCardList extends StatefulWidget {
@@ -59,7 +60,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     setState(() {
       _isLoading = true;
     });
@@ -85,7 +85,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
     String value = "";
 
-    print("<---Field --> $field $isPhoto <---${student.name}--->");
+    logger.d("<---Field --> $field $isPhoto <---${student.name}--->");
     if (isPhoto) {
       // field = field.substring(0, field.length - 6);
 
@@ -96,7 +96,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
           )
           .value;
 
-      value = 'http' + value.substring(5);
+      value = 'http${value.substring(5)}';
     } else {
       if (field == "name") {
         value = student.name;
@@ -114,7 +114,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       }
     }
 
-    print("Value--> ${value}");
+    logger.d("Value--> $value");
     return value;
   }
 
@@ -124,7 +124,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       fileName: "1",
     );
     outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    print(outputFile);
+    logger.d(outputFile);
 
     setState(() {
       _outputPath.text = outputFile!;
@@ -154,9 +154,9 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List pngBytes = byteData!.buffer.asUint8List();
-    await File('${path}\\${fileImage}.png').writeAsBytes(pngBytes);
+    await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
 
-    print("Png Captured --> ${path}\\${fileImage}.png");
+    logger.d("Png Captured --> $path\\$fileImage.png");
   }
 
   Future<void> captureScreenshot(
@@ -166,11 +166,11 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       pixelRatio: 3.0,
     );
 
-    await File('${path}\\${fileImage}.png').writeAsBytes(pngBytes);
-    print("SS Png Captured --> ${path}\\${fileImage}.png");
+    await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
+    logger.d("SS Png Captured --> $path\\$fileImage.png");
   }
 
-  Widget _widget = Text("Start");
+  Widget _widget = const Text("Start");
 
   int index = 0;
 
@@ -180,7 +180,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       header: Row(
         children: [
           Button(
-              child: Icon(FluentIcons.arrow_tall_up_left),
+              child: const Icon(FluentIcons.arrow_tall_up_left),
               onPressed: () {
                 Navigator.of(context).pop();
               }),
@@ -204,14 +204,14 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                 children: [
                   Text(
                     "Output Folder:- ${_outputPath.text}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    "Total ID Cards to be exported :- ${totalCount}",
-                    style: TextStyle(
+                    "Total ID Cards to be exported :- $totalCount",
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -224,8 +224,8 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                 value: (currentCount / totalCount) * 100,
                               ),
                               Text(
-                                "${currentCount}/${totalCount}",
-                                style: TextStyle(
+                                "$currentCount/$totalCount",
+                                style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -250,10 +250,10 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                           }
 
                           if (widget.isSelected[student.id]!) {
-                            print(
+                            logger.d(
                                 "-=------>   ${student.name} ${student.contact} ${student.studentClass}");
-                            GlobalKey _globalFrontKey = GlobalKey();
-                            GlobalKey _globalBackKey = GlobalKey();
+                            GlobalKey globalFrontKey = GlobalKey();
+                            GlobalKey globalBackKey = GlobalKey();
                             final labelList = <Widget>[];
                             final labelBackList = <Widget>[];
 
@@ -268,7 +268,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                       tempImage.lengthInBytes);
                               imageMap[student.photo[i].field] =
                                   audioUint8List.cast<int>();
-                              print(student.photo[i].field);
+                              logger.d(student.photo[i].field);
                             }
 
                             for (int i = 0;
@@ -276,7 +276,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                 i++) {
                               if (_idCardGenerationModel
                                   .idcard.labels[i].isPhoto) {
-                                print(
+                                logger.d(
                                     "Photo--> ${_idCardGenerationModel.idcard.labels[i].title}");
                               }
                             }
@@ -302,8 +302,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                   child: Image.memory(
                                     base64Decode(
                                       _idCardGenerationModel
-                                              .idcard.backgroundImagePath ??
-                                          "",
+                                          .idcard.backgroundImagePath,
                                     ),
                                     fit: BoxFit.fill,
                                   ),
@@ -495,7 +494,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                       ),
                                     ),
                                     child: RepaintBoundary(
-                                      key: _globalBackKey,
+                                      key: globalBackKey,
                                       child: SizedBox(
                                         height: _idCardGenerationModel
                                             .idcard.height
@@ -509,10 +508,10 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                   )
                                 : Container();
 
-                            print(
-                                "FrontKey : ${_globalFrontKey.currentState.toString()}");
-                            print(
-                                "BackKey : ${_globalBackKey.currentState.toString()}");
+                            logger.d(
+                                "FrontKey : ${globalFrontKey.currentState.toString()}");
+                            logger.d(
+                                "BackKey : ${globalBackKey.currentState.toString()}");
 
                             // await capturePng(
                             //     _globalFrontKey, "front", student.username);
@@ -536,8 +535,8 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
                         await _remoteServices.attachIDCard(_idCardAttachModel);
                       }),
-                      child: Center(
-                        child: Text("Generate"),
+                      child: const Center(
+                        child: const Text("Generate"),
                       ),
                     )
                   else
@@ -559,7 +558,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                 child: Center(
                                   child: Text(
                                     "Generating... $currentCount/$totalCount",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -567,7 +566,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                 ),
                               ),
                               Button(
-                                  child: Text("Stop Genrating"),
+                                  child: const Text("Stop Genrating"),
                                   onPressed: () {
                                     setState(() {
                                       isStop = true;

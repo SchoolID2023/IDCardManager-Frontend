@@ -2,7 +2,6 @@
 //
 //     final adminModel = adminModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 AdminModel adminModelFromJson(String str) => AdminModel.fromJson(json.decode(str));

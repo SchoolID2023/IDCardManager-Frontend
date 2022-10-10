@@ -6,6 +6,7 @@ import 'package:idcard_maker_frontend/homepage.dart';
 import 'package:idcard_maker_frontend/pages/add_id_card.dart';
 import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
+import '../services/logger.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -108,7 +109,6 @@ class _LoginPageState extends State<LoginPage> {
                                           showSnackbar(
                                             context,
                                             Snackbar(
-                                              
                                               content: Text(
                                                 'Wrong email or password',
                                               ),
@@ -139,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                           );
                                         } catch (e) {
-                                          print(e);
+                                          logger.d(e);
                                         }
                                       },
                                     ),
