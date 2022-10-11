@@ -32,7 +32,23 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NavigationView(
-      appBar: customNavigationAppBar("All Schools", context),     
+      appBar: customNavigationAppBar("All Schools", context,
+          isHomePage: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Button(
+                child: const Text("Log Out"),
+                onPressed: () async {
+                  final SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('token').then((value) => Navigator.of(context)
+                      .push(FluentPageRoute(
+                          builder: (context) => const LoginPage())));
+                },
+              ),
+            ),
+          ]),
       content: ScaffoldPage(
         header: Padding(
           padding: const EdgeInsets.symmetric(
