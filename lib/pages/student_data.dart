@@ -68,22 +68,18 @@ class StudentDataScreen extends StatelessWidget {
     double cheight = MediaQuery.of(context).size.height;
 
     return NavigationView(
-      appBar: customNavigationAppBar("Home", context),
+      appBar: customNavigationAppBar("School Info", context),
       content: ScaffoldPage(
           header: Row(
             children: [
-              isSchoolAdmin
-                  ? Container()
-                  : Button(
-                      child: const Icon(FluentIcons.arrow_tall_up_left),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      }),
-              Obx(() => Text(
-                    studentController.school.value.name,
-                    style: TextStyle(
-                      fontSize: 40,
-                      color: Colors.blue,
+              Obx(() => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      studentController.school.value.name,
+                      style: TextStyle(
+                        fontSize: 40,
+                        color: Colors.blue,
+                      ),
                     ),
                   )),
               isSchoolAdmin

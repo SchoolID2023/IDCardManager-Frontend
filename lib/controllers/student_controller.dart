@@ -34,6 +34,7 @@ class StudentController extends GetxController {
     id: "",
   ).obs;
 
+  School get getSchool => school.value;
 
   void addStudents(String schoolId, String excelFile) async {
     try {
@@ -95,10 +96,11 @@ class StudentController extends GetxController {
 
   void fetchSchool(String schoolId) async {
     try {
-      var school = await _remoteServices.getSchoolById(schoolId);
-      this.school.value = school;
+      isLoading(true);
+      logger.i("Fetching Schools ${schoolId}");
+      school.value = await _remoteServices.getSchoolById(schoolId);
     } finally {
-      // isLoading(false);
+      isLoading(false);
     }
   }
 

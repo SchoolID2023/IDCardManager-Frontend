@@ -37,5 +37,6 @@ NavigationAppBar customNavigationAppBar(
         WindowButtons()
       ],
     ),
+    
   );
 }

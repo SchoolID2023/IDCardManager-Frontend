@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/school_controller.dart';
+import 'package:idcard_maker_frontend/pages/school_info_page.dart';
 import 'package:idcard_maker_frontend/pages/student_data.dart';
 import '../models/schools_model.dart';
 
@@ -35,7 +36,10 @@ class SchoolTile extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(FluentPageRoute(builder: (context) {
-            return StudentDataScreen(
+            // return StudentDataScreen(
+            //   schoolId: school.id,
+            // );
+            return SchoolInfoPage(
               schoolId: school.id,
             );
           }));
