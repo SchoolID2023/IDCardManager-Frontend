@@ -34,10 +34,20 @@ class StudentController extends GetxController {
     id: "",
   ).obs;
 
+  var schoolLabels = SchoolLabels(
+    success: false,
+    labels: [],
+    photoLabels: [],
+  ).obs;
+
   School get getSchool => school.value;
   List<SchoolAdmin> get getAdmins => admins.value.schoolAdmins;
   List<Teacher> get getTeachers => teachers.value.teachers;
+  List<Student> get getStudents => students.value.students;
+  List<IdCard> get getIdCards => idCardList.value.idCards;
+  SchoolLabels get getSchoolLabels => schoolLabels.value;
 
+  // set setLoading(bool value) => isLoading.value = value;
 
   void addStudents(String schoolId, String excelFile) async {
     try {
@@ -108,6 +118,16 @@ class StudentController extends GetxController {
     }
   }
 
+  void fetchSchoolLabels(String schoolId) async {
+    try {
+      // isLoading(true);
+      logger.i("Fetching Schools ${schoolId}");
+      schoolLabels.value = await _remoteServices.getSchoolLabels(schoolId);
+    } finally {
+      // isLoading(false);
+    }
+  }
+
   void editSchool(School editSchool) async {
     try {
       school.value = editSchool;
@@ -125,7 +145,7 @@ class StudentController extends GetxController {
 
       logger.d("Teachers Fetched");
     } finally {
-       isLoading(false);
+      isLoading(false);
     }
   }
 

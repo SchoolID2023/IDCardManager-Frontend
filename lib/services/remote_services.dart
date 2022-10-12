@@ -317,6 +317,31 @@ class RemoteServices {
     }
   }
 
+  Future<SchoolLabels> getSchoolLabels(String schoolId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final userType = prefs.getString('userType');
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/$userType/viewSchoolById/$schoolId'),
+      headers: {
+        'Authorization': 'Biatch $token',
+        "Content-Type": "application/json"
+      },
+    );
+
+    logger.d(response);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      logger.d(data);
+
+      return SchoolLabels.fromJson(data);
+    } else {
+      throw Exception(response.statusCode);
+    }
+  }
+
   Future<String> addIdCard(IdCardModel idCard) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
