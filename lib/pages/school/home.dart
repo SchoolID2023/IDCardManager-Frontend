@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 
+import '../../widgets/add_school_admin.dart';
+import '../../widgets/add_school_teacher.dart';
 import '../../widgets/edit_school.dart';
 
 class Home extends StatefulWidget {
@@ -22,6 +24,8 @@ class _HomeState extends State<Home> {
     logger.i("Home Page SchoolID: ${widget.schoolId}");
     studentController = Get.put(StudentController(widget.schoolId));
     studentController.fetchSchool(widget.schoolId);
+    studentController.fetchAdmins(widget.schoolId);
+    studentController.fetchTeachers(widget.schoolId);
     super.initState();
   }
 
@@ -203,18 +207,18 @@ class _HomeState extends State<Home> {
                                         ),
                                         // child: Text("Hey"),
                                       ),
-                                       const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Divider(),
-                                            ),
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Divider(),
+                                      ),
                                       Text(
                                         "E Mail:- ${studentController.getSchool.email}",
                                         style: theme.typography.bodyLarge,
                                       ),
-                                       const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Divider(),
-                                            ),
+                                      const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Divider(),
+                                      ),
                                       Text(
                                         "Phone:- ${studentController.getSchool.contact}",
                                         style: theme.typography.bodyLarge,
@@ -224,12 +228,204 @@ class _HomeState extends State<Home> {
                                 )
                               : Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    "Staff Page",
-                                    textAlign: TextAlign.center,
-                                    style: theme.typography.title,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Card(
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      "Admins",
+                                                      style: theme
+                                                          .typography.bodyLarge,
+                                                    ),
+                                                    TextButton(
+                                                      child: const Text(
+                                                          "Add Admin"),
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AddSchoolAdmin(
+                                                                  schoolId: widget
+                                                                      .schoolId),
+                                                        );
+                                                      },
+                                                    ),
+                                                    ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount:
+                                                            studentController
+                                                                .getAdmins
+                                                                .length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                                  color: theme
+                                                                      .accentColor,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        4.0),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      studentController
+                                                                          .getAdmins[
+                                                                              index]
+                                                                          .name,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: theme
+                                                                          .typography
+                                                                          .bodyLarge,
+                                                                    ),
+                                                                    Text(
+                                                                      studentController
+                                                                          .getAdmins[
+                                                                              index]
+                                                                          .email,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: theme
+                                                                          .typography
+                                                                          .body,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Divider(),
+                                            ),
+                                            Flexible(
+                                              flex: 1,
+                                              child: Card(
+                                                child: Column(
+                                                  children: [
+                                                    Text(
+                                                      "Teachers",
+                                                      style: theme
+                                                          .typography.bodyLarge,
+                                                    ),
+                                                    TextButton(
+                                                      child: const Text(
+                                                          "Add Teacher"),
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (context) =>
+                                                              AddSchoolTeacher(
+                                                                  schoolId: widget
+                                                                      .schoolId),
+                                                        );
+                                                      },
+                                                    ),
+                                                    ListView.builder(
+                                                        shrinkWrap: true,
+                                                        itemCount:
+                                                            studentController
+                                                                .getTeachers
+                                                                .length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Container(
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                                  color: theme
+                                                                      .accentColor,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        4.0),
+                                                                child: Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Text(
+                                                                      studentController
+                                                                          .getTeachers[
+                                                                              index]
+                                                                          .name,
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: theme
+                                                                          .typography
+                                                                          .bodyLarge,
+                                                                    ),
+                                                                    Text(
+                                                                      "${studentController.getTeachers[index].teacherClass} - ${studentController.getTeachers[index].section}",
+                                                                      textAlign:
+                                                                          TextAlign
+                                                                              .center,
+                                                                      style: theme
+                                                                          .typography
+                                                                          .body,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        }),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        // child: Text("Hey"),
+                                      ),
+                                    ],
                                   ),
-                                ),
+                                )
                         ],
                       ),
                     ),

@@ -30,13 +30,12 @@ NavigationAppBar customNavigationAppBar(
     ),
     actions: Row(
       children: [
+        Expanded(child: MoveWindow()),
         Row(
           children: actions ?? [],
         ),
-        Expanded(child: MoveWindow()),
-        WindowButtons()
+        // WindowButtons()
       ],
     ),
-    
   );
 }

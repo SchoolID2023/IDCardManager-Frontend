@@ -35,6 +35,9 @@ class StudentController extends GetxController {
   ).obs;
 
   School get getSchool => school.value;
+  List<SchoolAdmin> get getAdmins => admins.value.schoolAdmins;
+  List<Teacher> get getTeachers => teachers.value.teachers;
+
 
   void addStudents(String schoolId, String excelFile) async {
     try {
@@ -87,10 +90,11 @@ class StudentController extends GetxController {
 
   void fetchAdmins(String schoolId) async {
     try {
+      isLoading(true);
       var admins = await _remoteServices.getSchoolAdmins(schoolId);
       this.admins.value = admins;
     } finally {
-      // isLoading(false);
+      isLoading(false);
     }
   }
 
@@ -115,12 +119,13 @@ class StudentController extends GetxController {
 
   void fetchTeachers(String schoolId) async {
     try {
+      isLoading(true);
       var teachers = await _remoteServices.getSchoolTeachers(schoolId);
       this.teachers.value = teachers;
 
       logger.d("Teachers Fetched");
     } finally {
-      // isLoading(false);
+       isLoading(false);
     }
   }
 
