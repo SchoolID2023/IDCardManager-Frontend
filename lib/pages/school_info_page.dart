@@ -26,10 +26,15 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
     // TODO: implement initState
     super.initState();
     studentController = Get.put(StudentController(widget.schoolId));
-    studentController.fetchSchoolLabels(widget.schoolId);
-    studentController.fetchSchool(widget.schoolId);
-    studentController.fetchAdmins(widget.schoolId);
-    studentController.fetchTeachers(widget.schoolId);
+
+    () async {
+      studentController.setLoading = true;
+      await studentController.fetchSchoolLabels(widget.schoolId);
+      await studentController.fetchSchool(widget.schoolId);
+      await studentController.fetchAdmins(widget.schoolId);
+      await studentController.fetchTeachers(widget.schoolId);
+      studentController.setLoading = false;
+    }();
   }
 
   @override

@@ -47,7 +47,7 @@ class StudentController extends GetxController {
   List<IdCard> get getIdCards => idCardList.value.idCards;
   SchoolLabels get getSchoolLabels => schoolLabels.value;
 
-  // set setLoading(bool value) => isLoading.value = value;
+  set setLoading(bool value) => isLoading.value = value;
 
   void addStudents(String schoolId, String excelFile) async {
     try {
@@ -98,27 +98,27 @@ class StudentController extends GetxController {
     }
   }
 
-  void fetchAdmins(String schoolId) async {
+  Future<void> fetchAdmins(String schoolId) async {
     try {
-      isLoading(true);
+      // isLoading(true);
       var admins = await _remoteServices.getSchoolAdmins(schoolId);
       this.admins.value = admins;
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 
-  void fetchSchool(String schoolId) async {
+  Future<void> fetchSchool(String schoolId) async {
     try {
-      isLoading(true);
+      // isLoading(true);
       logger.i("Fetching Schools ${schoolId}");
       school.value = await _remoteServices.getSchoolById(schoolId);
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 
-  void fetchSchoolLabels(String schoolId) async {
+  Future<void> fetchSchoolLabels(String schoolId) async {
     try {
       // isLoading(true);
       logger.i("Fetching Schools ${schoolId}");
@@ -137,15 +137,15 @@ class StudentController extends GetxController {
     }
   }
 
-  void fetchTeachers(String schoolId) async {
+  Future<void> fetchTeachers(String schoolId) async {
     try {
-      isLoading(true);
+      // isLoading(true);
       var teachers = await _remoteServices.getSchoolTeachers(schoolId);
       this.teachers.value = teachers;
 
       logger.d("Teachers Fetched");
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 
