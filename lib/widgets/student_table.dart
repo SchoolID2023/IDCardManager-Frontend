@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
 import 'package:idcard_maker_frontend/widgets/student_dialog.dart';
 import '../services/logger.dart';
 
@@ -12,15 +13,17 @@ class StudentTable extends StatefulWidget {
   final List<String> classes;
   final List<String> sections;
   final Map<String, bool> isSelected;
+  final String schoolId;
   final Function(String, bool) onSelected;
 
-  StudentTable({
+  const StudentTable({
     Key? key,
     required this.students,
     required this.isSelected,
     required this.onSelected,
     required this.classes,
     required this.sections,
+    required this.schoolId,
   }) : super(key: key);
 
   @override
@@ -157,7 +160,7 @@ class _StudentTableState extends State<StudentTable> {
                   widget.students.sort((a, b) => a.data[i].value
                       .toString()
                       .compareTo(b.data[i].value.toString()));
-                } 
+                }
               });
             },
           ),
@@ -261,7 +264,8 @@ class _StudentTableState extends State<StudentTable> {
                         width: 250,
                         child: fluent.DropDownButton(
                           title: classFilter != 'All'
-                              ? Text('Students of Class ${classFilter.toUpperCase()}')
+                              ? Text(
+                                  'Students of Class ${classFilter.toUpperCase()}')
                               : const Text('All Classes'),
                           items: List<fluent.MenuFlyoutItem>.generate(
                             widget.classes.length,
@@ -283,7 +287,8 @@ class _StudentTableState extends State<StudentTable> {
                         width: 250,
                         child: fluent.DropDownButton(
                           title: sectionFilter != 'All'
-                              ? Text('Students of Section ${sectionFilter.toUpperCase()}')
+                              ? Text(
+                                  'Students of Section ${sectionFilter.toUpperCase()}')
                               : const Text('All Sections'),
                           items: List<fluent.MenuFlyoutItem>.generate(
                             widget.sections.length,
@@ -299,6 +304,20 @@ class _StudentTableState extends State<StudentTable> {
                         ),
                       ),
                     ),
+                    fluent.FilledButton(
+                      child: Text("Generate ID Cards"),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return GenerateIdCard(
+                                students: widget.students,
+                                isSelected: widget.isSelected,
+                                schoolId: widget.schoolId,
+                              );
+                            });
+                      },
+                    )
                   ],
                 ),
               ],
@@ -318,7 +337,7 @@ class _StudentTableState extends State<StudentTable> {
 
               logger.d(isAllSelected);
             },
-            sortColumnIndex: 2,
+            // sortColumnIndex: 2,
             source: data,
             header: Row(
               children: [
@@ -455,7 +474,12 @@ class MyData extends DataTableSource {
 
       for (int i = 0; i < students[index].data.length; i++) {
         if (_isVisible[i] ?? false) {
-          studentData.add(students[index].data[i].value.toString());
+          if (i < students[index].data.length - 1) {
+            logger.i("Hayyyyyyeeeee");
+            studentData.add("No Value");
+          } else {
+            studentData.add(students[index].data[i].value.toString());
+          }
         }
       }
 

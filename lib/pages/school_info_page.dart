@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
+import 'package:idcard_maker_frontend/pages/school/students.dart';
 
 import '../services/remote_services.dart';
 import '../widgets/load_excel.dart';
@@ -33,6 +34,8 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
       await studentController.fetchSchool(widget.schoolId);
       await studentController.fetchAdmins(widget.schoolId);
       await studentController.fetchTeachers(widget.schoolId);
+      await studentController.fetchStudents(widget.schoolId);
+      await studentController.fetchIdCardList(widget.schoolId);
       studentController.setLoading = false;
     }();
   }
@@ -149,9 +152,10 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
           children: [
             Home(
               schoolId: widget.schoolId,
-              key: Key(widget.schoolId),
             ),
-            const Text("Students"),
+            Students(
+              schoolId: widget.schoolId,
+            ),
             const Text("ID Cards"),
           ],
         ),

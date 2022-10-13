@@ -69,7 +69,7 @@ class StudentController extends GetxController {
     }
   }
 
-  void fetchIdCardList(String schoolId) async {
+  Future<void> fetchIdCardList(String schoolId) async {
     try {
       // isLoading(true);
       var idCardList = await _remoteServices.getIdCardList(schoolId);

@@ -498,12 +498,7 @@ class StudentDataScreen extends StatelessWidget {
                                                                         Navigator.of(context)
                                                                             .pop();
                                                                       })
-                                                                  // Button(
-                                                                  //   child: Text(
-                                                                  //       "Edit"),
-                                                                  //   onPressed:
-                                                                  //       () {},
-                                                                  // ),
+                                                                  
                                                                 ],
                                                               ),
                                                             );
@@ -543,6 +538,7 @@ class StudentDataScreen extends StatelessWidget {
                                                       updateSelectedStudents,
                                                   classes: school.classes,
                                                   sections: school.sections,
+                                                  schoolId: schoolId,
                                                 ),
                                               )
                                             : const Text("No Students"),
