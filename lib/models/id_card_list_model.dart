@@ -47,11 +47,13 @@ class IdCard {
     required this.height,
     required this.v,
     required this.title,
+    required this.backgroundImagePath,
   });
 
   String id;
   bool isDual;
   String foregroundImagePath;
+  String? backgroundImagePath;
   String title;
   String schoolId;
   String labels;
@@ -69,6 +71,7 @@ class IdCard {
         height: json["height"],
         v: json["__v"],
         title: json["title"],
+        backgroundImagePath: json["backgroundImagePath"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,5 +84,6 @@ class IdCard {
         "height": height,
         "__v": v,
         "title": title,
+        "backgroundImagePath": backgroundImagePath,
       };
 }

@@ -66,7 +66,13 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
-                    child: Card(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: theme.accentColor,
+                        ),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
@@ -76,7 +82,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                                 studentController
                                     .getIdCards[index].foregroundImagePath,
                               ),
-                              height: 120,
+                              height: 140,
                               width: 100,
                               fit: BoxFit.cover,
                             ),
@@ -84,7 +90,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                               padding: const EdgeInsets.all(4.0),
                               child: Text(
                                 studentController.getIdCards[index].title,
-                                style: theme.typography.bodyLarge,
+                                style: theme.typography.body,
                               ),
                             ),
                           ],

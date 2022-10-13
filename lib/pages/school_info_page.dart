@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
+import 'package:idcard_maker_frontend/pages/school/idcard.dart';
 import 'package:idcard_maker_frontend/pages/school/students.dart';
 
 import '../services/remote_services.dart';
@@ -156,7 +157,9 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
             Students(
               schoolId: widget.schoolId,
             ),
-            const Text("ID Cards"),
+            IdCard(
+              schoolId: widget.schoolId,
+            )
           ],
         ),
       );
