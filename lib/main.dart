@@ -7,13 +7,13 @@ import '../services/logger.dart';
 
 Future<void> main() async {
   runApp(const MyApp());
-  doWhenWindowReady(() {
-    const initialSize = Size(1200, 450);
-    appWindow.minSize = initialSize;
-    appWindow.size = initialSize;
-    appWindow.alignment = Alignment.center;
-    appWindow.show();
-  });
+  // doWhenWindowReady(() {
+  //   const initialSize = Size(1200, 450);
+  //   appWindow.minSize = initialSize;
+  //   appWindow.size = initialSize;
+  //   appWindow.alignment = Alignment.center;
+  //   appWindow.show();
+  // });
 }
 
 class MyApp extends StatelessWidget {

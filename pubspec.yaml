@@ -48,7 +48,7 @@ dependencies:
   flutter_material_color_picker: ^1.1.0+2
   excel: ^2.0.0-null-safety-3
   dio: ^4.0.6
-  filesystem_picker: ^2.0.1
+  # filesystem_picker: ^2.0.1
   screenshot: ^1.2.3
   google_fonts: ^3.0.1
   archive: ^3.3.1

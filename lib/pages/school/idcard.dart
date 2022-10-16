@@ -4,6 +4,10 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 
+import '../../models/id_card_model.dart';
+import '../../widgets/load_id_card_data.dart';
+import '../edit_id_card.dart';
+
 class IdCard extends StatefulWidget {
   final String schoolId;
   const IdCard({super.key, required this.schoolId});
@@ -14,12 +18,18 @@ class IdCard extends StatefulWidget {
 
 class _IdCardState extends State<IdCard> {
   late StudentController studentController;
+  List<Label> labels = [];
 
   int selectedIndex = 0;
 
   @override
   void initState() {
     studentController = Get.put(StudentController(widget.schoolId));
+    for (var element in studentController.getSchoolLabels.labels) {
+      labels.add(Label(
+        title: element,
+      ));
+    }
     super.initState();
   }
 
@@ -41,13 +51,21 @@ class _IdCardState extends State<IdCard> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                         Text(
+                        Text(
                           "Your ID Cards",
                           style: theme.typography.title,
                         ),
                         IconButton(
                           icon: const Icon(FluentIcons.add),
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => LoadIdCardData(
+                                schoolId: widget.schoolId,
+                                labels: labels,
+                              ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -176,7 +194,18 @@ class _IdCardState extends State<IdCard> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: FilledButton(
                                       child: Text("Edit"),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                            FluentPageRoute(
+                                                builder: (context) =>
+                                                    EditIdCardPage(
+                                                      idCardId:
+                                                          studentController
+                                                              .getIdCards[
+                                                                  selectedIndex]
+                                                              .id,
+                                                    )));
+                                      },
                                     ),
                                   ),
                                 ),
@@ -184,8 +213,13 @@ class _IdCardState extends State<IdCard> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Button(
-                                      child: Text("Delete"),
-                                      onPressed: () {},
+                                      child: const Text("Delete"),
+                                      onPressed: () {
+                                        studentController.deleteIdCard(
+                                          studentController
+                                              .getIdCards[selectedIndex].id,
+                                        );
+                                      },
                                     ),
                                   ),
                                 ),
