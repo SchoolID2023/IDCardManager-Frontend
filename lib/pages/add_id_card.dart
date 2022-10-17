@@ -17,6 +17,7 @@ import '../services/logger.dart';
 // import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class AddIdCardPage extends StatefulWidget {
+  final String title;
   final List<Label> labels;
   final bool isDual;
   final double idCardWidth;
@@ -30,7 +31,7 @@ class AddIdCardPage extends StatefulWidget {
     required this.idCardWidth,
     required this.idCardHeight,
     required this.excelPath,
-    required this.schoolId,
+    required this.schoolId, required this.title,
   }) : super(key: key);
 
   @override
@@ -130,6 +131,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   void initState() {
     // TODO: implement initState
     _idCard = IdCardModel(
+      title: widget.title,
       id: DateTime.now().toString(),
       schoolId: widget.schoolId,
       labels: widget.labels,
@@ -483,20 +485,19 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   children: [
                                     _idCard.isDual
                                         ? ToggleSwitch(
-                                            checked: _idCard
-                                                .labels[index].isFront,
+                                            checked:
+                                                _idCard.labels[index].isFront,
                                             onChanged: (_) {
                                               setState(() {
-                                                _idCard.labels[index]
-                                                        .isFront =
-                                                    !_idCard.labels[index]
-                                                        .isFront;
+                                                _idCard.labels[index].isFront =
+                                                    !_idCard
+                                                        .labels[index].isFront;
                                               });
                                             },
-                                            content: _idCard
-                                                    .labels[index].isFront
-                                                ? const Text("On Front")
-                                                : const Text("On Back"),
+                                            content:
+                                                _idCard.labels[index].isFront
+                                                    ? const Text("On Front")
+                                                    : const Text("On Back"),
                                           )
                                         : Container(),
                                   ],
@@ -571,16 +572,14 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                                 _idCard.labels[ind].isFront,
                                             onChanged: (_) {
                                               setState(() {
-                                                _idCard.labels[ind]
-                                                        .isFront =
-                                                    !_idCard.labels[ind]
-                                                        .isFront;
+                                                _idCard.labels[ind].isFront =
+                                                    !_idCard
+                                                        .labels[ind].isFront;
                                               });
                                             },
-                                            content:
-                                                _idCard.labels[ind].isFront
-                                                    ? const Text("On Front")
-                                                    : const Text("On Back"),
+                                            content: _idCard.labels[ind].isFront
+                                                ? const Text("On Front")
+                                                : const Text("On Back"),
                                           )
                                         : Container(),
                                   ],
@@ -599,8 +598,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
 
                             _idCard.labels.forEach((label) {
                               if (label.isPrinted && label.isPhoto) {
-                                photoColumns.add(
-                                    label.title.toString().toLowerCase());
+                                photoColumns
+                                    .add(label.title.toString().toLowerCase());
                               }
                             });
 
@@ -753,8 +752,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                               .toString()
                                               .split('(0x')[1]
                                               .split(')')[0];
-                                          _idCard.labels[editableIndex]
-                                                  .color =
+                                          _idCard.labels[editableIndex].color =
                                               color
                                                   .toString()
                                                   .split('(0x')[1]

@@ -24,6 +24,30 @@ class RemoteServices {
 
   final String baseUrl = 'http://13.126.239.219:3000';
 
+  Future<void> sendOtp(String contact) async {
+    try {
+      await dio.post('$baseUrl/superAdmin/sendOtp', data: {'contact': contact});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> verifyOtp(String contact, String otp) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    try {
+      Response response = await dio
+          .post('$baseUrl/superAdmin/login', data: {'contact': contact, 'otp': otp});
+      // prefs.setString('token', response.data['token']);
+      logger.d(response.data);
+      prefs.setString('token', response.data['token']);
+      prefs.setString('userType', 'superAdmin');
+      prefs.setString('schoolId', response.data['schoolId']);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<String> login(String email, String password, bool isSuperAdmin) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 

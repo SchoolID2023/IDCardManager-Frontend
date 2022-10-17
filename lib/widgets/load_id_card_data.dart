@@ -19,41 +19,9 @@ class LoadIdCardData extends StatefulWidget {
 class _LoadIdCardDataState extends State<LoadIdCardData> {
   final TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
+  final TextEditingController _title = TextEditingController();
   final TextEditingController _idCardWidth = TextEditingController();
   final TextEditingController _idCardHeight = TextEditingController();
-
-  // Future<void> uploadExcel() async {
-  //   final result = await FilePicker.platform.pickFiles(
-  //     allowMultiple: false,
-  //     allowedExtensions: ['xls', 'xlsx'],
-  //   );
-
-  //   var file = result?.files.first;
-
-  //   var bytes = File(file!.path.toString()).readAsBytesSync();
-
-  //   setState(() {
-  //     _excelPath.text = file!.path.toString();
-  //   });
-
-  //   var excel = Excel.decodeBytes(bytes);
-
-  //   for (var table in excel.tables.keys) {
-  //     logger.d(table); //sheet Name
-  //     logger.d(excel.tables[table]?.maxCols);
-  //     logger.d(excel.tables[table]?.maxRows);
-  //     for (var cell in excel.tables[table]!.rows[0]) {
-  //       logger.d("${cell?.value}");
-  //       labels.add(
-  //         Label(
-  //           title: cell!.value.toString(),
-  //         ),
-  //       );
-  //     }
-
-  //     break;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +34,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
             onPressed: () {
               Navigator.of(context).push(FluentPageRoute(
                   builder: (context) => AddIdCardPage(
+                        title: _title.text,
                         schoolId: widget.schoolId,
                         labels: widget.labels,
                         isDual: isDual,
@@ -81,18 +50,25 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          TextBox(
+            controller: _title,
+            header: "Title",
+            placeholder: 'Enter title',
+          ),
           Row(
             children: [
               Expanded(
                 child: TextBox(
                   controller: _idCardWidth,
                   header: "ID Card Width",
+                  placeholder: 'Enter width',
                 ),
               ),
               Expanded(
                 child: TextBox(
                   controller: _idCardHeight,
                   header: "ID Card Height",
+                  placeholder: 'Enter height',
                 ),
               ),
               ToggleSwitch(

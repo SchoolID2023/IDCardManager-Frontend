@@ -13,6 +13,7 @@ String idCardModelToJson(IdCardModel data) => json.encode(data.toJson());
 
 class IdCardModel {
   IdCardModel({
+    required this.title,
     required this.id,
     required this.schoolId,
     required this.isDual,
@@ -22,6 +23,8 @@ class IdCardModel {
     required this.height,
     required this.labels,
   });
+
+  String title;
   String id;
   String schoolId;
   bool isDual;
@@ -32,6 +35,7 @@ class IdCardModel {
   List<Label> labels;
 
   factory IdCardModel.fromJson(Map<String, dynamic> json) => IdCardModel(
+        title: json["title"],
         isDual: json["isDual"],
         foregroundImagePath: json["foregroundImagePath"],
         backgroundImagePath: json["backgroundImagePath"] ?? "",
