@@ -2,8 +2,8 @@
 
 import 'package:fluent_ui/fluent_ui.dart';
 
-import '../models/id_card_model.dart';
-import '../pages/add_id_card.dart';
+import '../../models/id_card_model.dart';
+import '../../pages/add_id_card.dart';
 
 class LoadIdCardData extends StatefulWidget {
   final String schoolId;
@@ -32,6 +32,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
         Button(
             child: Text("OK"),
             onPressed: () {
+              Navigator.pop(context);
               Navigator.of(context).push(FluentPageRoute(
                   builder: (context) => AddIdCardPage(
                         title: _title.text,

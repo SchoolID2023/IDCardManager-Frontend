@@ -21,7 +21,9 @@ class _EditStudentState extends State<EditStudent> {
     "__v",
     "id",
     "currentSchool",
-    "idCard"
+    "idCard",
+    "otp",
+    "password",
   };
 
   @override

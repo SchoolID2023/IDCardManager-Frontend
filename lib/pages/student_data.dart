@@ -17,7 +17,7 @@ import '../models/schools_model.dart';
 import '../services/remote_services.dart';
 import '../widgets/add_school_admin.dart';
 import '../widgets/add_school_teacher.dart';
-import '../widgets/load_id_card_data.dart';
+import '../widgets/dialog/load_id_card_data.dart';
 import '../services/logger.dart';
 import 'edit_id_card.dart';
 import 'school_admin_login.dart';

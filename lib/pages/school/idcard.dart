@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 
 import '../../models/id_card_model.dart';
-import '../../widgets/load_id_card_data.dart';
+import '../../widgets/dialog/load_id_card_data.dart';
 import '../edit_id_card.dart';
 
 class IdCard extends StatefulWidget {
