@@ -498,7 +498,6 @@ class StudentDataScreen extends StatelessWidget {
                                                                         Navigator.of(context)
                                                                             .pop();
                                                                       })
-                                                                  
                                                                 ],
                                                               ),
                                                             );
@@ -524,25 +523,25 @@ class StudentDataScreen extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: cwidth,
-                                        height: 800,
-                                        child: students.isNotEmpty
-                                            ? InteractiveViewer(
-                                                scaleEnabled: false,
-                                                constrained: false,
-                                                child: StudentTable(
-                                                  students: students,
-                                                  isSelected: _selectedStudents,
-                                                  onSelected:
-                                                      updateSelectedStudents,
-                                                  classes: school.classes,
-                                                  sections: school.sections,
-                                                  schoolId: schoolId,
-                                                ),
-                                              )
-                                            : const Text("No Students"),
-                                      ),
+                                      // SizedBox(
+                                      //   width: cwidth,
+                                      //   height: 800,
+                                      //   child: students.isNotEmpty
+                                      //       ? InteractiveViewer(
+                                      //           scaleEnabled: false,
+                                      //           constrained: false,
+                                      //           child: StudentTable(
+                                      //             students: students,
+                                      //             isSelected: _selectedStudents,
+                                      //             onSelected:
+                                      //                 updateSelectedStudents,
+                                      //             classes: school.classes,
+                                      //             sections: school.sections,
+                                      //             schoolId: schoolId,
+                                      //           ),
+                                      //         )
+                                      //       : const Text("No Students"),
+                                      // ),
                                     ],
                                   ),
                                 ),

@@ -9,6 +9,8 @@ import '../services/logger.dart';
 import '../models/student_model.dart';
 
 class StudentTable extends StatefulWidget {
+  final List<String> labels;
+  final List<String> photoLabels;
   final List<Student> students;
   final List<String> classes;
   final List<String> sections;
@@ -24,6 +26,8 @@ class StudentTable extends StatefulWidget {
     required this.classes,
     required this.sections,
     required this.schoolId,
+    required this.labels,
+    required this.photoLabels,
   }) : super(key: key);
 
   @override
@@ -34,12 +38,13 @@ class _StudentTableState extends State<StudentTable> {
   bool isAllSelected = false;
   int photoIndex = -1;
   bool isFiltering = false;
-  int filterIndex = -1;
+  // int filterIndex = -1;
+  String filterField = '';
   String classFilter = 'All';
   String sectionFilter = 'All';
   final TextEditingController _filter = TextEditingController();
 
-  Set<String> filteredStudents = Set<String>();
+  List<String> filteredStudents = [];
 
   final ValueNotifier<bool> _isAllSelected = ValueNotifier(false);
   final ValueNotifier<Map<String, bool>> isSelected = ValueNotifier(
@@ -53,7 +58,7 @@ class _StudentTableState extends State<StudentTable> {
     widget.onSelected(studentId, isSelected);
   }
 
-  final Map<int, bool> _isVisible = <int, bool>{};
+  final Map<String, bool> _isVisible = <String, bool>{};
 
   @override
   void initState() {
@@ -62,9 +67,13 @@ class _StudentTableState extends State<StudentTable> {
 
     logger.d("Length-> ${widget.students[0].data.length}");
 
-    for (int i = 0; i < widget.students[0].data.length; i++) {
-      _isVisible[i] = false;
-      // logger.d("Field--> ${widget.students[0].data[i].field}");
+    // for (int i = 0; i < widget.students[0].data.length; i++) {
+    //   _isVisible[i] = false;
+    //   // logger.d("Field--> ${widget.students[0].data[i].field}");
+    // }
+
+    for (var element in widget.labels) {
+      _isVisible[element] = false;
     }
   }
 
@@ -73,19 +82,19 @@ class _StudentTableState extends State<StudentTable> {
     isSelected.value = widget.isSelected;
 
     List<DataColumn> columnName = [
-      DataColumn(
-        label: const Text('S. No.'),
-        onSort: (int columnIndex, bool ascending) {
-          setState(() {
-            if (columnIndex == 0) {
-              widget.students.sort((a, b) => a.id.compareTo(b.id));
-            } else {
-              widget.students.sort((a, b) => a.data[columnIndex - 1].value
-                  .toString()
-                  .compareTo(b.data[columnIndex - 1].value.toString()));
-            }
-          });
-        },
+      const DataColumn(
+        label: Text('S. No.'),
+        // onSort: (int columnIndex, bool ascending) {
+        //   setState(() {
+        //     if (columnIndex == 0) {
+        //       widget.students.sort((a, b) => a.id.compareTo(b.id));
+        //     } else {
+        //       widget.students.sort((a, b) => a.data[columnIndex - 1].value
+        //           .toString()
+        //           .compareTo(b.data[columnIndex - 1].value.toString()));
+        //     }
+        //   });
+        // },
       ),
       DataColumn(
         label: const Text('Name'),
@@ -147,32 +156,34 @@ class _StudentTableState extends State<StudentTable> {
       );
     }
 
-    for (int i = 0; i < widget.students[0].data.length; i++) {
-      // logger.d("Field--> ${element.field}");
+    int getIndex(Student student, String field) {
+      for (int i = 0; i < student.data.length; i++) {
+        if (student.data[i].field == field) {
+          return i;
+        }
+      }
+      return 0;
+    }
 
-      if (_isVisible[i] ?? false) {
+    for (String label in widget.labels) {
+      // logger.d("Field--> ${element.field}");
+      if (_isVisible[label] ?? false) {
         columnName.add(
           DataColumn(
-            label: Text(widget.students[0].data[i].field),
+            label: Text(label),
             onSort: (int columnIndex, bool ascending) {
               setState(() {
                 if (true) {
-                  widget.students.sort((a, b) => a.data[i].value
+                  widget.students.sort((a, b) => a
+                      .data[getIndex(a, label)].value
                       .toString()
-                      .compareTo(b.data[i].value.toString()));
+                      .compareTo(b.data[getIndex(a, label)].value.toString()));
                 }
               });
             },
           ),
         );
       }
-
-      // DataColumn(
-      //   label: Text(
-      //     widget.students[0].data[i].field,
-      //   ),
-      // ),
-
     }
     final DataTableSource data = MyData(
       widget.students,
@@ -183,7 +194,7 @@ class _StudentTableState extends State<StudentTable> {
       photoIndex,
       isFiltering,
       filteredStudents,
-      filterIndex,
+      filterField,
       classFilter,
       sectionFilter,
     );
@@ -202,11 +213,11 @@ class _StudentTableState extends State<StudentTable> {
                       SizedBox(
                         width: 150,
                         child: fluent.DropDownButton(
-                          title: filterIndex != -1
-                              ? Text(widget.students[0].data[filterIndex].field)
+                          title: filterField != ''
+                              ? Text(filterField)
                               : const Text('Search Data by'),
                           items: List<fluent.MenuFlyoutItem>.generate(
-                            widget.students[0].data.length,
+                            widget.labels.length,
                             (index) => fluent.MenuFlyoutItem(
                               // leading: fluent.Checkbox(
                               //   checked: _isVisible[index] ?? false,
@@ -216,10 +227,10 @@ class _StudentTableState extends State<StudentTable> {
                               //     });
                               //   },
                               // ),
-                              text: Text(widget.students[0].data[index].field),
+                              text: Text(widget.labels[index]),
                               onPressed: () {
                                 setState(() {
-                                  filterIndex = index;
+                                  filterField = widget.labels[index];
                                 });
                               },
                             ),
@@ -238,8 +249,10 @@ class _StudentTableState extends State<StudentTable> {
                           onPressed: () {
                             setState(() {
                               isFiltering = true;
-                              filteredStudents =
-                                  _filter.text.split(',').toSet();
+                              filteredStudents = _filter.text
+                                  .toLowerCase()
+                                  .split(',')
+                                  .toList();
                               logger.d(filteredStudents);
                             });
                           }),
@@ -250,7 +263,7 @@ class _StudentTableState extends State<StudentTable> {
                               isFiltering = false;
                               _filter.clear();
 
-                              filteredStudents = Set<String>();
+                              filteredStudents = [];
                             });
                           }),
                     ],
@@ -349,21 +362,22 @@ class _StudentTableState extends State<StudentTable> {
                     child: fluent.DropDownButton(
                       title: const Text('View Data'),
                       items: List<fluent.MenuFlyoutItem>.generate(
-                        widget.students[0].data.length,
+                        widget.labels.length,
                         (index) => fluent.MenuFlyoutItem(
                           leading: fluent.Checkbox(
-                            checked: _isVisible[index] ?? false,
+                            checked: _isVisible.values.elementAt(index),
                             onChanged: (value) {
                               setState(() {
-                                _isVisible[index] =
-                                    !(_isVisible[index] ?? false);
+                                _isVisible[_isVisible.keys.elementAt(index)] =
+                                    !(_isVisible.values.elementAt(index));
                               });
                             },
                           ),
-                          text: Text(widget.students[0].data[index].field),
+                          text: Text(_isVisible.keys.elementAt(index)),
                           onPressed: () {
                             setState(() {
-                              _isVisible[index] = !(_isVisible[index] ?? false);
+                              _isVisible[_isVisible.keys.elementAt(index)] =
+                                  !(_isVisible.values.elementAt(index));
                             });
                           },
                         ),
@@ -414,11 +428,11 @@ class MyData extends DataTableSource {
   final List<Student> students;
   final Function(String, bool) onSelected;
   final ValueNotifier<Map<String, bool>> isSelected;
-  final Map<int, bool> _isVisible;
+  final Map<String, bool> _isVisible;
   final int photoIndex;
   final bool isFiltering;
-  final Set<String> filteredStudents;
-  final int filterIndex;
+  final List<String> filteredStudents;
+  final String filterField;
   final String classFilter;
   final String sectionFilter;
 
@@ -433,16 +447,116 @@ class MyData extends DataTableSource {
     this.photoIndex,
     this.isFiltering,
     this.filteredStudents,
-    this.filterIndex,
+    this.filterField,
     this.classFilter,
     this.sectionFilter,
   ) {
+    bool ifFilter(Student student) {
+      bool value = false;
+      logger.i(
+          "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
+      if (filterField == "") {
+        for (var fields in _isVisible.keys) {
+          if (fields == 'name') {
+            for (var element in filteredStudents) {
+              if (student.name.toLowerCase().contains(element.toLowerCase())) {
+                value = true;
+                break;
+              }
+            }
+          } else if (fields == 'class') {
+            for (var element in filteredStudents) {
+              if (student.studentClass
+                  .toLowerCase()
+                  .contains(element.toLowerCase())) {
+                value = true;
+                break;
+              }
+            }
+          } else if (fields == 'section') {
+            for (var element in filteredStudents) {
+              if (student.section
+                  .toLowerCase()
+                  .contains(element.toLowerCase())) {
+                value = true;
+                break;
+              }
+            }
+          } else if (fields == 'contact') {
+            for (var element in filteredStudents) {
+              if (student.contact
+                  .toLowerCase()
+                  .contains(element.toLowerCase())) {
+                value = true;
+                break;
+              }
+            }
+          } else {
+            for (var element in filteredStudents) {
+              for (var data in student.data) {
+                if (data.value.toString().toLowerCase().contains(element.toLowerCase()) &&
+                    data.field
+                        .toLowerCase()
+                        .contains(filterField.toLowerCase())) {
+                  value = true;
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (filterField == 'name') {
+        for (var element in filteredStudents) {
+          if (student.name.toLowerCase().contains(element.toLowerCase())) {
+            value = true;
+            break;
+          }
+        }
+      } else if (filterField == 'class') {
+        for (var element in filteredStudents) {
+          if (student.studentClass
+              .toLowerCase()
+              .contains(element.toLowerCase())) {
+            value = true;
+            break;
+          }
+        }
+      } else if (filterField == 'section') {
+        for (var element in filteredStudents) {
+          if (student.section.toLowerCase().contains(element.toLowerCase())) {
+            value = true;
+            break;
+          }
+        }
+      } else if (filterField == 'contact') {
+        for (var element in filteredStudents) {
+          if (student.contact.toLowerCase().contains(element.toLowerCase())) {
+            value = true;
+            break;
+          }
+        }
+      } else {
+        for (var element in filteredStudents) {
+          for (var data in student.data) {
+            if (data.value.toString().toLowerCase().contains(element.toLowerCase()) &&
+                data.field.toLowerCase().contains(filterField.toLowerCase())) {
+              value = true;
+              break;
+            }
+          }
+        }
+      }
+
+      return value;
+    }
+
     for (int index = 0; index < students.length; index++) {
       if (isFiltering && filteredStudents.isNotEmpty) {
-        if (!filteredStudents
-            .contains(students[index].data[filterIndex].value.toString())) {
-          logger.d(
-              "##-> ${students[index].data[filterIndex].value} -- ${filteredStudents}");
+        if (!ifFilter(students[index])) {
+          // logger.d(
+          //     "##-> ${students[index].data[filterIndex].value} -- ${filteredStudents}");
           continue;
         }
       }
@@ -472,14 +586,25 @@ class MyData extends DataTableSource {
             'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png');
       }
 
-      for (int i = 0; i < students[index].data.length; i++) {
-        if (_isVisible[i] ?? false) {
-          if (i < students[index].data.length - 1) {
-            logger.i("Hayyyyyyeeeee");
-            studentData.add("No Value");
-          } else {
-            studentData.add(students[index].data[i].value.toString());
-          }
+      // for (int i = 0; i < students[index].data.length; i++) {
+      //   if (_isVisible[i] ?? false) {
+      //     if (i < students[index].data.length - 1) {
+      //       logger.i("Hayyyyyyeeeee");
+      //       studentData.add("No Value");
+      //     } else {
+      //       studentData.add(students[index].data[i].value.toString());
+      //     }
+      //   }
+      // }
+
+      for (var label in _isVisible.keys) {
+        if (_isVisible[label] ?? false) {
+          studentData.add(students[index]
+              .data
+              .firstWhere((element) => element.field == label,
+                  orElse: () => Datum(value: "No Value", field: "No Value"))
+              .value
+              .toString());
         }
       }
 

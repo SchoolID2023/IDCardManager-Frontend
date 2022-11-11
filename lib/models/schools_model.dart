@@ -41,19 +41,19 @@ String schoolLabelsToJson(SchoolLabels data) => json.encode(data.toJson());
 
 class SchoolLabels {
     SchoolLabels({
-        required this.success,
-        required this.labels,
+        required this.success,        
         required this.photoLabels,
+        required this.labels,
     });
 
     final bool success;
-    final List<String> labels;
-    final List<String> photoLabels;
+    List<String> labels = [];
+    List<String> photoLabels;
 
     factory SchoolLabels.fromJson(Map<String, dynamic> json) => SchoolLabels(
         success: json["success"],
-        labels: List<String>.from(json["labels"].map((x) => x)),
-        photoLabels: List<String>.from(json["photoLabels"].map((x) => x)),
+        labels: List<String>.from(json["labels"] ?? [].map((x) => x)),
+        photoLabels: List<String>.from(json["photoLabels"] ?? [].map((x) => x)),
     );
 
     Map<String, dynamic> toJson() => {

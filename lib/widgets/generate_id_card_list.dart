@@ -106,10 +106,11 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       } else if (field == "section") {
         value = student.section;
       } else {
+        logger.i("Student Data else section-> ${field}");
         value = student.data
             .firstWhere((element) => element.field == field,
                 orElse: () => student.data[0])
-            .value;
+            .value.toString();
       }
     }
 

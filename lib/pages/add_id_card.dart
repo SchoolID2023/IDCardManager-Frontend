@@ -48,6 +48,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   var _idCard;
   int nonPhotoLabels = 0;
   bool isInit = true;
+  bool isFrontView = true;
 
   int editableIndex = -1;
   String _pickedColor = "0xFF000000";
@@ -1137,8 +1138,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 ? backfile != null ||
                                         backfile == null && !_idCard.isDual
                                     ? Center(
-                                        child: SizedBox(
-                                          height: cheight,
+                                        child: SingleChildScrollView(
                                           child: GenerateIdCard(
                                             idCard: _idCard,
                                             updateIdCardPosition:
@@ -1152,19 +1152,33 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 : Container(),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 100,
-                            child: Slider(
-                              max: 400.0,
-                              min: 100.0,
-                              value: scaleFactor,
-                              onChanged: (v) => setState(() => scaleFactor = v),
-                              // Label is the text displayed above the slider when the user is interacting with it.
-                              label: '${scaleFactor.toInt()}',
+                        Row(
+                          children: [
+                            ToggleSwitch(
+                              checked: isFrontView,
+                              onChanged: (_) {
+                                setState(() {
+                                  isFrontView = !isFrontView;
+                                });
+                              },
                             ),
-                          ),
+                            const Spacer(),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 100,
+                                child: Slider(
+                                  max: 400.0,
+                                  min: 100.0,
+                                  value: scaleFactor,
+                                  onChanged: (v) =>
+                                      setState(() => scaleFactor = v),
+                                  // Label is the text displayed above the slider when the user is interacting with it.
+                                  label: '${scaleFactor.toInt()}',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

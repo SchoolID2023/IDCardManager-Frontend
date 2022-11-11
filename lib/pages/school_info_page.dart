@@ -78,7 +78,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                     context: context,
                     builder: (context) => LoadPhotos(
                       schoolId: widget.schoolId,
-                      fields: studentController.getSchoolLabels.photoLabels,
+                      fields: studentController.getSchoolLabels.labels,
                     ),
                   );
                 },
