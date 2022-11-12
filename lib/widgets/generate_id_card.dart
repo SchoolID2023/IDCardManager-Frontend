@@ -22,6 +22,7 @@ class GenerateIdCard extends StatefulWidget {
     required this.updateEditIndex,
     required this.scaleFactor,
     this.isEdit = false,
+    this.isFrontView = true,
   }) : super(key: key);
 
   IdCardModel idCard;
@@ -29,6 +30,7 @@ class GenerateIdCard extends StatefulWidget {
   Function updateEditIndex;
   double scaleFactor;
   bool isEdit = false;
+  bool isFrontView = true;
 
   @override
   State<GenerateIdCard> createState() => _GenerateIdCardState();
@@ -162,50 +164,45 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
     }
 
     return Container(
-      child: Row(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 1,
+      child: widget.isFrontView
+          ? Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                ),
+              ),
+              child: RepaintBoundary(
+                key: _globalFrontKey,
+                child: SizedBox(
+                  height: widget.idCard.height.toDouble() *
+                      widget.scaleFactor /
+                      100,
+                  width:
+                      widget.idCard.width.toDouble() * widget.scaleFactor / 100,
+                  child: Stack(children: labelList),
+                ),
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                ),
+              ),
+              child: RepaintBoundary(
+                key: _globalBackKey,
+                child: SizedBox(
+                  height: widget.idCard.height.toDouble() *
+                      widget.scaleFactor /
+                      100,
+                  width:
+                      widget.idCard.width.toDouble() * widget.scaleFactor / 100,
+                  child: Stack(children: labelBackList),
+                ),
               ),
             ),
-            child: RepaintBoundary(
-              key: _globalFrontKey,
-              child: SizedBox(
-                height:
-                    widget.idCard.height.toDouble() * widget.scaleFactor / 100,
-                width:
-                    widget.idCard.width.toDouble() * widget.scaleFactor / 100,
-                child: Stack(children: labelList),
-              ),
-            ),
-          ),
-          widget.idCard.isDual
-              ? Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    ),
-                  ),
-                  child: RepaintBoundary(
-                    key: _globalBackKey,
-                    child: SizedBox(
-                      height: widget.idCard.height.toDouble() *
-                          widget.scaleFactor /
-                          100,
-                      width: widget.idCard.width.toDouble() *
-                          widget.scaleFactor /
-                          100,
-                      child: Stack(children: labelBackList),
-                    ),
-                  ),
-                )
-              : Container(),
-        ],
-      ),
     );
 
     // return Stack(children: labelList);

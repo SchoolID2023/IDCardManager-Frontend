@@ -5,7 +5,7 @@ import 'package:idcard_maker_frontend/pages/school/idcard.dart';
 import 'package:idcard_maker_frontend/pages/school/students.dart';
 
 import '../services/remote_services.dart';
-import '../widgets/load_excel.dart';
+import '../widgets/dialog/load_excel.dart';
 import '../widgets/load_photos.dart';
 import '../widgets/titlebar/navigation_app_bar.dart';
 import 'school/home.dart';

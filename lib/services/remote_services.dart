@@ -704,6 +704,7 @@ class RemoteServices {
     } catch (e) {
       logger.d("Error----->");
       logger.d(e);
+      
       throw Exception("Normal Error");
     }
   }

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart' as mat;
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/widgets/edit_school.dart';
 import 'package:idcard_maker_frontend/widgets/generate_id_card_list.dart';
-import 'package:idcard_maker_frontend/widgets/load_excel.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/load_excel.dart';
 import 'package:idcard_maker_frontend/widgets/load_photos.dart';
 import 'package:idcard_maker_frontend/widgets/student_table.dart';
 import 'package:idcard_maker_frontend/widgets/titlebar/navigation_app_bar.dart';

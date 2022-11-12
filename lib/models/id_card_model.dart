@@ -35,7 +35,7 @@ class IdCardModel {
   List<Label> labels;
 
   factory IdCardModel.fromJson(Map<String, dynamic> json) => IdCardModel(
-        title: json["title"],
+        title: json["title"] ?? "No Title Given",
         isDual: json["isDual"],
         foregroundImagePath: json["foregroundImagePath"],
         backgroundImagePath: json["backgroundImagePath"] ?? "",
@@ -50,6 +50,7 @@ class IdCardModel {
         "isDual": isDual,
         // "foregroundImagePath": foregroundImagePath,
         // "backgroundImagePath": backgroundImagePath,
+        "title": title,
         "width": width,
         "height": height,
         "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
@@ -71,6 +72,9 @@ class Label {
     this.isPhoto = false,
     this.fontName = "Amiko",
     this.textAlign = "left",
+    this.isBold = false,
+    this.isItalic = false,
+    this.isUnderline = false,
   });
 
   String title;
@@ -85,6 +89,9 @@ class Label {
   bool isPhoto;
   String fontName;
   String textAlign;
+  bool isBold;
+  bool isItalic;
+  bool isUnderline;
 
   factory Label.fromJson(Map<String, dynamic> json) => Label(
         title: json["title"],

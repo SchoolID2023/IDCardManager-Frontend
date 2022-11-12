@@ -25,6 +25,7 @@ class AddIdCardPage extends StatefulWidget {
   final double idCardHeight;
   final String excelPath;
   final String schoolId;
+
   const AddIdCardPage({
     Key? key,
     required this.labels,
@@ -208,8 +209,32 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
       appBar: customNavigationAppBar(widget.title, context, actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),
+          child: Button(
+            onPressed: () {
+              Navigator.of(context).push(
+                FluentPageRoute(
+                  builder: (context) => PreviewIdCard(
+                    idCard: _idCard,
+                    isEdit: false,
+                    dummyStudent: dummyStudent,
+                  ),
+                ),
+              );
+            },
+            child: const Text(
+              "Preview",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
           child: FilledButton(
-            onPressed: () async {},
+            onPressed: () async {
+              await _studentController.addIdCard(_idCard).then((value) {
+                Navigator.of(context).pop();
+              });
+            },
             child: const Text(
               "Save",
               style: TextStyle(color: Colors.white),
@@ -415,7 +440,10 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _idCard.labels[editableIndex].bold =
+                                          !_idCard.labels[editableIndex].bold;
+                                    },
                                     icon: const Icon(FluentIcons.bold),
                                   ),
                                 ),
@@ -426,7 +454,10 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _idCard.labels[editableIndex].italic =
+                                          !_idCard.labels[editableIndex].italic;
+                                    },
                                     icon: const Icon(FluentIcons.italic),
                                   ),
                                 ),
@@ -437,7 +468,11 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      _idCard.labels[editableIndex].isUnderline =
+                                          !_idCard
+                                              .labels[editableIndex].isUunderline;
+                                    },
                                     icon: const Icon(FluentIcons.underline),
                                   ),
                                 ),
@@ -461,7 +496,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() {
+                                        _idCard.labels[editableIndex]
+                                            .textAlign = "left";
+                                      });
+                                    },
                                     icon: const Icon(FluentIcons.align_left),
                                   ),
                                 ),
@@ -472,7 +512,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() {
+                                        _idCard.labels[editableIndex]
+                                            .textAlign = "center";
+                                      });
+                                    },
                                     icon: const Icon(FluentIcons.align_center),
                                   ),
                                 ),
@@ -483,7 +528,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      setState(() {
+                                        _idCard.labels[editableIndex]
+                                            .textAlign = "right";
+                                      });
+                                    },
                                     icon: const Icon(FluentIcons.align_right),
                                   ),
                                 ),
@@ -1079,26 +1129,26 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
             //     },
             //   ),
             // ),
-            //           Padding(
-            //             padding: const EdgeInsets.all(8.0),
-            //             child: Button(
-            //                 onPressed: () async {
-            //                   List<String> photoColumns = [];
+            // Padding(
+            //   padding: const EdgeInsets.all(8.0),
+            //   child: Button(
+            //       onPressed: () async {
+            //         List<String> photoColumns = [];
 
-            //                   _idCard.labels.forEach((label) {
-            //                     if (label.isPrinted && label.isPhoto) {
-            //                       photoColumns.add(
-            //                           label.title.toString().toLowerCase());
-            //                     }
-            //                   });
+            //         _idCard.labels.forEach((label) {
+            //           if (label.isPrinted && label.isPhoto) {
+            //             photoColumns.add(
+            //                 label.title.toString().toLowerCase());
+            //           }
+            //         });
 
-            //                   String idCardId =
-            //                       await _studentController.addIdCard(_idCard);
+            //         String idCardId =
+            //             await _studentController.addIdCard(_idCard);
 
-            //                   Navigator.of(context).pop();
-            //                 },
-            //                 child: const Text('Save')),
-            //           ),
+            //         Navigator.of(context).pop();
+            //       },
+            //       child: const Text('Save')),
+            // ),
 
             //           // SizedBox(
             //           //   width: 300,
@@ -1145,6 +1195,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                                 _updatePostion,
                                             updateEditIndex: updateEditIndex,
                                             scaleFactor: scaleFactor,
+                                            isFrontView: isFrontView,
                                           ),
                                         ),
                                       )
@@ -1154,14 +1205,22 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                         ),
                         Row(
                           children: [
-                            ToggleSwitch(
-                              checked: isFrontView,
-                              onChanged: (_) {
-                                setState(() {
-                                  isFrontView = !isFrontView;
-                                });
-                              },
-                            ),
+                            widget.isDual
+                                ? Row(
+                                    children: [
+                                      Text("Back"),
+                                      ToggleSwitch(
+                                        checked: isFrontView,
+                                        onChanged: (_) {
+                                          setState(() {
+                                            isFrontView = !isFrontView;
+                                          });
+                                        },
+                                      ),
+                                      Text("Front"),
+                                    ],
+                                  )
+                                : Container(),
                             const Spacer(),
                             Padding(
                               padding: const EdgeInsets.all(8.0),

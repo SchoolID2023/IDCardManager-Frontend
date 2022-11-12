@@ -70,7 +70,7 @@ class IdCard {
         width: json["width"],
         height: json["height"],
         v: json["__v"],
-        title: json["title"],
+        title: json["title"] ?? "No Title Given",
         backgroundImagePath: json["backgroundImagePath"],
       );
 

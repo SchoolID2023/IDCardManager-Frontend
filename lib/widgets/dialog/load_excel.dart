@@ -5,9 +5,9 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:excel/excel.dart';
 import 'package:get/get.dart';
 
-import '../controllers/student_controller.dart';
-import '../models/id_card_model.dart';
-import '../services/logger.dart';
+import '../../controllers/student_controller.dart';
+import '../../models/id_card_model.dart';
+import '../../services/logger.dart';
 
 class LoadExcel extends StatefulWidget {
   final String schoolId;
@@ -92,7 +92,9 @@ class _LoadExcelState extends State<LoadExcel> {
             Button(
               child: const Text("Upload Excel"),
               onPressed: () async {
-                await uploadExcel();
+                await uploadExcel().then(
+                  (value) => Navigator.of(context).pop(),
+                );
               },
             ),
           ],

@@ -44,6 +44,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
                         idCardHeight:
                             double.parse(_idCardHeight.text) * 3.7795275591,
                         excelPath: _excelPath.text,
+                        
                       )));
             }),
         Button(child: Text("CANCEL"), onPressed: () => Navigator.pop(context)),
