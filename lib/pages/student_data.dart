@@ -19,7 +19,7 @@ import '../widgets/add_school_admin.dart';
 import '../widgets/add_school_teacher.dart';
 import '../widgets/dialog/load_id_card_data.dart';
 import '../services/logger.dart';
-import 'edit_id_card.dart';
+import 'edit_id_card_2.dart';
 import 'school_admin_login.dart';
 
 class StudentDataScreen extends StatelessWidget {

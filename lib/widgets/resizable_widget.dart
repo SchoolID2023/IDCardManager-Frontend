@@ -36,16 +36,20 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
     logger.d("Scale->${widget.myScale}");
     Label temp = widget.label;
     _label = Label(
-        title: temp.title,
-        color: temp.color,
-        x: temp.x * widget.myScale,
-        y: temp.y * widget.myScale,
-        width: temp.width * widget.myScale,
-        height: temp.height * widget.myScale,
-        fontSize: (temp.fontSize * widget.myScale).toInt(),
-        fontName: temp.fontName,
-        textAlign: temp.textAlign,
-        isPhoto: temp.isPhoto);
+      title: temp.title,
+      color: temp.color,
+      x: temp.x * widget.myScale,
+      y: temp.y * widget.myScale,
+      width: temp.width * widget.myScale,
+      height: temp.height * widget.myScale,
+      fontSize: (temp.fontSize * widget.myScale).toInt(),
+      fontName: temp.fontName,
+      textAlign: temp.textAlign,
+      isPhoto: temp.isPhoto,
+      isBold: temp.isBold,
+      isItalic: temp.isItalic,
+      isUnderline: temp.isUnderline,
+    );
     // height = widget.label.height;
     // width = widget.label.width;
     // top = widget.label.y;
@@ -160,6 +164,14 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                     ),
                   ),
                   fontSize: _label.fontSize.toDouble(),
+                  fontWeight:
+                      _label.isBold ? FontWeight.bold : FontWeight.normal,
+                  // fontWeight: FontWeight.bold,
+                  fontStyle:
+                      _label.isItalic ? FontStyle.italic : FontStyle.normal,
+                  decoration: _label.isUnderline
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
                 ),
               ),
             ),

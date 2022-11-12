@@ -895,7 +895,7 @@ class RemoteServices {
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
 
-        logger.d(data);
+        // logger.d(data);
 
         logger.d("Id Card Generation Model Added");
         return IdCardGenerationModel.fromJson(data);

@@ -106,6 +106,9 @@ class Label {
         isPhoto: json["isPhoto"],
         fontName: json["fontName"] ?? 'ABeeZee',
         textAlign: json["textAlign"] ?? 'left',
+        isBold: json["isBold"] ?? false,
+        isItalic: json["isItalic"] ?? false,
+        isUnderline: json["isUnderline"] ?? false,
       );
 
   Map<String, dynamic> toJson() => {

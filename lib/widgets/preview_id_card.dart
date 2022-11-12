@@ -55,7 +55,7 @@ class PreviewIdCard extends StatelessWidget {
                       field: field,
                       value: "test $field",
                     ))
-            .value;
+            .value.toString();
       }
     }
 
@@ -168,6 +168,15 @@ class PreviewIdCard extends StatelessWidget {
                           ),
                         ),
                         fontSize: idCard.labels[i].fontSize.toDouble(),
+                        fontWeight: idCard.labels[i].isBold
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        fontStyle: idCard.labels[i].isItalic
+                            ? FontStyle.italic
+                            : FontStyle.normal,
+                        decoration: idCard.labels[i].isUnderline
+                            ? TextDecoration.underline
+                            : TextDecoration.none,
                       ),
                     ),
             ),

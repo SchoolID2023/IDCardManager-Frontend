@@ -286,8 +286,6 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   _fontName = fontName.toString();
                                   _idCard.labels[editableIndex].fontName =
                                       _fontName;
-                                  logger.d('Helooooooo $_fontName');
-                                  logger.d('Helooooooo2 $_fontName');
                                 });
                               },
                             ),
@@ -441,8 +439,13 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
-                                      _idCard.labels[editableIndex].bold =
-                                          !_idCard.labels[editableIndex].bold;
+                                      setState(() {
+                                        _idCard.labels[editableIndex].isBold =
+                                            !_idCard
+                                                .labels[editableIndex].isBold;
+                                      });
+                                      logger.i(
+                                          "Bold: ${_idCard.labels[editableIndex].isBold}");
                                     },
                                     icon: const Icon(FluentIcons.bold),
                                   ),
@@ -455,8 +458,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
-                                      _idCard.labels[editableIndex].italic =
-                                          !_idCard.labels[editableIndex].italic;
+                                      setState(() {
+                                        _idCard.labels[editableIndex].isItalic =
+                                            !_idCard
+                                                .labels[editableIndex].isItalic;
+                                      });
+                                      logger.i("Italic: ${_idCard.labels[editableIndex].isItalic}");
                                     },
                                     icon: const Icon(FluentIcons.italic),
                                   ),
@@ -469,9 +476,13 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
-                                      _idCard.labels[editableIndex].isUnderline =
-                                          !_idCard
-                                              .labels[editableIndex].isUunderline;
+                                      setState(() {
+                                        _idCard.labels[editableIndex]
+                                                .isUnderline =
+                                            !_idCard.labels[editableIndex]
+                                                .isUnderline;
+                                      });
+                                      logger.i("Underline: ${_idCard.labels[editableIndex].isUnderline}");
                                     },
                                     icon: const Icon(FluentIcons.underline),
                                   ),

@@ -110,7 +110,8 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
         value = student.data
             .firstWhere((element) => element.field == field,
                 orElse: () => student.data[0])
-            .value.toString();
+            .value
+            .toString();
       }
     }
 
@@ -397,6 +398,18 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                                 fontSize: _idCardGenerationModel
                                                     .idcard.labels[i].fontSize
                                                     .toDouble(),
+                                                fontWeight: _idCardGenerationModel
+                                                    .idcard.labels[i].isBold
+                                                    ? FontWeight.bold
+                                                    : FontWeight.normal,
+                                                fontStyle: _idCardGenerationModel
+                                                    .idcard.labels[i].isItalic
+                                                    ? FontStyle.italic
+                                                    : FontStyle.normal,
+                                                decoration: _idCardGenerationModel
+                                                    .idcard.labels[i].isUnderline
+                                                    ? TextDecoration.underline
+                                                    : TextDecoration.none,
                                               ),
                                             ),
                                     ),
