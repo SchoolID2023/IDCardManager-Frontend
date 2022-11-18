@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -126,52 +127,57 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
           Positioned(
             top: _label.y,
             left: _label.x,
-            child: Container(
-              height: _label.height,
-              width: _label.width,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1,
-                ),
-                color: Colors.lightBlue[100],
-                image: _label.isPhoto
-                    ? const DecorationImage(
-                        image: const NetworkImage(
-                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
-                        ),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child: Text(
-                _label.title,
-                textAlign: _label.textAlign == "left"
-                    ? TextAlign.left
-                    : _label.textAlign == "right"
-                        ? TextAlign.right
-                        : TextAlign.center,
-                // style: TextStyle(
-                //   fontSize: _label.fontSize.toDouble(),
-                //   color: Color(int.parse(_label.color, radix: 16)),
-
-                // ),
-                style: GoogleFonts.asMap()[_label.fontName]!(
-                  color: Color(
-                    int.parse(
-                      _label.color,
-                      radix: 16,
-                    ),
+            child: Draggable(
+              feedback: Container(),
+              
+              
+              child: Container(
+                height: _label.height,
+                width: _label.width,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
                   ),
-                  fontSize: _label.fontSize.toDouble(),
-                  fontWeight:
-                      _label.isBold ? FontWeight.bold : FontWeight.normal,
-                  // fontWeight: FontWeight.bold,
-                  fontStyle:
-                      _label.isItalic ? FontStyle.italic : FontStyle.normal,
-                  decoration: _label.isUnderline
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
+                  color: Colors.lightBlue[100],
+                  image: _label.isPhoto
+                      ? const DecorationImage(
+                          image: const NetworkImage(
+                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+                          ),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                child: Text(
+                  _label.title,
+                  textAlign: _label.textAlign == "left"
+                      ? TextAlign.left
+                      : _label.textAlign == "right"
+                          ? TextAlign.right
+                          : TextAlign.center,
+                  // style: TextStyle(
+                  //   fontSize: _label.fontSize.toDouble(),
+                  //   color: Color(int.parse(_label.color, radix: 16)),
+            
+                  // ),
+                  style: GoogleFonts.asMap()[_label.fontName]!(
+                    color: Color(
+                      int.parse(
+                        _label.color,
+                        radix: 16,
+                      ),
+                    ),
+                    fontSize: _label.fontSize.toDouble(),
+                    fontWeight:
+                        _label.isBold ? FontWeight.bold : FontWeight.normal,
+                    // fontWeight: FontWeight.bold,
+                    fontStyle:
+                        _label.isItalic ? FontStyle.italic : FontStyle.normal,
+                    decoration: _label.isUnderline
+                        ? TextDecoration.underline
+                        : TextDecoration.none,
+                  ),
                 ),
               ),
             ),

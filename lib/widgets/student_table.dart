@@ -17,8 +17,9 @@ class StudentTable extends StatefulWidget {
   final Map<String, bool> isSelected;
   final String schoolId;
   final Function(String, bool) onSelected;
+  // final ScrollController ScrollController() = ScrollController();
 
-  const StudentTable({
+  StudentTable({
     Key? key,
     required this.students,
     required this.isSelected,
@@ -198,172 +199,171 @@ class _StudentTableState extends State<StudentTable> {
       classFilter,
       sectionFilter,
     );
-    return SizedBox(
-      width: columnName.length * 150,
-      child: fluent.Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: fluent.Column(
-              children: [
-                fluent.Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: fluent.Row(
-                    children: [
-                      SizedBox(
-                        width: 150,
-                        child: fluent.DropDownButton(
-                          title: filterField != ''
-                              ? Text(filterField)
-                              : const Text('Search Data by'),
-                          items: List<fluent.MenuFlyoutItem>.generate(
-                            widget.labels.length,
-                            (index) => fluent.MenuFlyoutItem(
-                              // leading: fluent.Checkbox(
-                              //   checked: _isVisible[index] ?? false,
-                              //   onChanged: (value) {
-                              //     setState(() {
-                              //       _isVisible[index] = !(_isVisible[index] ?? false);
-                              //     });
-                              //   },
-                              // ),
-                              text: Text(widget.labels[index]),
-                              onPressed: () {
-                                setState(() {
-                                  filterField = widget.labels[index];
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      fluent.SizedBox(
-                        width: 400,
-                        child: fluent.TextBox(
-                          placeholder: 'Search',
-                          controller: _filter,
-                        ),
-                      ),
-                      fluent.Button(
-                          child: const Text("Filter"),
-                          onPressed: () {
-                            setState(() {
-                              isFiltering = true;
-                              filteredStudents = _filter.text
-                                  .toLowerCase()
-                                  .split(',')
-                                  .toList();
-                              logger.d(filteredStudents);
-                            });
-                          }),
-                      fluent.Button(
-                          child: const Text("Clear Filter"),
-                          onPressed: () {
-                            setState(() {
-                              isFiltering = false;
-                              _filter.clear();
-
-                              filteredStudents = [];
-                            });
-                          }),
-                    ],
-                  ),
-                ),
-                fluent.Row(
+    return fluent.Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: fluent.Column(
+            children: [
+              fluent.Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: fluent.Row(
                   children: [
-                    fluent.Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 250,
-                        child: fluent.DropDownButton(
-                          title: classFilter != 'All'
-                              ? Text(
-                                  'Students of Class ${classFilter.toUpperCase()}')
-                              : const Text('All Classes'),
-                          items: List<fluent.MenuFlyoutItem>.generate(
-                            widget.classes.length,
-                            (index) => fluent.MenuFlyoutItem(
-                              text: Text(widget.classes[index]),
-                              onPressed: () {
-                                setState(() {
-                                  classFilter = widget.classes[index];
-                                });
-                              },
-                            ),
+                    SizedBox(
+                      width: 150,
+                      child: fluent.DropDownButton(
+                        title: filterField != ''
+                            ? Text(filterField)
+                            : const Text('Search Data by'),
+                        items: List<fluent.MenuFlyoutItem>.generate(
+                          widget.labels.length,
+                          (index) => fluent.MenuFlyoutItem(
+                            // leading: fluent.Checkbox(
+                            //   checked: _isVisible[index] ?? false,
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       _isVisible[index] = !(_isVisible[index] ?? false);
+                            //     });
+                            //   },
+                            // ),
+                            text: Text(widget.labels[index]),
+                            onPressed: () {
+                              setState(() {
+                                filterField = widget.labels[index];
+                              });
+                            },
                           ),
                         ),
                       ),
                     ),
-                    fluent.Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 250,
-                        child: fluent.DropDownButton(
-                          title: sectionFilter != 'All'
-                              ? Text(
-                                  'Students of Section ${sectionFilter.toUpperCase()}')
-                              : const Text('All Sections'),
-                          items: List<fluent.MenuFlyoutItem>.generate(
-                            widget.sections.length,
-                            (index) => fluent.MenuFlyoutItem(
-                              text: Text(widget.sections[index]),
-                              onPressed: () {
-                                setState(() {
-                                  sectionFilter = widget.sections[index];
-                                });
-                              },
-                            ),
-                          ),
-                        ),
+                    fluent.SizedBox(
+                      width: 400,
+                      child: fluent.TextBox(
+                        placeholder: 'Search',
+                        controller: _filter,
                       ),
                     ),
-                    fluent.FilledButton(
-                      child: Text("Generate ID Cards"),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return GenerateIdCard(
-                                students: widget.students,
-                                isSelected: widget.isSelected,
-                                schoolId: widget.schoolId,
-                              );
-                            });
-                      },
-                    )
+                    fluent.Button(
+                        child: const Text("Filter"),
+                        onPressed: () {
+                          setState(() {
+                            isFiltering = true;
+                            filteredStudents =
+                                _filter.text.toLowerCase().split(',').toList();
+                            logger.d(filteredStudents);
+                          });
+                        }),
+                    fluent.Button(
+                        child: const Text("Clear Filter"),
+                        onPressed: () {
+                          setState(() {
+                            isFiltering = false;
+                            _filter.clear();
+
+                            filteredStudents = [];
+                          });
+                        }),
                   ],
                 ),
-              ],
-            ),
+              ),
+              fluent.Row(
+                children: [
+                  fluent.Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: 250,
+                      child: fluent.DropDownButton(
+                        title: classFilter != 'All'
+                            ? Text(
+                                'Students of Class ${classFilter.toUpperCase()}')
+                            : const Text('All Classes'),
+                        items: List<fluent.MenuFlyoutItem>.generate(
+                          widget.classes.length,
+                          (index) => fluent.MenuFlyoutItem(
+                            text: Text(widget.classes[index]),
+                            onPressed: () {
+                              setState(() {
+                                classFilter = widget.classes[index];
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  fluent.Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: 250,
+                      child: fluent.DropDownButton(
+                        title: sectionFilter != 'All'
+                            ? Text(
+                                'Students of Section ${sectionFilter.toUpperCase()}')
+                            : const Text('All Sections'),
+                        items: List<fluent.MenuFlyoutItem>.generate(
+                          widget.sections.length,
+                          (index) => fluent.MenuFlyoutItem(
+                            text: Text(widget.sections[index]),
+                            onPressed: () {
+                              setState(() {
+                                sectionFilter = widget.sections[index];
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  fluent.FilledButton(
+                    child: Text("Generate ID Cards"),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return GenerateIdCard(
+                              students: widget.students,
+                              isSelected: widget.isSelected,
+                              schoolId: widget.schoolId,
+                            );
+                          });
+                    },
+                  )
+                ],
+              ),
+            ],
           ),
-          PaginatedDataTable(
-            onSelectAll: (selectedValue) {
-              for (var student in widget.students) {
-                widget.onSelected(student.id, selectedValue!);
-              }
+        ),
+        PaginatedDataTable(
+          // controller: ScrollController(),
+          onSelectAll: (selectedValue) {
+            for (var student in widget.students) {
+              widget.onSelected(student.id, selectedValue!);
+            }
 
-              isSelected.value
-                  .updateAll((key, value) => value = selectedValue!);
-              setState(() {
-                isAllSelected = selectedValue!;
-              });
+            isSelected.value.updateAll((key, value) => value = selectedValue!);
+            setState(() {
+              isAllSelected = selectedValue!;
+            });
 
-              logger.d(isAllSelected);
-            },
-            // sortColumnIndex: 2,
-            source: data,
-            header: Row(
-              children: [
-                const Text('Students'),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 150,
-                    child: fluent.DropDownButton(
-                      title: const Text('View Data'),
-                      items: List<fluent.MenuFlyoutItem>.generate(
-                        widget.labels.length,
-                        (index) => fluent.MenuFlyoutItem(
+            logger.d(isAllSelected);
+          },
+          // sortColumnIndex: 2,
+          source: data,
+          header: Row(
+            children: [
+              const Text('Students'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 150,
+                  child: fluent.DropDownButton(
+                    title: const Text('View Data'),
+                    items: List<fluent.MenuFlyoutItem>.generate(
+                      widget.labels.length - 5,
+                      (index) {
+                        index += 5;
+
+                        return fluent.MenuFlyoutItem(
                           leading: fluent.Checkbox(
                             checked: _isVisible.values.elementAt(index),
                             onChanged: (value) {
@@ -380,46 +380,47 @@ class _StudentTableState extends State<StudentTable> {
                                   !(_isVisible.values.elementAt(index));
                             });
                           },
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ),
-                widget.students[0].photo.isEmpty
-                    ? Container()
-                    : Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          width: 150,
-                          child: fluent.DropDownButton(
-                            title: const Text('View Photo'),
-                            items: List<fluent.MenuFlyoutItem>.generate(
-                              widget.students[0].photo.length,
-                              (index) => fluent.MenuFlyoutItem(
-                                text:
-                                    Text(widget.students[0].photo[index].field),
-                                onPressed: () {
-                                  setState(() {
-                                    photoIndex = index;
-                                  });
-                                },
-                              ),
+              ),
+              widget.students[0].photo.isEmpty
+                  ? Container()
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        width: 150,
+                        child: fluent.DropDownButton(
+                          title: const Text('View Photo'),
+                          items: List<fluent.MenuFlyoutItem>.generate(
+                            widget.students[0].photo.length,
+                            (index) => fluent.MenuFlyoutItem(
+                              text: Text(widget.students[0].photo[index].field),
+                              onPressed: () {
+                                setState(() {
+                                  photoIndex = index;
+                                });
+                              },
                             ),
                           ),
                         ),
                       ),
-              ],
-            ),
-            columns: columnName,
-            columnSpacing: 50,
-            horizontalMargin: 10,
-            rowsPerPage: isFiltering
-                ? min(10, filteredStudents.length)
-                : min(10, widget.students.length),
-            showCheckboxColumn: true,
+                    ),
+            ],
           ),
-        ],
-      ),
+          columns: columnName,
+          columnSpacing: 50,
+          horizontalMargin: 10,
+          dataRowHeight: 90,
+
+          rowsPerPage: isFiltering
+              ? min(10, filteredStudents.length)
+              : min(10, widget.students.length),
+          showCheckboxColumn: true,
+        ),
+      ],
     );
   }
 }
@@ -494,7 +495,10 @@ class MyData extends DataTableSource {
           } else {
             for (var element in filteredStudents) {
               for (var data in student.data) {
-                if (data.value.toString().toLowerCase().contains(element.toLowerCase()) &&
+                if (data.value
+                        .toString()
+                        .toLowerCase()
+                        .contains(element.toLowerCase()) &&
                     data.field
                         .toLowerCase()
                         .contains(filterField.toLowerCase())) {
@@ -540,7 +544,10 @@ class MyData extends DataTableSource {
       } else {
         for (var element in filteredStudents) {
           for (var data in student.data) {
-            if (data.value.toString().toLowerCase().contains(element.toLowerCase()) &&
+            if (data.value
+                    .toString()
+                    .toLowerCase()
+                    .contains(element.toLowerCase()) &&
                 data.field.toLowerCase().contains(filterField.toLowerCase())) {
               value = true;
               break;
@@ -669,14 +676,15 @@ class MyData extends DataTableSource {
           return DataCell(
             Image.network(
               _data[index][value],
-              height: 100,
-              width: 100,
+              height: 90,
+              // width: 100,
             ),
           );
         }
 
         return DataCell(
           // showEditIcon: value == 0 ? true : false,
+
           onTap: () {
             logger.d(students[index].id);
             showDialog(
@@ -688,6 +696,8 @@ class MyData extends DataTableSource {
           },
           Text(
             _data[index][value].toString(),
+            maxLines: 3,
+            // overflow: TextOverflow.ellipsis,
           ),
         );
       }),

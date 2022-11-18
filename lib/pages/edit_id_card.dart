@@ -640,17 +640,16 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   children: [
-                                    Image.memory(
-                                      base64Decode(_idCard.foregroundImagePath),
+                                    Image.network(
+                                      _idCard.foregroundImagePath,
                                       width: 80,
                                       height: 80,
                                     ),
                                     _idCard.isDual
                                         ? Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Image.memory(
-                                              base64Decode(
-                                                  _idCard.backgroundImagePath),
+                                            child: Image.network(
+                                              _idCard.backgroundImagePath,
                                               width: 80,
                                               height: 80,
                                             ),
@@ -840,11 +839,15 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                         shrinkWrap: true,
                                                         // controller: ScrollController(),
                                                         itemCount: _idCard
-                                                                .labels.length -
-                                                            nonPhotoLabels,
+                                                            .labels.length,
                                                         itemBuilder:
                                                             (context, index) {
                                                           // index = index + nonPhotoLabels;
+                                                          if (!_idCard
+                                                              .labels[index]
+                                                              .isPhoto) {
+                                                            return Container();
+                                                          }
                                                           int ind = index +
                                                               nonPhotoLabels;
                                                           logger.d(ind);

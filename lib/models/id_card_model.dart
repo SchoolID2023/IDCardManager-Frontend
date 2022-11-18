@@ -124,5 +124,8 @@ class Label {
         "isPhoto": isPhoto,
         "fontName": fontName,
         "textAlign": textAlign,
+        "isBold": isBold,
+        "isItalic": isItalic,
+        "isUnderline": isUnderline,
       };
 }

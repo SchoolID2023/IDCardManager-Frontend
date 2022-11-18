@@ -77,28 +77,24 @@ class _LoadExcelState extends State<LoadExcel> {
             child: const Text("CANCEL"),
             onPressed: () => Navigator.pop(context)),
       ],
-      content: SizedBox(
-        width: 500,
-        height: 250,
-        child: Row(
-          children: [
-            Expanded(
-              child: TextBox(
-                controller: _excelPath,
-                header: "Excel Path",
-                readOnly: true,
-              ),
+      content: Row(
+        children: [
+          Expanded(
+            child: TextBox(
+              controller: _excelPath,
+              header: "Excel Path",
+              readOnly: true,
             ),
-            Button(
-              child: const Text("Upload Excel"),
-              onPressed: () async {
-                await uploadExcel().then(
-                  (value) => Navigator.of(context).pop(),
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+          Button(
+            child: const Text("Upload Excel"),
+            onPressed: () async {
+              await uploadExcel().then(
+                (value) => Navigator.of(context).pop(),
+              );
+            },
+          ),
+        ],
       ),
     );
   }

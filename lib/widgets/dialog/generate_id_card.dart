@@ -77,11 +77,9 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
                           children: [
-                            Image.memory(
-                              base64Decode(
-                                studentController
-                                    .getIdCards[index].foregroundImagePath,
-                              ),
+                            Image.network(
+                              studentController
+                                  .getIdCards[index].foregroundImagePath,
                               height: 140,
                               width: 100,
                               fit: BoxFit.cover,

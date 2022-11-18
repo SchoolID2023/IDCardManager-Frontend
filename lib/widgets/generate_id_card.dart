@@ -90,10 +90,8 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
           height: widget.idCard.height.toDouble() * widget.scaleFactor / 100,
           width: widget.idCard.width.toDouble() * widget.scaleFactor / 100,
           child: widget.isEdit
-              ? Image.memory(
-                  base64Decode(
-                    widget.idCard.foregroundImagePath,
-                  ),
+              ? Image.network(
+                  widget.idCard.foregroundImagePath,
                   fit: BoxFit.fill,
                 )
               : Image.file(
@@ -112,10 +110,8 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
           height: widget.idCard.height.toDouble() * widget.scaleFactor / 100,
           width: widget.idCard.width.toDouble() * widget.scaleFactor / 100,
           child: widget.isEdit
-              ? Image.memory(
-                  base64Decode(
-                    widget.idCard.backgroundImagePath,
-                  ),
+              ? Image.network(
+                  widget.idCard.backgroundImagePath,
                   fit: BoxFit.fill,
                 )
               : Image.file(

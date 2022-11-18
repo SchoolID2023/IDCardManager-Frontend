@@ -47,16 +47,19 @@ class _StudentsState extends State<Students> {
                       scrollDirection: Axis.horizontal,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.vertical,
-                        child: StudentTable(
-                          students: studentController.getStudents,
-                          isSelected: _selectedStudents,
-                          onSelected: updateSelectedStudents,
-                          classes: studentController.getSchool.classes,
-                          sections: studentController.getSchool.sections,
-                          schoolId: widget.schoolId,
-                          labels: studentController.getSchoolLabels.labels,
-                          photoLabels:
-                              studentController.getSchoolLabels.photoLabels,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: StudentTable(
+                            students: studentController.getStudents,
+                            isSelected: _selectedStudents,
+                            onSelected: updateSelectedStudents,
+                            classes: studentController.getSchool.classes,
+                            sections: studentController.getSchool.sections,
+                            schoolId: widget.schoolId,
+                            labels: studentController.getSchoolLabels.labels,
+                            photoLabels:
+                                studentController.getSchoolLabels.photoLabels,
+                          ),
                         ),
                       ),
                     ),

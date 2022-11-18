@@ -3,8 +3,10 @@ import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/pages/school/idcard.dart';
 import 'package:idcard_maker_frontend/pages/school/students.dart';
+import 'package:idcard_maker_frontend/services/download_data.dart';
 
 import '../services/remote_services.dart';
+import '../widgets/dialog/download_photos.dart';
 import '../widgets/dialog/load_excel.dart';
 import '../widgets/load_photos.dart';
 import '../widgets/titlebar/navigation_app_bar.dart';
@@ -101,28 +103,44 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
             ),
             studentController.getSchoolLabels.photoLabels.isEmpty
                 ? Container()
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DropDownButton(
-                      title: const Text('Download Photos'),
-                      items: List<MenuFlyoutItem>.generate(
-                        studentController.getSchoolLabels.photoLabels.length,
-                        (index) => MenuFlyoutItem(
-                          text: Text(studentController
-                              .getSchoolLabels.photoLabels[index]),
-                          onPressed: () {
-                            _remoteServices.downloadPhotos(
-                              widget.schoolId,
-                              'all',
-                              'all',
-                              studentController
-                                  .getSchoolLabels.photoLabels[index],
-                            );
-                          },
+                // : Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child: DropDownButton(
+                //       title: const Text('Download Photos'),
+                //       items: List<MenuFlyoutItem>.generate(
+                //         studentController.getSchoolLabels.photoLabels.length,
+                //         (index) => MenuFlyoutItem(
+                //           text: Text(studentController
+                //               .getSchoolLabels.photoLabels[index]),
+                //           onPressed: () {
+                //             DownloadData.downloadAndSavePhotos(
+                //                 widget.schoolId,
+                //                 'all',
+                //                 'all',
+                //                 studentController
+                //                     .getSchoolLabels.photoLabels[index]);
+                //             // _remoteServices.downloadPhotos(
+                //             //   widget.schoolId,
+                //             //   'all',
+                //             //   'all',
+                //             //   studentController
+                //             //       .getSchoolLabels.photoLabels[index],
+                //             // );
+                //           },
+                //         ),
+                //       ),
+                //     ),
+                //   )
+                : Button(
+                    child: Text("Download Photos"),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DownloadPhotosDialog(
+                          schoolId: widget.schoolId,
                         ),
-                      ),
-                    ),
-                  )
+                      );
+                    })
           ],
         ),
         pane: NavigationPane(

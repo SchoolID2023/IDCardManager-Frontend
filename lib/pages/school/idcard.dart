@@ -70,62 +70,63 @@ class _IdCardState extends State<IdCard> {
                       ],
                     ),
                     studentController.getIdCards.isEmpty
-                        ? const Center(
-                            child: Text("No ID Cards"),
+                        ? const Expanded(
+                            child: Center(
+                              child: Text("No ID Cards"),
+                            ),
                           )
-                        : ListView.builder(
-                            itemCount: studentController.getIdCards.length,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedIndex = index;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: theme.accentColor,
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: studentController.getIdCards.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedIndex = index;
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: theme.accentColor,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Column(
-                                          children: [
-                                            Image.memory(
-                                              base64Decode(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(4.0),
+                                          child: Column(
+                                            children: [
+                                              Image.network(
                                                 studentController
                                                     .getIdCards[index]
                                                     .foregroundImagePath,
+                                                height: 200,
+                                                width: 200,
+                                                fit: BoxFit.cover,
                                               ),
-                                              height: 200,
-                                              width: 200,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(4.0),
-                                              child: Text(
-                                                studentController
-                                                    .getIdCards[index].title,
-                                                style: theme.typography.body,
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(4.0),
+                                                child: Text(
+                                                  studentController
+                                                      .getIdCards[index].title,
+                                                  style: theme.typography.body,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                   ],
                 ),
@@ -155,12 +156,12 @@ class _IdCardState extends State<IdCard> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Image.memory(
-                                      base64Decode(
+                                    child: Image.network(
+                                      
                                         studentController
                                             .getIdCards[selectedIndex]
                                             .foregroundImagePath,
-                                      ),
+                                      
                                       // height: 200,
                                       fit: BoxFit.cover,
                                     ),
@@ -169,15 +170,14 @@ class _IdCardState extends State<IdCard> {
                                           .getIdCards[selectedIndex].isDual
                                       ? Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Image.memory(
-                                            base64Decode(
-                                              studentController
-                                                      .getIdCards[selectedIndex]
-                                                      .backgroundImagePath ??
-                                                  studentController
-                                                      .getIdCards[selectedIndex]
-                                                      .foregroundImagePath,
-                                            ),
+                                          child: Image.network(
+                                            studentController
+                                                    .getIdCards[selectedIndex]
+                                                    .backgroundImagePath ??
+                                                studentController
+                                                    .getIdCards[selectedIndex]
+                                                    .foregroundImagePath,
+
                                             // height: 200,
                                             fit: BoxFit.cover,
                                           ),
@@ -193,7 +193,7 @@ class _IdCardState extends State<IdCard> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: FilledButton(
-                                      child: Text("Edit"),
+                                      child: const Text("Edit"),
                                       onPressed: () {
                                         Navigator.of(context).push(
                                             FluentPageRoute(

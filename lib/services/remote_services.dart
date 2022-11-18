@@ -9,6 +9,7 @@ import '../models/admin_model.dart';
 import '../models/id_card_attach_model.dart';
 import '../models/id_card_list_model.dart';
 import '../models/id_card_model.dart';
+import '../models/photos_list_model.dart';
 import '../models/student_model.dart';
 import '../models/teacher_list_model.dart';
 import '../models/teacher_model.dart';
@@ -36,8 +37,8 @@ class RemoteServices {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     try {
-      Response response = await dio
-          .post('$baseUrl/superAdmin/login', data: {'contact': contact, 'otp': otp});
+      Response response = await dio.post('$baseUrl/superAdmin/login',
+          data: {'contact': contact, 'otp': otp});
       // prefs.setString('token', response.data['token']);
       logger.d(response.data);
       prefs.setString('token', response.data['token']);
@@ -390,7 +391,7 @@ class RemoteServices {
     }
 
     var formData = FormData.fromMap(formMap);
-
+    logger.i(formData);
     try {
       Response<String> response = await dio.post(
         '$baseUrl/superAdmin/addIdCard',
@@ -440,7 +441,10 @@ class RemoteServices {
     // var formData = FormData.fromMap(formMap);
 
     logger.d('Edit Id Card Id-> $idCardId');
-
+    logger.i({
+      "_id": idCardId,
+      "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
+    });
     Response<String> response = await dio.post(
       '$baseUrl/superAdmin/editIdCard',
       data: {
@@ -451,7 +455,6 @@ class RemoteServices {
         headers: headers,
       ),
     );
-
     if (response.statusCode == 200) {
       var data = json.decode(response.data ?? "") as Map<String, dynamic>;
 
@@ -704,7 +707,7 @@ class RemoteServices {
     } catch (e) {
       logger.d("Error----->");
       logger.d(e);
-      
+
       throw Exception("Normal Error");
     }
   }
@@ -813,17 +816,13 @@ class RemoteServices {
     }
   }
 
-  Future<void> downloadPhotos(
+  Future<PhotosList> downloadPhotos(
       String schoolId, String className, String section, String label) async {
     logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
 
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output destination:',
-      fileName: "students_${schoolId}_${className}_${section}_photos.zip",
-    );
     logger.d('Excell Token-> $token');
     var headers = {
       'Authorization': 'Biatch $token',
@@ -835,17 +834,17 @@ class RemoteServices {
       "photos": [label]
     };
 
+    logger.i(body);
+
     var url = userType == "superAdmin"
         ? '$baseUrl/$userType/downloadPhotos'
         : '$baseUrl/$userType/downloadPhotos';
 
-    final response;
+    Response<String> response;
     try {
-      response = await dio.download(
+      response = await dio.post(
         url,
-        outputFile,
         options: Options(
-          method: 'POST',
           headers: headers,
         ),
         data: body,
@@ -853,12 +852,11 @@ class RemoteServices {
       logger.d(response);
 
       if (response.statusCode == 200) {
-        // final data = json.decode(response.data!);
-        // logger.d(data);
+        final data = json.decode(response.data!);
+
         logger.d(response.toString());
 
-        logger.d("Excel added");
-        return;
+        return PhotosList.fromJson(data);
       } else {
         logger.d("Errorrrrr");
         throw Exception(response.data);
@@ -867,7 +865,6 @@ class RemoteServices {
       logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {
-      logger.d("Error----->");
       logger.d(e);
       throw Exception("Normal Error");
     }
@@ -893,6 +890,7 @@ class RemoteServices {
       );
 
       if (response.statusCode == 200) {
+        logger.i(response.data);
         final data = json.decode(response.data!);
 
         // logger.d(data);
