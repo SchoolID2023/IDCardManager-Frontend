@@ -2,8 +2,13 @@ import 'dart:math';
 
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
+import 'package:idcard_maker_frontend/controllers/student_controller.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
-import 'package:idcard_maker_frontend/widgets/student_dialog.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/student_dialog.dart';
 import '../services/logger.dart';
 
 import '../models/student_model.dart';
@@ -60,6 +65,11 @@ class _StudentTableState extends State<StudentTable> {
   }
 
   final Map<String, bool> _isVisible = <String, bool>{};
+  late StudentController studentController;
+
+  void deleteStudent(String studnentId) {
+    studentController.deleteStudent(studnentId);
+  }
 
   @override
   void initState() {
@@ -76,6 +86,8 @@ class _StudentTableState extends State<StudentTable> {
     for (var element in widget.labels) {
       _isVisible[element] = false;
     }
+
+    studentController = Get.put(StudentController(widget.schoolId));
   }
 
   @override
@@ -186,6 +198,7 @@ class _StudentTableState extends State<StudentTable> {
         );
       }
     }
+    final tableKey = GlobalKey<PaginatedDataTableState>();
     final DataTableSource data = MyData(
       widget.students,
       context,
@@ -198,6 +211,7 @@ class _StudentTableState extends State<StudentTable> {
       filterField,
       classFilter,
       sectionFilter,
+      deleteStudent,
     );
     return fluent.Column(
       children: [
@@ -315,7 +329,7 @@ class _StudentTableState extends State<StudentTable> {
                     ),
                   ),
                   fluent.FilledButton(
-                    child: Text("Generate ID Cards"),
+                    child: const Text("Generate ID Cards"),
                     onPressed: () {
                       showDialog(
                           context: context,
@@ -335,6 +349,19 @@ class _StudentTableState extends State<StudentTable> {
         ),
         PaginatedDataTable(
           // controller: ScrollController(),
+          key: tableKey,
+          actions: [
+            SizedBox(
+              width: 150,
+              child: fluent.TextBox(
+                placeholder: 'Page Number',
+                onChanged: ((value) {
+                  tableKey.currentState!
+                      .pageTo(int.parse(value == "" ? "0" : value) * 10);
+                }),
+              ),
+            )
+          ],
           onSelectAll: (selectedValue) {
             for (var student in widget.students) {
               widget.onSelected(student.id, selectedValue!);
@@ -419,6 +446,7 @@ class _StudentTableState extends State<StudentTable> {
               ? min(10, filteredStudents.length)
               : min(10, widget.students.length),
           showCheckboxColumn: true,
+          sortAscending: true,
         ),
       ],
     );
@@ -437,6 +465,8 @@ class MyData extends DataTableSource {
   final String classFilter;
   final String sectionFilter;
 
+  final Function deleteFunction;
+
   BuildContext context;
   final List<List<String>> _data = [];
   MyData(
@@ -451,6 +481,7 @@ class MyData extends DataTableSource {
     this.filterField,
     this.classFilter,
     this.sectionFilter,
+    this.deleteFunction,
   ) {
     bool ifFilter(Student student) {
       bool value = false;
@@ -685,19 +716,48 @@ class MyData extends DataTableSource {
         return DataCell(
           // showEditIcon: value == 0 ? true : false,
 
-          onTap: () {
-            logger.d(students[index].id);
-            showDialog(
-              context: context,
-              builder: (context) => StudentDialog(
-                student: students[index],
+          onTap: value == 1
+              ? null
+              : () {
+                  logger.d(students[index].id);
+                  showDialog(
+                    context: context,
+                    builder: (context) => EditStudent(student: students[index]),
+                  );
+                },
+          fluent.Row(
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 150,
+                ),
+                child: Text(
+                  _data[index][value].toString(),
+                  maxLines: 3,
+                  // overflow: TextOverflow.ellipsis,
+                ),
               ),
-            );
-          },
-          Text(
-            _data[index][value].toString(),
-            maxLines: 3,
-            // overflow: TextOverflow.ellipsis,
+              value == 1
+                  ? IconButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ConfirmDelete(
+                                type: "Student",
+                                name: _data[index][value],
+                                deleteFunction: () {
+                                  deleteFunction(students[index].id);
+                                },
+                              );
+                            });
+                      },
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ))
+                  : Container(),
+            ],
           ),
         );
       }),

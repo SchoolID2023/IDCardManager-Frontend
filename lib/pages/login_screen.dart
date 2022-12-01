@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:idcard_maker_frontend/homepage.dart';
+import 'package:idcard_maker_frontend/pages/homepage.dart';
 import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import '../services/logger.dart';

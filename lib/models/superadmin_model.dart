@@ -27,8 +27,8 @@ class SuperAdmin {
         email: json["email"],
         password: json["password"],
         name: json["name"],
-        contact: json["contact"],
-        username: json["username"],
+        contact: json["contact"] ?? "No Contact",
+        username: json["username"] ?? "No Username",
     );
 
     Map<String, dynamic> toJson() => {

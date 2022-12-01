@@ -62,7 +62,7 @@ class Label {
   Label({
     required this.title,
     this.color = "ff000000",
-    this.fontSize = 20,
+    this.fontSize = 10,
     this.x = 0.0,
     this.y = 0.0,
     this.width = 100.0,

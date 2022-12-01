@@ -11,22 +11,34 @@ class SchoolController extends GetxController {
   var schools =
       SchoolsModel(success: false, message: "Schools List", schools: []).obs;
 
+  var superAdmins = <SuperAdmin>[].obs;
+
   @override
   void onInit() {
     super.onInit();
-    fetchSchools();
   }
 
-  void fetchSchools() async {
+  List<School> get getSchools => schools.value.schools;
+  List<SuperAdmin> get getSuperAdmins => superAdmins.value;
+
+  set setLoading(bool value) => isLoading.value = value;
+
+  Future<void> fetchSchools() async {
     try {
-      isLoading(true);
       var schools = await _remoteServices.getSchools();
       this.schools.value = schools;
     } catch (e) {
       throw Exception(e);
-    } finally {
-      isLoading(false);
-    }
+    } finally {}
+  }
+
+  Future<void> fetchSuperAdmins() async {
+    try {
+      var superAdmins = await _remoteServices.getSuperAdmins();
+      this.superAdmins.value = superAdmins;
+    } catch (e) {
+      throw Exception(e);
+    } finally {}
   }
 
   void addSchool(School school) async {

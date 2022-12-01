@@ -2,7 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 
-import '../models/student_model.dart';
+import '../../models/student_model.dart';
 
 class EditStudent extends StatefulWidget {
   final Student student;
@@ -65,7 +65,8 @@ class _EditStudentState extends State<EditStudent> {
                   return Column(children: [
                     TextBox(
                       header: "Name",
-                      placeholder: student.name,
+                      
+                      controller: TextEditingController(text: student.name),
                       onChanged: (value) {
                         setState(() {
                           student.name = value;
@@ -74,7 +75,7 @@ class _EditStudentState extends State<EditStudent> {
                     ),
                     TextBox(
                       header: "Contact",
-                      placeholder: student.contact,
+                      controller: TextEditingController(text: student.contact),
                       onChanged: (value) {
                         setState(() {
                           student.contact = value;
@@ -83,7 +84,7 @@ class _EditStudentState extends State<EditStudent> {
                     ),
                     TextBox(
                       header: "Class",
-                      placeholder: student.studentClass,
+                      controller: TextEditingController(text: student.studentClass),
                       onChanged: (value) {
                         setState(() {
                           student.studentClass = value;
@@ -92,7 +93,7 @@ class _EditStudentState extends State<EditStudent> {
                     ),
                     TextBox(
                       header: "Section",
-                      placeholder: student.section,
+                      controller: TextEditingController(text: student.section),
                       onChanged: (value) {
                         setState(() {
                           student.section = value;
@@ -107,7 +108,9 @@ class _EditStudentState extends State<EditStudent> {
                   return Container();
                 }
                 return TextBox(
-                  placeholder: widget.student.data[index - 1].value.toString(),
+                  // placeholder: widget.student.data[index - 1].value.toString(),
+                  controller: TextEditingController(
+                      text: widget.student.data[index - 1].value.toString()),
                   header: widget.student.data[index - 1].field.toString(),
                   onChanged: (value) {
                     student.data[index - 1].value = value;

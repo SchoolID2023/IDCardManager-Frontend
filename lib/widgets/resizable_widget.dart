@@ -70,7 +70,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
     var newWidth = _label.width + dx;
 
     setState(() {
-      _label.height = newHeight > 0 ? newHeight : 0;
+      _label.height = newHeight > 20.0 ? newHeight : 20.0;
       _label.width = newWidth > 0 ? newWidth : 0;
       onChange();
     });
@@ -83,7 +83,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
       bindings: [
         KeyAction(
           LogicalKeyboardKey.arrowUp,
-          'increment the counter',
+          'up the label ${widget.label.title}',
           () {
             setState(() {
               _label.y -= 1;
@@ -127,59 +127,70 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
           Positioned(
             top: _label.y,
             left: _label.x,
-            child: Draggable(
-              feedback: Container(),
-              
-              
-              child: Container(
-                height: _label.height,
-                width: _label.width,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  ),
-                  color: Colors.lightBlue[100],
-                  image: _label.isPhoto
-                      ? const DecorationImage(
-                          image: const NetworkImage(
-                            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
-                          ),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
+            child: Container(
+              height: _label.height ?? 1,
+              width: _label.width ?? 1,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
                 ),
-                child: Text(
-                  _label.title,
-                  textAlign: _label.textAlign == "left"
-                      ? TextAlign.left
-                      : _label.textAlign == "right"
-                          ? TextAlign.right
-                          : TextAlign.center,
-                  // style: TextStyle(
-                  //   fontSize: _label.fontSize.toDouble(),
-                  //   color: Color(int.parse(_label.color, radix: 16)),
-            
-                  // ),
-                  style: GoogleFonts.asMap()[_label.fontName]!(
-                    color: Color(
-                      int.parse(
-                        _label.color,
-                        radix: 16,
-                      ),
+                color: Colors.lightBlue[100],
+                image: _label.isPhoto
+                    ? const DecorationImage(
+                        image: const NetworkImage(
+                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+                        ),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: Text(
+                _label.title,
+                textAlign: _label.textAlign == "left"
+                    ? TextAlign.left
+                    : _label.textAlign == "right"
+                        ? TextAlign.right
+                        : TextAlign.center,
+                // style: TextStyle(
+                //   fontSize: _label.fontSize.toDouble(),
+                //   color: Color(int.parse(_label.color, radix: 16)),
+
+                // ),
+                style: GoogleFonts.asMap()[_label.fontName]!(
+                  color: Color(
+                    int.parse(
+                      _label.color,
+                      radix: 16,
                     ),
-                    fontSize: _label.fontSize.toDouble(),
-                    fontWeight:
-                        _label.isBold ? FontWeight.bold : FontWeight.normal,
-                    // fontWeight: FontWeight.bold,
-                    fontStyle:
-                        _label.isItalic ? FontStyle.italic : FontStyle.normal,
-                    decoration: _label.isUnderline
-                        ? TextDecoration.underline
-                        : TextDecoration.none,
                   ),
+                  fontSize: _label.fontSize.toDouble(),
+                  fontWeight:
+                      _label.isBold ? FontWeight.bold : FontWeight.normal,
+                  // fontWeight: FontWeight.bold,
+                  fontStyle:
+                      _label.isItalic ? FontStyle.italic : FontStyle.normal,
+                  decoration: _label.isUnderline
+                      ? TextDecoration.underline
+                      : TextDecoration.none,
                 ),
               ),
+            ),
+          ),
+          Positioned(           
+            top: _label.y - ballDiameter / 2,
+            left: _label.x - ballDiameter / 2,
+            child: ManipulatingCenterBox(
+              onDrag: (dx, dy) {
+                setState(() {
+                  _label.y = _label.y + dy;
+                  _label.x = _label.x + dx;
+                  onChange();
+                });
+              },
+              scale: widget.myScale,
+              height: _label.height,
+              width: _label.width,
             ),
           ),
           // top left
@@ -193,7 +204,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newWidth = _label.width - 2 * mid;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   _label.width = newWidth > 0 ? newWidth : 0;
                   _label.y = _label.y + mid;
                   _label.x = _label.x + mid;
@@ -212,7 +223,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newHeight = _label.height - dy;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   _label.y = _label.y + dy;
                   onChange();
                 });
@@ -232,7 +243,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newWidth = _label.width + 2 * mid;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   _label.width = newWidth > 0 ? newWidth : 0;
                   _label.y = _label.y - mid;
                   _label.x = _label.x - mid;
@@ -270,7 +281,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newWidth = _label.width + 2 * mid;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   _label.width = newWidth > 0 ? newWidth : 0;
                   _label.y = _label.y - mid;
                   _label.x = _label.x - mid;
@@ -289,7 +300,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newHeight = _label.height + dy;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   onChange();
                 });
               },
@@ -308,7 +319,7 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
                 var newWidth = _label.width + 2 * mid;
 
                 setState(() {
-                  _label.height = newHeight > 0 ? newHeight : 0;
+                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
                   _label.width = newWidth > 0 ? newWidth : 0;
                   _label.y = _label.y - mid;
                   _label.x = _label.x - mid;
@@ -336,20 +347,6 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
             ),
           ),
           // center center
-          Positioned(
-            top: _label.y + _label.height / 2 - ballDiameter / 2,
-            left: _label.x + _label.width / 2 - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                setState(() {
-                  _label.y = _label.y + dy;
-                  _label.x = _label.x + dx;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
-          ),
         ],
       ),
     );
@@ -397,6 +394,59 @@ class _ManipulatingBallState extends State<ManipulatingBall> {
           color: Colors.blue.withOpacity(0.5),
           shape: BoxShape.circle,
         ),
+      ),
+    );
+  }
+}
+
+class ManipulatingCenterBox extends StatefulWidget {
+  const ManipulatingCenterBox(
+      {Key? key,
+      required this.onDrag,
+      required this.scale,
+      required this.height,
+      required this.width});
+
+  final Function onDrag;
+  final double scale;
+  final double height;
+  final double width;
+
+  @override
+  _ManipulatingCenterBoxState createState() => _ManipulatingCenterBoxState();
+}
+
+class _ManipulatingCenterBoxState extends State<ManipulatingCenterBox> {
+  double initX = 0.0;
+  double initY = 0.0;
+
+  _handleDrag(details) {
+    setState(() {
+      initX = details.globalPosition.dx;
+      initY = details.globalPosition.dy;
+    });
+  }
+
+  _handleUpdate(details) {
+    var dx = details.globalPosition.dx - initX;
+    var dy = details.globalPosition.dy - initY;
+    initX = details.globalPosition.dx;
+    initY = details.globalPosition.dy;
+    widget.onDrag(dx, dy);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onPanStart: _handleDrag,
+      onPanUpdate: _handleUpdate,
+      child: Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+            // color: Colors.blue.withOpacity(0.0),
+
+            ),
       ),
     );
   }

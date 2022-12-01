@@ -23,7 +23,7 @@ class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  final String baseUrl = 'http://13.126.239.219:3000';
+  final String baseUrl = 'http://3.7.239.25:3000';
 
   Future<void> sendOtp(String contact) async {
     try {
@@ -91,6 +91,33 @@ class RemoteServices {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return SchoolsModel.fromJson(data);
+      } else {
+        throw Exception(response.statusCode);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  Future<List<SuperAdmin>> getSuperAdmins() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    logger.d("Super Admin token: $token");
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl/superAdmin/getAllSuperAdmins'),
+        headers: {
+          'Authorization': 'Biatch $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        logger.d(data);
+        return List<SuperAdmin>.from(
+            data["superAdmins"].map((x) => SuperAdmin.fromJson(x)));
+        // return [];
       } else {
         throw Exception(response.statusCode);
       }
@@ -549,7 +576,7 @@ class RemoteServices {
 
     var response;
 
-    logger.d("Edited Student Data:- $studentId");
+    logger.d("Deleted Student Data:- $studentId");
 
     try {
       response = await dio.post(
@@ -831,7 +858,7 @@ class RemoteServices {
       "school": schoolId,
       "class": className,
       "section": section,
-      "photos": [label]
+      "photos": label
     };
 
     logger.i(body);

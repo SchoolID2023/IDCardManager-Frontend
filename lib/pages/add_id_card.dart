@@ -304,26 +304,27 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               children: [
+                               
+                                mat.VerticalDivider(
+                                  color: theme.acrylicBackgroundColor,
+                                  thickness: 1,
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
                                       setState(() {
                                         _idCard
-                                            .labels[editableIndex].fontSize++;
+                                            .labels[editableIndex].fontSize--;
                                         _fontSizeController.text = _idCard
                                             .labels[editableIndex].fontSize
                                             .toString();
                                       });
                                     },
                                     icon: const Icon(
-                                      FluentIcons.add,
+                                      FluentIcons.calculator_subtract,
                                     ),
                                   ),
-                                ),
-                                mat.VerticalDivider(
-                                  color: theme.acrylicBackgroundColor,
-                                  thickness: 1,
                                 ),
                                 Expanded(
                                   child: TextBox(
@@ -348,23 +349,24 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   color: theme.acrylicBackgroundColor,
                                   thickness: 1,
                                 ),
-                                Padding(
+                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
                                       setState(() {
                                         _idCard
-                                            .labels[editableIndex].fontSize--;
+                                            .labels[editableIndex].fontSize++;
                                         _fontSizeController.text = _idCard
                                             .labels[editableIndex].fontSize
                                             .toString();
                                       });
                                     },
                                     icon: const Icon(
-                                      FluentIcons.calculator_subtract,
+                                      FluentIcons.add,
                                     ),
                                   ),
                                 ),
+                                
                               ],
                             ),
                           ),
@@ -740,6 +742,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                                 return Container();
                                               }
                                               return GestureDetector(
+                                                
                                                 onTap: () {
                                                   updateEditIndex(index, false);
                                                 },

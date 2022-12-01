@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 
-import '../controllers/student_controller.dart';
-import '../models/student_model.dart';
+import '../../controllers/student_controller.dart';
+import '../../models/student_model.dart';
 import 'edit_student.dart';
 
 class StudentDialog extends StatelessWidget {

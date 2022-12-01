@@ -55,7 +55,8 @@ class PreviewIdCard extends StatelessWidget {
                       field: field,
                       value: "test $field",
                     ))
-            .value.toString();
+            .value
+            .toString();
       }
     }
 
@@ -72,16 +73,16 @@ class PreviewIdCard extends StatelessWidget {
         height: idCard.height.toDouble(),
         width: idCard.width.toDouble(),
         child: isEdit
-            ? Image.memory(
-                base64Decode(idCard.foregroundImagePath),
+            ? Image.network(
+                idCard.foregroundImagePath,
                 fit: BoxFit.fill,
               )
             : Image.file(
-                File(
-                  idCard.foregroundImagePath,
+                  File(
+                    idCard.backgroundImagePath,
+                  ),
+                  fit: BoxFit.fill,
                 ),
-                fit: BoxFit.fill,
-              ),
       ),
     );
 
@@ -91,8 +92,8 @@ class PreviewIdCard extends StatelessWidget {
           height: idCard.height.toDouble(),
           width: idCard.width.toDouble(),
           child: isEdit
-              ? Image.memory(
-                  base64Decode(idCard.backgroundImagePath),
+              ? Image.network(
+                  idCard.backgroundImagePath,
                   fit: BoxFit.fill,
                 )
               : Image.file(
@@ -250,17 +251,21 @@ class PreviewIdCard extends StatelessWidget {
           )
         : Container();
     return ScaffoldPage(
-      content: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              frontWidget,
-              backWidget,
-              Button(
-                  child: const Text("Close"),
-                  onPressed: () => Navigator.pop(context)),
-            ],
+      bottomBar: Button(
+        child: const Text("Close"),
+        onPressed: () => Navigator.pop(context),
+      ),
+      content: InteractiveViewer(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                frontWidget,
+                backWidget,
+              ],
+            ),
           ),
         ),
       ),

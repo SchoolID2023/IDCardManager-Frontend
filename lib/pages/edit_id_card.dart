@@ -292,13 +292,17 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Row(
                                     children: [
+                                      mat.VerticalDivider(
+                                        color: theme.acrylicBackgroundColor,
+                                        thickness: 1,
+                                      ),
                                       Padding(
                                         padding: const EdgeInsets.all(4.0),
                                         child: IconButton(
                                           onPressed: () {
                                             setState(() {
                                               _idCard.labels[editableIndex]
-                                                  .fontSize++;
+                                                  .fontSize--;
                                               _fontSizeController.text = _idCard
                                                   .labels[editableIndex]
                                                   .fontSize
@@ -306,13 +310,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                             });
                                           },
                                           icon: const Icon(
-                                            FluentIcons.add,
+                                            FluentIcons.calculator_subtract,
                                           ),
                                         ),
-                                      ),
-                                      mat.VerticalDivider(
-                                        color: theme.acrylicBackgroundColor,
-                                        thickness: 1,
                                       ),
                                       Expanded(
                                         child: TextBox(
@@ -346,7 +346,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                           onPressed: () {
                                             setState(() {
                                               _idCard.labels[editableIndex]
-                                                  .fontSize--;
+                                                  .fontSize++;
                                               _fontSizeController.text = _idCard
                                                   .labels[editableIndex]
                                                   .fontSize
@@ -354,7 +354,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                             });
                                           },
                                           icon: const Icon(
-                                            FluentIcons.calculator_subtract,
+                                            FluentIcons.add,
                                           ),
                                         ),
                                       ),

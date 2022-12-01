@@ -103,34 +103,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
             ),
             studentController.getSchoolLabels.photoLabels.isEmpty
                 ? Container()
-                // : Padding(
-                //     padding: const EdgeInsets.all(8.0),
-                //     child: DropDownButton(
-                //       title: const Text('Download Photos'),
-                //       items: List<MenuFlyoutItem>.generate(
-                //         studentController.getSchoolLabels.photoLabels.length,
-                //         (index) => MenuFlyoutItem(
-                //           text: Text(studentController
-                //               .getSchoolLabels.photoLabels[index]),
-                //           onPressed: () {
-                //             DownloadData.downloadAndSavePhotos(
-                //                 widget.schoolId,
-                //                 'all',
-                //                 'all',
-                //                 studentController
-                //                     .getSchoolLabels.photoLabels[index]);
-                //             // _remoteServices.downloadPhotos(
-                //             //   widget.schoolId,
-                //             //   'all',
-                //             //   'all',
-                //             //   studentController
-                //             //       .getSchoolLabels.photoLabels[index],
-                //             // );
-                //           },
-                //         ),
-                //       ),
-                //     ),
-                //   )
+                
                 : Button(
                     child: Text("Download Photos"),
                     onPressed: () {

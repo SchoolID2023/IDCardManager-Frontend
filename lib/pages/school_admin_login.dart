@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
-import 'package:idcard_maker_frontend/pages/student_data.dart';
+
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import '../services/logger.dart';
 
@@ -91,13 +91,13 @@ class _SchoolAdminLoginPageState extends State<SchoolAdminLoginPage> {
                                             _passwordController.text,
                                             false,
                                           );
-                                          navigator.push(
-                                            FluentPageRoute(
-                                              builder: (context) =>
-                                                  StudentDataScreen(
-                                                      schoolId: schoolId),
-                                            ),
-                                          );
+                                          // navigator.push(
+                                          //   FluentPageRoute(
+                                          //     builder: (context) =>
+                                          //         StudentDataScreen(
+                                          //             schoolId: schoolId),
+                                          //   ),
+                                          // );
                                           // Navigator.push(
                                           //   context,
                                           // FluentPageRoute(
