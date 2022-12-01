@@ -101,6 +101,16 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
     });
   }
 
+  void reorderData(int oldindex, int newindex) {
+    setState(() {
+      if (newindex > oldindex) {
+        newindex -= 1;
+      }
+      final items = _idCard.labels.removeAt(oldindex);
+      _idCard.labels.insert(newindex, items);
+    });
+  }
+
   bool showLabels = false;
   bool isTextLabelSection = true;
 
@@ -304,7 +314,6 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
                               children: [
-                               
                                 mat.VerticalDivider(
                                   color: theme.acrylicBackgroundColor,
                                   thickness: 1,
@@ -349,7 +358,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   color: theme.acrylicBackgroundColor,
                                   thickness: 1,
                                 ),
-                                 Padding(
+                                Padding(
                                   padding: const EdgeInsets.all(4.0),
                                   child: IconButton(
                                     onPressed: () {
@@ -366,7 +375,6 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                     ),
                                   ),
                                 ),
-                                
                               ],
                             ),
                           ),
@@ -465,7 +473,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                             !_idCard
                                                 .labels[editableIndex].isItalic;
                                       });
-                                      logger.i("Italic: ${_idCard.labels[editableIndex].isItalic}");
+                                      logger.i(
+                                          "Italic: ${_idCard.labels[editableIndex].isItalic}");
                                     },
                                     icon: const Icon(FluentIcons.italic),
                                   ),
@@ -484,7 +493,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                             !_idCard.labels[editableIndex]
                                                 .isUnderline;
                                       });
-                                      logger.i("Underline: ${_idCard.labels[editableIndex].isUnderline}");
+                                      logger.i(
+                                          "Underline: ${_idCard.labels[editableIndex].isUnderline}");
                                     },
                                     icon: const Icon(FluentIcons.underline),
                                   ),
@@ -731,7 +741,8 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                       ),
                                     ),
                                     isTextLabelSection
-                                        ? ListView.builder(
+                                        ? ReorderableListView.builder(
+                                            onReorder: reorderData,
                                             shrinkWrap: true,
                                             // controller: ScrollController(),
                                             itemCount: nonPhotoLabels,
@@ -742,7 +753,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                                 return Container();
                                               }
                                               return GestureDetector(
-                                                
+                                                key: ValueKey(index),
                                                 onTap: () {
                                                   updateEditIndex(index, false);
                                                 },
@@ -838,8 +849,10 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                               Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
-                                                child: ListView.builder(
+                                                child:
+                                                    ReorderableListView.builder(
                                                   shrinkWrap: true,
+                                                  onReorder: reorderData,
                                                   // controller: ScrollController(),
                                                   itemCount:
                                                       _idCard.labels.length -
@@ -851,6 +864,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                                         index + nonPhotoLabels;
                                                     logger.d(ind);
                                                     return GestureDetector(
+                                                      key: ValueKey(ind),
                                                       onTap: () {
                                                         updateEditIndex(
                                                             ind, false);

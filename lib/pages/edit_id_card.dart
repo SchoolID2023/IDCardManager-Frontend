@@ -90,6 +90,16 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     });
   }
 
+  void reorderData(int oldindex, int newindex) {
+    setState(() {
+      if (newindex > oldindex) {
+        newindex -= 1;
+      }
+      final items = _idCard.labels.removeAt(oldindex);
+      _idCard.labels.insert(newindex, items);
+    });
+  }
+
   bool showLabels = false;
   bool isTextLabelSection = true;
   bool isLoading = true;
@@ -725,8 +735,9 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                             ),
                                           ),
                                           isTextLabelSection
-                                              ? ListView.builder(
+                                              ? ReorderableListView.builder(
                                                   shrinkWrap: true,
+                                                  onReorder: reorderData,
                                                   // controller: ScrollController(),
                                                   itemCount:
                                                       _idCard.labels.length,
@@ -734,9 +745,12 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                       (context, index) {
                                                     if (_idCard.labels[index]
                                                         .isPhoto) {
-                                                      return Container();
+                                                      return Container(
+                                                        key: ValueKey(index),
+                                                      );
                                                     }
                                                     return GestureDetector(
+                                                      key: ValueKey(index),
                                                       onTap: () {
                                                         updateEditIndex(
                                                             index, false);
@@ -835,8 +849,10 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                       padding:
                                                           const EdgeInsets.all(
                                                               8.0),
-                                                      child: ListView.builder(
+                                                      child: ReorderableListView
+                                                          .builder(
                                                         shrinkWrap: true,
+                                                        onReorder: reorderData,
                                                         // controller: ScrollController(),
                                                         itemCount: _idCard
                                                             .labels.length,
@@ -846,12 +862,16 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                           if (!_idCard
                                                               .labels[index]
                                                               .isPhoto) {
-                                                            return Container();
+                                                            return Container(
+                                                              key: ValueKey(
+                                                                  index),
+                                                            );
                                                           }
                                                           int ind = index +
                                                               nonPhotoLabels;
                                                           logger.d(ind);
                                                           return GestureDetector(
+                                                            key: ValueKey(ind),
                                                             onTap: () {
                                                               updateEditIndex(
                                                                   ind, false);

@@ -79,7 +79,7 @@ class PreviewIdCard extends StatelessWidget {
               )
             : Image.file(
                   File(
-                    idCard.backgroundImagePath,
+                    idCard.foregroundImagePath,
                   ),
                   fit: BoxFit.fill,
                 ),
