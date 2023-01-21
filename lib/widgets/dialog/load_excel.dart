@@ -62,6 +62,7 @@ class _LoadExcelState extends State<LoadExcel> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = FluentTheme.of(context);
     StudentController studentController =
         Get.put(StudentController(widget.schoolId));
     return ContentDialog(
@@ -70,13 +71,64 @@ class _LoadExcelState extends State<LoadExcel> {
         Button(
           child: const Text("OK"),
           onPressed: () async {
-            await studentController
-                .addStudents(widget.schoolId, _excelPath.text)
-                .then(
-              (value) {
-                Navigator.pop(context);
-              },
-            );
+            List<String> problemStudents = [];
+            try {
+              problemStudents = await studentController.addStudents(
+                  widget.schoolId, _excelPath.text);
+            } catch (e) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ContentDialog(
+                      title: const Text("Error"),
+                      content: Text(e.toString()),
+                      actions: [
+                        Button(
+                          child: const Text("OK"),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    );
+                  });
+            }
+
+            if (problemStudents.isNotEmpty) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return ContentDialog(
+                      title: Text(
+                          "Problem with ${problemStudents.length} students"),
+                      content: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: problemStudents.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: theme.accentColor,
+                                ),
+                                borderRadius: BorderRadius.circular(4.0),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(problemStudents[index]),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      actions: [
+                        Button(
+                          child: const Text("OK"),
+                          onPressed: () => Navigator.pop(context),
+                        )
+                      ],
+                    );
+                  });
+            }
           },
         ),
         Button(

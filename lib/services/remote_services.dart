@@ -519,7 +519,7 @@ class RemoteServices {
     }
   }
 
-  Future<void> addStudentData(String schoolId, String excelPath) async {
+  Future<List<String>> addStudentData(String schoolId, String excelPath) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -546,15 +546,26 @@ class RemoteServices {
       if (response.statusCode == 200) {
         logger.d("Added Student Data");
         logger.d("student Data excel sheet --> ${response.data}");
+        final data = json.decode(response.data!);
+        logger.d(
+            "Problems -> ${data["success"]} ${data["message"]} ${data["problem"]}");
+
+        List<String> problemStudents = [];
+        data["problem"]
+            .forEach((problem) => problemStudents.add(json.encode(problem)));
+
+        return problemStudents;
       } else {
         logger.d("Errorrrrr");
         throw Exception(response.data);
       }
     } on DioError catch (e) {
       logger.d(e.response);
+      rethrow;
     } catch (e) {
       logger.d("Error----->");
       logger.d(e);
+      rethrow;
     }
   }
 

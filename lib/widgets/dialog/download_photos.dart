@@ -48,7 +48,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
 
   Future<void> downloadAndSavePhotos() async {
     final String response = await rootBundle.loadString('./data.json');
-    final data = await json.decode(response ?? "") as Map<String, dynamic>;
+    final data = await json.decode(response) as Map<String, dynamic>;
 
     // final photosList = PhotosList.fromJson(data);
     final photosList = await RemoteServices().downloadPhotos(

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +10,7 @@ class DownloadData {
   static Future<void> downloadAndSavePhotos(
       String schoolId, String classes, String sections, String label) async {
     final String response = await rootBundle.loadString('./data.json');
-    final data = await json.decode(response ?? "") as Map<String, dynamic>;
+    final data = await json.decode(response) as Map<String, dynamic>;
     final photosList = PhotosList.fromJson(data);
     final classes = photosList.classes;
 

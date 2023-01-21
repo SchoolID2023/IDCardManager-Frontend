@@ -53,10 +53,10 @@ class StudentController extends GetxController {
 
   
 
-  Future<void> addStudents(String schoolId, String excelFile) async {
+  Future<List<String>> addStudents(String schoolId, String excelFile) async {
     try {
       isLoading(true);
-      await _remoteServices.addStudentData(schoolId, excelFile);
+      return await _remoteServices.addStudentData(schoolId, excelFile);
     } finally {
       fetchStudents(schoolId);
       isLoading(false);
