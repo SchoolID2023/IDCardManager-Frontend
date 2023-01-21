@@ -38,13 +38,37 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
     () async {
       studentController.setLoading = true;
       await studentController.setRole(widget.role);
-      await studentController.fetchSchoolLabels(widget.schoolId);
-      await studentController.fetchSchool(widget.schoolId);
-      await studentController.fetchAdmins(widget.schoolId);
-      await studentController.fetchTeachers(widget.schoolId);
-      await studentController.fetchStudents(widget.schoolId);
-      await studentController.fetchIdCardList(widget.schoolId);
-      studentController.setLoading = false;
+
+      try {
+        await studentController.fetchSchoolLabels(widget.schoolId);
+        await studentController.fetchSchool(widget.schoolId);
+        await studentController.fetchAdmins(widget.schoolId);
+        await studentController.fetchTeachers(widget.schoolId);
+        await studentController.fetchStudents(widget.schoolId);
+        await studentController.fetchIdCardList(widget.schoolId);
+        studentController.setLoading = false;
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) => ContentDialog(
+                  title: const Text("Error"),
+                  content: Text(e.toString()),
+                  actions: [
+                    Button(
+                      child: const Text("Log Out"),
+                      onPressed: () async {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.remove('token').then((value) =>
+                            Navigator.of(context).push(FluentPageRoute(
+                                builder: (context) => const LoginPage())));
+                      },
+                    ),
+                  ],
+                ));
+      }
+
+         
     }();
   }
 

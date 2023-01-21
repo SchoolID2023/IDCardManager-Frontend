@@ -25,7 +25,6 @@ class _LoadPhotosState extends State<LoadPhotos> {
   List<String> photoColumns = [];
 
   Future<void> uploadPhotos() async {
-
     var nav = Navigator.of(context);
     final result = await FilePicker.platform.pickFiles(
       allowMultiple: true,
@@ -51,6 +50,8 @@ class _LoadPhotosState extends State<LoadPhotos> {
     nav.pop();
   }
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     StudentController _studentController =
@@ -62,64 +63,82 @@ class _LoadPhotosState extends State<LoadPhotos> {
         //   child: Text("OK"),
         //   onPressed: () {},
         // ),
-        Button(child: const Text("CANCEL"), onPressed: () => Navigator.pop(context)),
+        Button(
+            child: const Text("CANCEL"),
+            onPressed: () => Navigator.pop(context)),
       ],
       content: SizedBox(
         width: 500,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                // Expanded(
-                //   child: TextBox(
-                //     controller: _columns,
-                //     header: "Photo Colums",
-                //   ),
-                // ),
-                Expanded(
-                  child: DropDownButton(
-                    title: const Text("Select Columns"),
-                    items: List<MenuFlyoutItem>.generate(
-                      widget.fields.length,
-                      (index) => MenuFlyoutItem(
-                        leading: Checkbox(
-                          checked: photoColumns.contains(widget.fields[index]),
-                          onChanged: (value) {
-                            setState(() {
-                              if (photoColumns.contains(widget.fields[index])) {
-                                photoColumns.remove(widget.fields[index]);
-                              } else {
-                                photoColumns.add(widget.fields[index]);
-                              }
-                            });
-                          },
+        child: isLoading
+            ? Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const [
+                    Text("Uploading Photos, Kindly Wait...."),
+                    ProgressBar(),
+                  ],
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      // Expanded(
+                      //   child: TextBox(
+                      //     controller: _columns,
+                      //     header: "Photo Colums",
+                      //   ),
+                      // ),
+                      Expanded(
+                        child: DropDownButton(
+                          title: const Text("Select Columns"),
+                          items: List<MenuFlyoutItem>.generate(
+                            widget.fields.length,
+                            (index) => MenuFlyoutItem(
+                              leading: Checkbox(
+                                checked:
+                                    photoColumns.contains(widget.fields[index]),
+                                onChanged: (value) {
+                                  setState(() {
+                                    if (photoColumns
+                                        .contains(widget.fields[index])) {
+                                      photoColumns.remove(widget.fields[index]);
+                                    } else {
+                                      photoColumns.add(widget.fields[index]);
+                                    }
+                                  });
+                                },
+                              ),
+                              text: Text(widget.fields[index]),
+                              onPressed: () {
+                                setState(() {
+                                  if (photoColumns
+                                      .contains(widget.fields[index])) {
+                                    photoColumns.remove(widget.fields[index]);
+                                  } else {
+                                    photoColumns.add(widget.fields[index]);
+                                  }
+                                });
+                              },
+                            ),
+                          ),
                         ),
-                        text: Text(widget.fields[index]),
-                        onPressed: () {
+                      ),
+                      Button(
+                        child: const Text("Upload Photos"),
+                        onPressed: () async {
                           setState(() {
-                            if (photoColumns.contains(widget.fields[index])) {
-                              photoColumns.remove(widget.fields[index]);
-                            } else {
-                              photoColumns.add(widget.fields[index]);
-                            }
+                            isLoading = true;
                           });
+                          await uploadPhotos();
                         },
                       ),
-                    ),
+                    ],
                   ),
-                ),
-                Button(
-                  child: const Text("Upload Photos"),
-                  onPressed: () async {
-                    await uploadPhotos();
-                  },
-                ),
-              ],
-            ),
-            Text("Selected Columns: ${photoColumns.join(", ")}"),
-          ],
-        ),
+                  Text("Selected Columns: ${photoColumns.join(", ")}"),
+                ],
+              ),
       ),
     );
   }

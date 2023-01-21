@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' as mat;
 import 'package:idcard_maker_frontend/pages/homepage.dart';
 import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/pages/school_info_page.dart';
@@ -68,13 +69,25 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                         } catch (e) {
                           role = 1;
-                          await remoteServices
-                              .sendOtp(_numberController.text, role)
-                              .then((value) => {
-                                    setState(() {
-                                      sendingOtp = false;
-                                    })
-                                  });
+                          try {
+                            await remoteServices
+                                .sendOtp(_numberController.text, role)
+                                .then((value) => {
+                                      setState(() {
+                                        sendingOtp = false;
+                                      })
+                                    });
+                          } catch (e) {
+                            logger.e(e);
+                            showSnackbar(
+                              context,
+                              const Snackbar(
+                                content: Text(
+                                  'No Account attached to this number',
+                                ),
+                              ),
+                            );
+                          }
                         }
                       }
                     : () async {
