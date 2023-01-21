@@ -78,277 +78,232 @@ class _ResizebleWidgetState extends State<ResizebleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return KeyboardWidget(
-      columnCount: 2,
-      bindings: [
-        KeyAction(
-          LogicalKeyboardKey.arrowUp,
-          'up the label ${widget.label.title}',
-          () {
-            setState(() {
-              _label.y -= 1;
-              onChange();
-            });
-          },
-        ),
-        KeyAction(
-          LogicalKeyboardKey.arrowDown,
-          'increment the counter',
-          () {
-            setState(() {
-              _label.y += 1;
-              onChange();
-            });
-          },
-        ),
-        KeyAction(
-          LogicalKeyboardKey.arrowLeft,
-          'increment the counter',
-          () {
-            setState(() {
-              _label.x -= 1;
-              onChange();
-            });
-          },
-        ),
-        KeyAction(
-          LogicalKeyboardKey.arrowRight,
-          'increment the counter',
-          () {
-            setState(() {
-              _label.x += 1;
-              onChange();
-            });
-          },
-        ),
-      ],
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: _label.y,
-            left: _label.x,
-            child: Container(
-              height: _label.height ?? 1,
-              width: _label.width ?? 1,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1,
-                ),
-                color: Colors.lightBlue[100],
-                image: _label.isPhoto
-                    ? const DecorationImage(
-                        image: const NetworkImage(
-                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
-                        ),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: _label.y,
+          left: _label.x,
+          child: Container(
+            height: _label.height ?? 1,
+            width: _label.width ?? 1,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 1,
               ),
-              child: Text(
-                _label.title,
-                textAlign: _label.textAlign == "left"
-                    ? TextAlign.left
-                    : _label.textAlign == "right"
-                        ? TextAlign.right
-                        : TextAlign.center,
-                // style: TextStyle(
-                //   fontSize: _label.fontSize.toDouble(),
-                //   color: Color(int.parse(_label.color, radix: 16)),
+              color: Colors.lightBlue[100],
+              image: _label.isPhoto
+                  ? const DecorationImage(
+                      image: const NetworkImage(
+                        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png",
+                      ),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: Text(
+              _label.title,
+              textAlign: _label.textAlign == "left"
+                  ? TextAlign.left
+                  : _label.textAlign == "right"
+                      ? TextAlign.right
+                      : TextAlign.center,
+              // style: TextStyle(
+              //   fontSize: _label.fontSize.toDouble(),
+              //   color: Color(int.parse(_label.color, radix: 16)),
 
-                // ),
-                style: GoogleFonts.asMap()[_label.fontName]!(
-                  color: Color(
-                    int.parse(
-                      _label.color,
-                      radix: 16,
-                    ),
+              // ),
+              style: GoogleFonts.asMap()[_label.fontName]!(
+                color: Color(
+                  int.parse(
+                    _label.color,
+                    radix: 16,
                   ),
-                  fontSize: _label.fontSize.toDouble(),
-                  fontWeight:
-                      _label.isBold ? FontWeight.bold : FontWeight.normal,
-                  // fontWeight: FontWeight.bold,
-                  fontStyle:
-                      _label.isItalic ? FontStyle.italic : FontStyle.normal,
-                  decoration: _label.isUnderline
-                      ? TextDecoration.underline
-                      : TextDecoration.none,
                 ),
+                fontSize: _label.fontSize.toDouble(),
+                fontWeight:
+                    _label.isBold ? FontWeight.bold : FontWeight.normal,
+                // fontWeight: FontWeight.bold,
+                fontStyle:
+                    _label.isItalic ? FontStyle.italic : FontStyle.normal,
+                decoration: _label.isUnderline
+                    ? TextDecoration.underline
+                    : TextDecoration.none,
               ),
             ),
           ),
-          Positioned(           
-            top: _label.y - ballDiameter / 2,
-            left: _label.x - ballDiameter / 2,
-            child: ManipulatingCenterBox(
-              onDrag: (dx, dy) {
-                setState(() {
-                  _label.y = _label.y + dy;
-                  _label.x = _label.x + dx;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-              height: _label.height,
-              width: _label.width,
-            ),
+        ),
+        Positioned(           
+          top: _label.y - ballDiameter / 2,
+          left: _label.x - ballDiameter / 2,
+          child: ManipulatingCenterBox(
+            onDrag: (dx, dy) {
+              setState(() {
+                _label.y = _label.y + dy;
+                _label.x = _label.x + dx;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
+            height: _label.height,
+            width: _label.width,
           ),
-          // top left
-          Positioned(
-            top: _label.y - ballDiameter / 2,
-            left: _label.x - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var mid = (dx + dy) / 2;
-                var newHeight = _label.height - 2 * mid;
-                var newWidth = _label.width - 2 * mid;
+        ),
+        // top left
+        Positioned(
+          top: _label.y - ballDiameter / 2,
+          left: _label.x - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var mid = (dx + dy) / 2;
+              var newHeight = _label.height - 2 * mid;
+              var newWidth = _label.width - 2 * mid;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  _label.y = _label.y + mid;
-                  _label.x = _label.x + mid;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                _label.width = newWidth > 0 ? newWidth : 0;
+                _label.y = _label.y + mid;
+                _label.x = _label.x + mid;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // _label.ymiddle
-          Positioned(
-            top: _label.y - ballDiameter / 2,
-            left: _label.x + _label.width / 2 - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newHeight = _label.height - dy;
+        ),
+        // _label.ymiddle
+        Positioned(
+          top: _label.y - ballDiameter / 2,
+          left: _label.x + _label.width / 2 - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var newHeight = _label.height - dy;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  _label.y = _label.y + dy;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                _label.y = _label.y + dy;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // _label.yright
-          Positioned(
-            top: _label.y - ballDiameter / 2,
-            left: _label.x + _label.width - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var mid = (dx + (dy * -1)) / 2;
+        ),
+        // _label.yright
+        Positioned(
+          top: _label.y - ballDiameter / 2,
+          left: _label.x + _label.width - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var mid = (dx + (dy * -1)) / 2;
 
-                var newHeight = _label.height + 2 * mid;
-                var newWidth = _label.width + 2 * mid;
+              var newHeight = _label.height + 2 * mid;
+              var newWidth = _label.width + 2 * mid;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  _label.y = _label.y - mid;
-                  _label.x = _label.x - mid;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                _label.width = newWidth > 0 ? newWidth : 0;
+                _label.y = _label.y - mid;
+                _label.x = _label.x - mid;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // center right
-          Positioned(
-            top: _label.y + _label.height / 2 - ballDiameter / 2,
-            left: _label.x + _label.width - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newWidth = _label.width + dx;
+        ),
+        // center right
+        Positioned(
+          top: _label.y + _label.height / 2 - ballDiameter / 2,
+          left: _label.x + _label.width - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var newWidth = _label.width + dx;
 
-                setState(() {
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.width = newWidth > 0 ? newWidth : 0;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // bottom right
-          Positioned(
-            top: _label.y + _label.height - ballDiameter / 2,
-            left: _label.x + _label.width - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var mid = (dx + dy) / 2;
+        ),
+        // bottom right
+        Positioned(
+          top: _label.y + _label.height - ballDiameter / 2,
+          left: _label.x + _label.width - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var mid = (dx + dy) / 2;
 
-                var newHeight = _label.height + 2 * mid;
-                var newWidth = _label.width + 2 * mid;
+              var newHeight = _label.height + 2 * mid;
+              var newWidth = _label.width + 2 * mid;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  _label.y = _label.y - mid;
-                  _label.x = _label.x - mid;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                _label.width = newWidth > 0 ? newWidth : 0;
+                _label.y = _label.y - mid;
+                _label.x = _label.x - mid;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // bottom center
-          Positioned(
-            top: _label.y + _label.height - ballDiameter / 2,
-            left: _label.x + _label.width / 2 - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newHeight = _label.height + dy;
+        ),
+        // bottom center
+        Positioned(
+          top: _label.y + _label.height - ballDiameter / 2,
+          left: _label.x + _label.width / 2 - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var newHeight = _label.height + dy;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // bottom left
-          Positioned(
-            top: _label.y + _label.height - ballDiameter / 2,
-            left: _label.x - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var mid = (((dx) * -1) + (dy)) / 2;
+        ),
+        // bottom left
+        Positioned(
+          top: _label.y + _label.height - ballDiameter / 2,
+          left: _label.x - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var mid = (((dx) * -1) + (dy)) / 2;
 
-                var newHeight = _label.height + 2 * mid;
-                var newWidth = _label.width + 2 * mid;
+              var newHeight = _label.height + 2 * mid;
+              var newWidth = _label.width + 2 * mid;
 
-                setState(() {
-                  _label.height = newHeight > 20.0 ? newHeight : 20.0;
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  _label.y = _label.y - mid;
-                  _label.x = _label.x - mid;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.height = newHeight > 20.0 ? newHeight : 20.0;
+                _label.width = newWidth > 0 ? newWidth : 0;
+                _label.y = _label.y - mid;
+                _label.x = _label.x - mid;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          //left center
-          Positioned(
-            top: _label.y + _label.height / 2 - ballDiameter / 2,
-            left: _label.x - ballDiameter / 2,
-            child: ManipulatingBall(
-              onDrag: (dx, dy) {
-                var newWidth = _label.width - dx;
+        ),
+        //left center
+        Positioned(
+          top: _label.y + _label.height / 2 - ballDiameter / 2,
+          left: _label.x - ballDiameter / 2,
+          child: ManipulatingBall(
+            onDrag: (dx, dy) {
+              var newWidth = _label.width - dx;
 
-                setState(() {
-                  _label.width = newWidth > 0 ? newWidth : 0;
-                  _label.x = _label.x + dx;
-                  onChange();
-                });
-              },
-              scale: widget.myScale,
-            ),
+              setState(() {
+                _label.width = newWidth > 0 ? newWidth : 0;
+                _label.x = _label.x + dx;
+                onChange();
+              });
+            },
+            scale: widget.myScale,
           ),
-          // center center
-        ],
-      ),
+        ),
+        // center center
+      ],
     );
   }
 }

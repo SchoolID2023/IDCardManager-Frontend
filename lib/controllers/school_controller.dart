@@ -55,6 +55,7 @@ class SchoolController extends GetxController {
       isLoading(true);
       var newSchool = await _remoteServices.addSchool(school);
       schools.value.schools.add(newSchool);
+      fetchSchools();
     } finally {
       isLoading(false);
     }
@@ -65,6 +66,7 @@ class SchoolController extends GetxController {
       isLoading(true);
       await _remoteServices.deleteSchool(schoolId);
       schools.value.schools.removeWhere((element) => element.id == schoolId);
+      fetchSchools();
     } finally {
       isLoading(false);
     }

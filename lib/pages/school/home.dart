@@ -296,7 +296,7 @@ class _HomeState extends State<Home> {
                                                                     studentController
                                                                         .getAdmins[
                                                                             index]
-                                                                        .email,
+                                                                        .contact,
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,

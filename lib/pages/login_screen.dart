@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/homepage.dart';
 import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
+import 'package:idcard_maker_frontend/pages/school_info_page.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import '../services/logger.dart';
 
@@ -19,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _numberController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   bool sendingOtp = true;
-
+  int role = 0;
   @override
   Widget build(BuildContext context) {
     double cwidth = MediaQuery.of(context).size.width;
@@ -57,24 +58,47 @@ class _LoginPageState extends State<LoginPage> {
               Button(
                 onPressed: sendingOtp
                     ? () async {
-                        await remoteServices
-                            .sendOtp(_numberController.text)
-                            .then((value) => {
-                                  setState(() {
-                                    sendingOtp = false;
-                                  })
-                                });
+                        try {
+                          await remoteServices
+                              .sendOtp(_numberController.text, role)
+                              .then((value) => {
+                                    setState(() {
+                                      sendingOtp = false;
+                                    })
+                                  });
+                        } catch (e) {
+                          role = 1;
+                          await remoteServices
+                              .sendOtp(_numberController.text, role)
+                              .then((value) => {
+                                    setState(() {
+                                      sendingOtp = false;
+                                    })
+                                  });
+                        }
                       }
                     : () async {
                         try {
                           await remoteServices
-                              .verifyOtp(
-                                  _numberController.text, _otpController.text)
+                              .verifyOtp(_numberController.text,
+                                  _otpController.text, role)
                               .then((value) => {
                                     {
-                                      Navigator.of(context).pushReplacement(
-                                          FluentPageRoute(
-                                              builder: (context) => HomePage()))
+                                      role == 0
+                                          ? Navigator.of(context)
+                                              .pushReplacement(FluentPageRoute(
+                                                  builder: (context) =>
+                                                      HomePage()))
+                                          : Navigator.of(context)
+                                              .pushReplacement(
+                                              FluentPageRoute(
+                                                builder: (context) =>
+                                                    SchoolInfoPage(
+                                                  schoolId: value,
+                                                  role: role,
+                                                ),
+                                              ),
+                                            )
                                     }
                                   });
                         } catch (e) {

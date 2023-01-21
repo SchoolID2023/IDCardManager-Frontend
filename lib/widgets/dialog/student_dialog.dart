@@ -44,7 +44,7 @@ class StudentDialog extends StatelessWidget {
         Button(
           child: const Text('Delete'),
           onPressed: () {
-            _studentController.deleteStudent(student.id);
+            // _studentController.deleteStudent(student.id);
             Navigator.of(context).pop();
           },
         ),

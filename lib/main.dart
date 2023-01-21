@@ -2,6 +2,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:idcard_maker_frontend/pages/homepage.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
+import 'package:idcard_maker_frontend/pages/school_info_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/logger.dart';
 
@@ -53,9 +54,14 @@ class LoginWrapper extends StatelessWidget {
               .push(FluentPageRoute(builder: (context) => const LoginPage()));
         } else {
           logger.d("Byeee");
+          logger.d("userType: $userType");
           if (userType == "schoolAdmin") {
-            Navigator.of(context)
-                .push(FluentPageRoute(builder: (context) => const LoginPage()));
+            Navigator.of(context).push(FluentPageRoute(
+              builder: (context) => SchoolInfoPage(
+                schoolId: schoolId,
+                role: 1,
+              ),
+            ));
           } else {
             Navigator.of(context)
                 .push(FluentPageRoute(builder: (context) => HomePage()));

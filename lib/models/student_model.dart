@@ -103,6 +103,8 @@ class Datum {
 }
 
 class Photo {
+  static const String no_photo =
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png";
   Photo({
     required this.field,
     required this.value,
@@ -113,7 +115,7 @@ class Photo {
 
   factory Photo.fromJson(Map<String, dynamic> json) => Photo(
         field: json["field"],
-        value: json["value"],
+        value: json["value"] ?? no_photo,
       );
 
   Map<String, dynamic> toJson() => {

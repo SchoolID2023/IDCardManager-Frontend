@@ -69,8 +69,14 @@ class _LoadExcelState extends State<LoadExcel> {
       actions: [
         Button(
           child: const Text("OK"),
-          onPressed: () {
-            studentController.addStudents(widget.schoolId, _excelPath.text);
+          onPressed: () async {
+            await studentController
+                .addStudents(widget.schoolId, _excelPath.text)
+                .then(
+              (value) {
+                Navigator.pop(context);
+              },
+            );
           },
         ),
         Button(
@@ -89,9 +95,7 @@ class _LoadExcelState extends State<LoadExcel> {
           Button(
             child: const Text("Upload Excel"),
             onPressed: () async {
-              await uploadExcel().then(
-                (value) => Navigator.of(context).pop(),
-              );
+              await uploadExcel();
             },
           ),
         ],

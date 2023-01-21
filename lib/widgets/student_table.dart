@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -67,8 +68,8 @@ class _StudentTableState extends State<StudentTable> {
   final Map<String, bool> _isVisible = <String, bool>{};
   late StudentController studentController;
 
-  void deleteStudent(String studnentId) {
-    studentController.deleteStudent(studnentId);
+  void deleteStudent(String studentId) {
+    studentController.deleteStudent(studentId, widget.schoolId);
   }
 
   @override
@@ -223,33 +224,35 @@ class _StudentTableState extends State<StudentTable> {
                 padding: const EdgeInsets.all(8.0),
                 child: fluent.Row(
                   children: [
-                    SizedBox(
-                      width: 150,
-                      child: fluent.DropDownButton(
-                        title: filterField != ''
-                            ? Text(filterField)
-                            : const Text('Search Data by'),
-                        items: List<fluent.MenuFlyoutItem>.generate(
-                          widget.labels.length,
-                          (index) => fluent.MenuFlyoutItem(
-                            // leading: fluent.Checkbox(
-                            //   checked: _isVisible[index] ?? false,
-                            //   onChanged: (value) {
-                            //     setState(() {
-                            //       _isVisible[index] = !(_isVisible[index] ?? false);
-                            //     });
-                            //   },
-                            // ),
-                            text: Text(widget.labels[index]),
-                            onPressed: () {
-                              setState(() {
-                                filterField = widget.labels[index];
-                              });
-                            },
+                    widget.labels.isEmpty
+                        ? Container()
+                        : SizedBox(
+                            width: 150,
+                            child: fluent.DropDownButton(
+                              title: filterField != ''
+                                  ? Text(filterField)
+                                  : const Text('Search Data by'),
+                              items: List<fluent.MenuFlyoutItem>.generate(
+                                widget.labels.length,
+                                (index) => fluent.MenuFlyoutItem(
+                                  // leading: fluent.Checkbox(
+                                  //   checked: _isVisible[index] ?? false,
+                                  //   onChanged: (value) {
+                                  //     setState(() {
+                                  //       _isVisible[index] = !(_isVisible[index] ?? false);
+                                  //     });
+                                  //   },
+                                  // ),
+                                  text: Text(widget.labels[index]),
+                                  onPressed: () {
+                                    setState(() {
+                                      filterField = widget.labels[index];
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                     fluent.SizedBox(
                       width: 400,
                       child: fluent.TextBox(
@@ -286,30 +289,32 @@ class _StudentTableState extends State<StudentTable> {
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       width: 250,
-                      child: fluent.DropDownButton(
-                        title: classFilter != 'All'
-                            ? Text(
-                                'Students of Class ${classFilter.toUpperCase()}')
-                            : const Text('All Classes'),
-                        items: List<fluent.MenuFlyoutItem>.generate(
-                          widget.classes.length,
-                          (index) => fluent.MenuFlyoutItem(
-                            text: Text(widget.classes[index]),
-                            onPressed: () {
-                              setState(() {
-                                classFilter = widget.classes[index];
-                              });
-                            },
-                          ),
-                        ),
-                      ),
+                      child: widget.classes.isEmpty
+                          ? Container()
+                          : fluent.DropDownButton(
+                              title: classFilter != 'All'
+                                  ? Text(
+                                      'Students of Class ${classFilter.toUpperCase()}')
+                                  : const Text('All Classes'),
+                              items: List<fluent.MenuFlyoutItem>.generate(
+                                widget.classes.length,
+                                (index) => fluent.MenuFlyoutItem(
+                                  text: Text(widget.classes[index]),
+                                  onPressed: () {
+                                    setState(() {
+                                      classFilter = widget.classes[index];
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                   fluent.Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       width: 250,
-                      child: fluent.DropDownButton(
+                      child: widget.sections.isEmpty ? Container() : fluent.DropDownButton(
                         title: sectionFilter != 'All'
                             ? Text(
                                 'Students of Section ${sectionFilter.toUpperCase()}')
@@ -381,37 +386,41 @@ class _StudentTableState extends State<StudentTable> {
               const Text('Students'),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  width: 150,
-                  child: fluent.DropDownButton(
-                    title: const Text('View Data'),
-                    items: List<fluent.MenuFlyoutItem>.generate(
-                      widget.labels.length - 5,
-                      (index) {
-                        index += 5;
+                child: widget.labels.length <= 5
+                    ? Container()
+                    : SizedBox(
+                        width: 150,
+                        child: fluent.DropDownButton(
+                          title: const Text('View Data'),
+                          items: List<fluent.MenuFlyoutItem>.generate(
+                            widget.labels.length - 5,
+                            (index) {
+                              index += 5;
 
-                        return fluent.MenuFlyoutItem(
-                          leading: fluent.Checkbox(
-                            checked: _isVisible.values.elementAt(index),
-                            onChanged: (value) {
-                              setState(() {
-                                _isVisible[_isVisible.keys.elementAt(index)] =
-                                    !(_isVisible.values.elementAt(index));
-                              });
+                              return fluent.MenuFlyoutItem(
+                                leading: fluent.Checkbox(
+                                  checked: _isVisible.values.elementAt(index),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _isVisible[_isVisible.keys
+                                              .elementAt(index)] =
+                                          !(_isVisible.values.elementAt(index));
+                                    });
+                                  },
+                                ),
+                                text: Text(_isVisible.keys.elementAt(index)),
+                                onPressed: () {
+                                  setState(() {
+                                    _isVisible[
+                                            _isVisible.keys.elementAt(index)] =
+                                        !(_isVisible.values.elementAt(index));
+                                  });
+                                },
+                              );
                             },
                           ),
-                          text: Text(_isVisible.keys.elementAt(index)),
-                          onPressed: () {
-                            setState(() {
-                              _isVisible[_isVisible.keys.elementAt(index)] =
-                                  !(_isVisible.values.elementAt(index));
-                            });
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ),
+                        ),
+                      ),
               ),
               widget.students[0].photo.isEmpty
                   ? Container()
@@ -705,10 +714,32 @@ class MyData extends DataTableSource {
       cells: List<DataCell>.generate(_data[index].length, (value) {
         if (value == 5 && photoIndex != -1) {
           return DataCell(
-            Image.network(
-              _data[index][value],
-              height: 90,
-              // width: 100,
+            GestureDetector(
+              onDoubleTap: () async {
+                // Download the image to the computer in downloads section
+                String savePath =
+                    "C:/Users/chira/downloads/idcardImages/${_data[index][1]}.jpg";
+                logger.i(savePath);
+                try {
+                  await Dio().download(
+                    _data[index][value],
+                    savePath,
+                  );
+                } on DioError catch (e) {
+                  print(e.message);
+                } finally {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Image Downloaded in Downloads Folder"),
+                    ),
+                  );
+                }
+              },
+              child: Image.network(
+                _data[index][value],
+                height: 90,
+                // width: 100,
+              ),
             ),
           );
         }

@@ -40,6 +40,8 @@ class StudentController extends GetxController {
     photoLabels: [],
   ).obs;
 
+  var role = 0.obs;
+
   School get getSchool => school.value;
   List<SchoolAdmin> get getAdmins => admins.value.schoolAdmins;
   List<Teacher> get getTeachers => teachers.value.teachers;
@@ -49,7 +51,9 @@ class StudentController extends GetxController {
 
   set setLoading(bool value) => isLoading.value = value;
 
-  void addStudents(String schoolId, String excelFile) async {
+  
+
+  Future<void> addStudents(String schoolId, String excelFile) async {
     try {
       isLoading(true);
       await _remoteServices.addStudentData(schoolId, excelFile);
@@ -59,10 +63,20 @@ class StudentController extends GetxController {
     }
   }
 
+  void addStudent(Map<String, String> studentData) async {
+    try {
+      isLoading(true);
+      await _remoteServices.addStudent(studentData);
+    } finally {
+      fetchStudents(schoolId);
+      isLoading(false);
+    }
+  }
+
   Future<void> fetchStudents(String schoolId) async {
     logger.d("API -> $schoolId");
     try {
-      var students = await _remoteServices.getStudentData(schoolId);
+      var students = await _remoteServices.getStudentData(schoolId, role.value);
       this.students.value = students;
     } finally {
       // isLoading(false);
@@ -72,7 +86,7 @@ class StudentController extends GetxController {
   Future<void> fetchIdCardList(String schoolId) async {
     try {
       // isLoading(true);
-      var idCardList = await _remoteServices.getIdCardList(schoolId);
+      var idCardList = await _remoteServices.getIdCardList(schoolId, role.value);
       this.idCardList.value = idCardList;
     } finally {
       // isLoading(false);
@@ -101,7 +115,7 @@ class StudentController extends GetxController {
   Future<void> fetchAdmins(String schoolId) async {
     try {
       // isLoading(true);
-      var admins = await _remoteServices.getSchoolAdmins(schoolId);
+      var admins = await _remoteServices.getSchoolAdmins(schoolId, role.value);
       this.admins.value = admins;
     } finally {
       // isLoading(false);
@@ -112,7 +126,7 @@ class StudentController extends GetxController {
     try {
       // isLoading(true);
       logger.i("Fetching Schools ${schoolId}");
-      school.value = await _remoteServices.getSchoolById(schoolId);
+      school.value = await _remoteServices.getSchoolById(schoolId, role.value);
     } finally {
       // isLoading(false);
     }
@@ -121,8 +135,8 @@ class StudentController extends GetxController {
   Future<void> fetchSchoolLabels(String schoolId) async {
     try {
       // isLoading(true);
-      logger.i("Fetching Schools ${schoolId}");
-      schoolLabels.value = await _remoteServices.getSchoolLabels(schoolId);
+      logger.i("Fetching School Labels ${schoolId}");
+      schoolLabels.value = await _remoteServices.getSchoolLabels(schoolId, role.value);
     } finally {
       // isLoading(false);
     }
@@ -140,7 +154,7 @@ class StudentController extends GetxController {
   Future<void> fetchTeachers(String schoolId) async {
     try {
       // isLoading(true);
-      var teachers = await _remoteServices.getSchoolTeachers(schoolId);
+      var teachers = await _remoteServices.getSchoolTeachers(schoolId, role.value);
       this.teachers.value = teachers;
 
       logger.d("Teachers Fetched");
@@ -161,12 +175,18 @@ class StudentController extends GetxController {
     }
   }
 
-  void deleteStudent(String studentId) async {
+  void deleteStudent(String studentId, String schoolId) async {
     try {
-      students.value.students.removeWhere((element) => element.id == studentId);
+      // students.value.students.removeWhere((element) => element.id == studentId);
       await _remoteServices.deleteStudent(studentId);
     } finally {
       fetchStudents(schoolId);
     }
   }
+
+  Future setRole(int role) async {
+    this.role.value = role;
+  }
+
+  
 }

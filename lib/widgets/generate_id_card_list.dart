@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:image/image.dart' as IMG;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -35,7 +36,9 @@ class GenerateIdCardList extends StatefulWidget {
 class _GenerateIdCardListState extends State<GenerateIdCardList> {
   late IdCardGenerationModel _idCardGenerationModel;
   final TextEditingController _outputPath = TextEditingController();
+  final TextEditingController _dpi = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
+
   bool _isLoading = true;
   bool _isGenerating = false;
 
@@ -65,10 +68,13 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     });
   }
 
+  double pixelRatio = 1.0;
+
   @override
   void initState() {
     setState(() {
       _isLoading = true;
+      _dpi.text = '600';
     });
 
     () async {
@@ -182,28 +188,58 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     final ByteData? byteData =
         await image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List pngBytes = byteData!.buffer.asUint8List();
+    var dpi = 300;
+    pngBytes[13] = 1;
+    pngBytes[14] = (dpi >> 8);
+    pngBytes[15] = (dpi & 0xff);
+    pngBytes[16] = (dpi >> 8);
+    pngBytes[17] = (dpi & 0xff);
     await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
 
     logger.d("Png Captured --> $path\\$fileImage.png");
   }
 
+  Uint8List resizeImage(Uint8List data) {
+    Uint8List? resizedData = data;
+    IMG.Image? img = IMG.decodeImage(data);
+    IMG.Image resized = IMG.copyResize(
+      img!,
+      width: img.width * double.parse(_dpi.text) ~/ 100,
+      height: img.height * double.parse(_dpi.text) ~/ 100,
+    );
+    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
+    return resizedData;
+  }
+
   Future<void> captureScreenshot(
       Widget idCard, String path, String fileImage) async {
-    final Uint8List pngBytes = await screenshotController.captureFromWidget(
+    Uint8List pngBytes = await screenshotController.captureFromWidget(
       idCard,
-      pixelRatio: 1.0,
+      pixelRatio: pixelRatio,
     );
+    // var dpi = 300;
+    // pngBytes[13] = 1;
+    // pngBytes[14] = (dpi >> 8);
+    // pngBytes[15] = (dpi & 0xff);
+    // pngBytes[16] = (dpi >> 8);
+    // pngBytes[17] = (dpi & 0xff);
 
-    await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
-    logger.d("SS Png Captured --> $path\\$fileImage.png");
+    pngBytes = resizeImage(pngBytes);
+
+    await File('$path\\$fileImage.jpeg').writeAsBytes(pngBytes);
+    logger.d("SS Png Captured --> $path\\$fileImage.jpeg");
   }
 
   final Widget _widget = const Text("Start");
+  Widget frontWidget = const SizedBox(
+    height: 1.0,
+  );
 
   int index = 0;
 
   @override
   Widget build(BuildContext context) {
+    pixelRatio = MediaQuery.of(context).devicePixelRatio;
     return ScaffoldPage(
       header: Row(
         children: [
@@ -461,6 +497,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                   );
                                 } else if (_idCardGenerationModel
                                     .idcard.labels[i].isPrinted) {
+                                      
                                   labelBackList.add(
                                     Positioned(
                                       top: _idCardGenerationModel
@@ -532,21 +569,15 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                 }
                               }
 
-                              Widget frontWidget = Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Colors.black,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: _idCardGenerationModel.idcard.height
-                                      .toDouble(),
-                                  width: _idCardGenerationModel.idcard.width
-                                      .toDouble(),
-                                  child: Stack(children: labelList),
-                                ),
+                              frontWidget = SizedBox(
+                                height: _idCardGenerationModel.idcard.height
+                                    .toDouble(),
+                                width: _idCardGenerationModel.idcard.width
+                                    .toDouble(),
+                                child: Stack(children: labelList),
                               );
+
+                              // frontWidget = Stack(children: labelList);
 
                               Widget backWidget = _idCardGenerationModel
                                       .idcard.isDual
@@ -576,6 +607,9 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                   "FrontKey : ${globalFrontKey.currentState.toString()}");
                               logger.d(
                                   "BackKey : ${globalBackKey.currentState.toString()}");
+
+                              logger.d(
+                                  "Height and Width : ${_idCardGenerationModel.idcard.height} ${_idCardGenerationModel.idcard.width}");
 
                               // await capturePng(
                               //     _globalFrontKey, "front", student.username);
@@ -608,8 +642,23 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                         await _remoteServices.attachIDCard(_idCardAttachModel);
                         errorFile.writeAsString(errors);
                       }),
-                      child: const Center(
-                        child: const Text("Generate"),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: 350,
+                                child: TextBox(
+                                  header: 'DPI of the ID Card to be generated:- ',
+                                  controller: _dpi,
+                                ),
+                              ),
+                            ),                          
+                            const Center(child:  Text("Generate")),
+                          ],
+                        ),
                       ),
                     )
                   else
@@ -624,28 +673,31 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                               ),
                             ),
                           )
-                        : Column(
-                            children: [
-                              Container(
-                                height: 100,
-                                child: Center(
-                                  child: Text(
-                                    "Generating... $currentCount/$totalCount",
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
+                        : SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 100,
+                                  child: Center(
+                                    child: Text(
+                                      "Generating... $currentCount/$totalCount",
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Button(
-                                  child: const Text("Stop Genrating"),
-                                  onPressed: () {
-                                    setState(() {
-                                      isStop = true;
-                                    });
-                                  })
-                            ],
+                                Button(
+                                    child: const Text("Stop Genrating"),
+                                    onPressed: () {
+                                      setState(() {
+                                        isStop = true;
+                                      });
+                                    }),
+                                frontWidget,
+                              ],
+                            ),
                           ),
                 ],
               ),

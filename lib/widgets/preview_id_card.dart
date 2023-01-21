@@ -68,6 +68,10 @@ class PreviewIdCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // logger.d("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
     // logger.d("ID Card Foreground----->>>>>: ${idCard.foregroundImagePath}");
+
+    logger.d("ID Card Preview");
+    logger.d("Id card Height -> ${idCard.height}");
+    logger.d("Id card Width -> ${idCard.width}");
     labelList.add(
       SizedBox(
         height: idCard.height.toDouble(),
@@ -75,14 +79,14 @@ class PreviewIdCard extends StatelessWidget {
         child: isEdit
             ? Image.network(
                 idCard.foregroundImagePath,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
               )
             : Image.file(
-                  File(
-                    idCard.foregroundImagePath,
-                  ),
-                  fit: BoxFit.fill,
+                File(
+                  idCard.foregroundImagePath,
                 ),
+                fit: BoxFit.fill,
+              ),
       ),
     );
 
@@ -255,17 +259,15 @@ class PreviewIdCard extends StatelessWidget {
         child: const Text("Close"),
         onPressed: () => Navigator.pop(context),
       ),
-      content: InteractiveViewer(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                frontWidget,
-                backWidget,
-              ],
-            ),
+      content: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              frontWidget,
+              backWidget,
+            ],
           ),
         ),
       ),

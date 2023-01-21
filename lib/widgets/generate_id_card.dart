@@ -4,7 +4,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:idcard_maker_frontend/widgets/resizable_widget.dart';
+import 'package:keymap/keymap.dart';
 
 import '../models/id_card_model.dart';
 import 'dart:async';
@@ -135,6 +137,9 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
             onLongPressMoveUpdate: (_) {
               widget.updateEditIndex(i, false);
             },
+            onTap: () {
+              widget.updateEditIndex(i, false);
+            },
             child: ResizebleWidget(
               label: widget.idCard.labels[i],
               myScale: widget.scaleFactor / 100,
@@ -159,46 +164,84 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
       }
     }
 
-    return Container(
-      child: widget.isFrontView
-          ? Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1,
+    return KeyboardWidget(
+      columnCount: 2,
+      bindings: [
+        KeyAction(
+          LogicalKeyboardKey.arrowUp,
+          'up the label ',
+          () {
+            widget.updateIdCardPosition(0, -1);
+          
+          },
+        ),
+        KeyAction(
+          LogicalKeyboardKey.arrowDown,
+          'increment the counter',
+          () {
+            widget.updateIdCardPosition(0, 1);
+          
+          },
+        ),
+        KeyAction(
+          LogicalKeyboardKey.arrowLeft,
+          'increment the counter',
+          () {
+            widget.updateIdCardPosition(-1, 0);
+          
+          },
+        ),
+        KeyAction(
+          LogicalKeyboardKey.arrowRight,
+          'increment the counter',
+          () {
+            widget.updateIdCardPosition(1, 0);
+          
+          },
+        ),
+      ],
+      
+      child: Container(
+        child: widget.isFrontView
+            ? Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  ),
+                ),
+                child: RepaintBoundary(
+                  key: _globalFrontKey,
+                  child: SizedBox(
+                    height: widget.idCard.height.toDouble() *
+                        widget.scaleFactor /
+                        100,
+                    width:
+                        widget.idCard.width.toDouble() * widget.scaleFactor / 100,
+                    child: Stack(children: labelList),
+                  ),
+                ),
+              )
+            : Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  ),
+                ),
+                child: RepaintBoundary(
+                  key: _globalBackKey,
+                  child: SizedBox(
+                    height: widget.idCard.height.toDouble() *
+                        widget.scaleFactor /
+                        100,
+                    width:
+                        widget.idCard.width.toDouble() * widget.scaleFactor / 100,
+                    child: Stack(children: labelBackList),
+                  ),
                 ),
               ),
-              child: RepaintBoundary(
-                key: _globalFrontKey,
-                child: SizedBox(
-                  height: widget.idCard.height.toDouble() *
-                      widget.scaleFactor /
-                      100,
-                  width:
-                      widget.idCard.width.toDouble() * widget.scaleFactor / 100,
-                  child: Stack(children: labelList),
-                ),
-              ),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.black,
-                  width: 1,
-                ),
-              ),
-              child: RepaintBoundary(
-                key: _globalBackKey,
-                child: SizedBox(
-                  height: widget.idCard.height.toDouble() *
-                      widget.scaleFactor /
-                      100,
-                  width:
-                      widget.idCard.width.toDouble() * widget.scaleFactor / 100,
-                  child: Stack(children: labelBackList),
-                ),
-              ),
-            ),
+      ),
     );
 
     // return Stack(children: labelList);

@@ -76,10 +76,10 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
     });
   }
 
-  void _updatePostion(int pos, int x, int y, int height, int width) {
+  void _updatePostion(int dx, int dy) {
     setState(() {
-      _idCard.labels[pos].x = x;
-      _idCard.labels[pos].y = y;
+      _idCard.labels[editableIndex].x += dx;
+      _idCard.labels[editableIndex].y += dy;
     });
   }
 
@@ -158,6 +158,9 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   @override
   void initState() {
     // TODO: implement initState
+    logger.d("Add Id Card Page Init");
+    logger.d("Height--> ${widget.idCardHeight}");
+    logger.d("Width--> ${widget.idCardWidth}");
     _idCard = IdCardModel(
       title: widget.title,
       id: DateTime.now().toString(),
@@ -1255,13 +1258,13 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                               child: SizedBox(
                                 width: 100,
                                 child: Slider(
-                                  max: 400.0,
+                                  max: 500.0,
                                   min: 100.0,
                                   value: scaleFactor,
                                   onChanged: (v) =>
                                       setState(() => scaleFactor = v),
                                   // Label is the text displayed above the slider when the user is interacting with it.
-                                  label: '${scaleFactor.toInt()}',
+                                  label: '${scaleFactor.toInt() / 100}',
                                 ),
                               ),
                             ),

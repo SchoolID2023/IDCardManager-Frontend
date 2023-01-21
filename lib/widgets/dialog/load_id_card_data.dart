@@ -22,9 +22,11 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
   final TextEditingController _title = TextEditingController();
   final TextEditingController _idCardWidth = TextEditingController();
   final TextEditingController _idCardHeight = TextEditingController();
+  // final TextEditingController _dpi = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     return ContentDialog(
       backgroundDismiss: true,
       title: Text("Generate ID Card"),
@@ -39,12 +41,11 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
                         schoolId: widget.schoolId,
                         labels: widget.labels,
                         isDual: isDual,
-                        idCardWidth:
-                            double.parse(_idCardWidth.text) * 3.7795275591,
-                        idCardHeight:
-                            double.parse(_idCardHeight.text) * 3.7795275591,
+                        idCardWidth: double.parse(_idCardWidth.text) *
+                            (0.0393701 * 100.0 / pixelRatio),
+                        idCardHeight: double.parse(_idCardHeight.text) *
+                            (0.0393701 * 100.0 / pixelRatio),
                         excelPath: _excelPath.text,
-                        
                       )));
             }),
         Button(child: Text("CANCEL"), onPressed: () => Navigator.pop(context)),
@@ -62,17 +63,28 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
               Expanded(
                 child: TextBox(
                   controller: _idCardWidth,
-                  header: "ID Card Width",
+                  header: "ID Card Width (in mm)",
                   placeholder: 'Enter width',
                 ),
               ),
               Expanded(
                 child: TextBox(
                   controller: _idCardHeight,
-                  header: "ID Card Height",
+                  header: "ID Card Height (in mm)",
                   placeholder: 'Enter height',
                 ),
               ),
+            ],
+          ),
+          Row(
+            children: [
+              // Expanded(
+              //   child: TextBox(
+              //     controller: _dpi,
+              //     header: "DPI",
+              //     placeholder: 'Enter DPI',
+              //   ),
+              // ),
               ToggleSwitch(
                 checked: isDual,
                 onChanged: (_) {

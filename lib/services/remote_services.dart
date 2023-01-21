@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
-import 'package:idcard_maker_frontend/models/superadmin_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 
+import '../models/superadmin_model.dart';
 import '../models/admin_model.dart';
 import '../models/id_card_attach_model.dart';
 import '../models/id_card_list_model.dart';
@@ -25,27 +25,49 @@ class RemoteServices {
 
   final String baseUrl = 'http://3.7.239.25:3000';
 
-  Future<void> sendOtp(String contact) async {
-    try {
-      await dio.post('$baseUrl/superAdmin/sendOtp', data: {'contact': contact});
-    } catch (e) {
-      print(e);
+  String getUrl(int role, String endpoint, {String? schoolId}) {
+    if (role == 0) {
+      return '$baseUrl/superAdmin/$endpoint/${schoolId ?? ""}';
+    } else if (role == 1) {
+      return '$baseUrl/schoolAdmin/$endpoint';
+    } else {
+      return '$baseUrl/officeAdmin/$endpoint/$schoolId';
     }
   }
 
-  Future<void> verifyOtp(String contact, String otp) async {
+  Future<void> sendOtp(String contact, int role) async {
+    String url = getUrl(role, 'sendOtp');
+
+    logger.i('Sending OTP to $contact');
+    logger.i('URL: $url');
+    try {
+      await dio.post(getUrl(role, 'sendOtp'), data: {'contact': contact});
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> verifyOtp(String contact, String otp, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    logger.i('Verifying OTP $otp for $contact');
+    // logger.i('URL: ${getUrl(role)}/login');
+
     try {
-      Response response = await dio.post('$baseUrl/superAdmin/login',
-          data: {'contact': contact, 'otp': otp});
+      Response response = await dio
+          .post(getUrl(role, 'login'), data: {'contact': contact, 'otp': otp});
       // prefs.setString('token', response.data['token']);
       logger.d(response.data);
       prefs.setString('token', response.data['token']);
-      prefs.setString('userType', 'superAdmin');
+      prefs.setString('userType',
+          response.data['isSuperAdmin'] ? 'superAdmin' : 'schoolAdmin');
       prefs.setString('schoolId', response.data['schoolId']);
+
+      return response.data['schoolId'] ?? "null";
+
+      // prefs.setString('schoolId', response.data['schoolId']);
     } catch (e) {
-      throw Exception(e.toString());
+      rethrow;
     }
   }
 
@@ -286,14 +308,12 @@ class RemoteServices {
     }
   }
 
-  Future<AdminsModel> getSchoolAdmins(String schoolId) async {
+  Future<AdminsModel> getSchoolAdmins(String schoolId, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
 
-    var url = userType == "superAdmin"
-        ? '$baseUrl/$userType/viewSchoolAdmins/$schoolId'
-        : '$baseUrl/$userType/viewSchoolAdmins';
+    var url = getUrl(role, 'viewSchoolAdmins', schoolId: schoolId);
 
     final response = await http.get(
       Uri.parse(url),
@@ -315,14 +335,16 @@ class RemoteServices {
     }
   }
 
-  Future<TeacherListModel> getSchoolTeachers(String schoolId) async {
+  Future<TeacherListModel> getSchoolTeachers(String schoolId, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
 
-    var url = userType == "superAdmin"
-        ? '$baseUrl/$userType/getAllTeachers/$schoolId'
-        : '$baseUrl/$userType/getAllTeachers';
+    // var url = userType == "superAdmin"
+    //     ? '$baseUrl/$userType/getAllTeachers/$schoolId'
+    //     : '$baseUrl/$userType/getAllTeachers';
+
+    String url = getUrl(role, 'getAllTeachers', schoolId: schoolId);
 
     final response = await http.get(
       Uri.parse(url),
@@ -344,13 +366,13 @@ class RemoteServices {
     }
   }
 
-  Future<School> getSchoolById(String schoolId) async {
+  Future<School> getSchoolById(String schoolId, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
 
     final response = await http.get(
-      Uri.parse('$baseUrl/$userType/viewSchoolById/$schoolId'),
+      Uri.parse(getUrl(role, 'viewSchoolById', schoolId: schoolId)),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
@@ -369,20 +391,24 @@ class RemoteServices {
     }
   }
 
-  Future<SchoolLabels> getSchoolLabels(String schoolId) async {
+  Future<SchoolLabels> getSchoolLabels(String schoolId, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final userType = prefs.getString('userType');
+    // final userType = prefs.getString('userType');
+
+    logger.d("URL:- ${getUrl(role, 'viewSchoolById', schoolId: schoolId)}");
 
     final response = await http.get(
-      Uri.parse('$baseUrl/$userType/viewSchoolById/$schoolId'),
+      Uri.parse(getUrl(role, 'viewSchoolById', schoolId: schoolId)),
       headers: {
         'Authorization': 'Biatch $token',
         "Content-Type": "application/json"
       },
     );
 
-    logger.d(response);
+    logger.d("Schoool Labels --> ");
+
+    logger.d(response.body);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -390,7 +416,7 @@ class RemoteServices {
 
       return SchoolLabels.fromJson(data);
     } else {
-      throw Exception(response.statusCode);
+      throw Exception(response.body);
     }
   }
 
@@ -519,6 +545,45 @@ class RemoteServices {
 
       if (response.statusCode == 200) {
         logger.d("Added Student Data");
+        logger.d("student Data excel sheet --> ${response.data}");
+      } else {
+        logger.d("Errorrrrr");
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      logger.d(e.response);
+    } catch (e) {
+      logger.d("Error----->");
+      logger.d(e);
+    }
+  }
+
+  Future<void> addStudent(Map<String, String> data) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var headers = {
+      'Authorization': 'Biatch $token',
+    };
+
+    // var formData = FormData.fromMap({
+    //   'schoolId': schoolId,
+    //   'student_list': await MultipartFile.fromFile(excelPath),
+    // });
+
+    Response<String> response;
+
+    try {
+      response = await dio.post(
+        '$baseUrl/superAdmin/addStudent',
+        data: data,
+        options: Options(
+          headers: headers,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("Added a Student");
       } else {
         logger.d("Errorrrrr");
         throw Exception(response.data);
@@ -652,7 +717,7 @@ class RemoteServices {
     }
   }
 
-  Future<StudentModel> getStudentData(String schoolId) async {
+  Future<StudentModel> getStudentData(String schoolId, int role) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final userType = prefs.getString('userType');
@@ -665,9 +730,11 @@ class RemoteServices {
 
     logger.d("School ID-> $schoolId");
 
-    var url = userType == "superAdmin"
-        ? '$baseUrl/$userType/getStudentData/$schoolId'
-        : '$baseUrl/$userType/getStudentData';
+    // var url = userType == "superAdmin"
+    //     ? '$baseUrl/$userType/getStudentData/$schoolId'
+    //     : '$baseUrl/$userType/getStudentData';
+
+    var url = getUrl(role, 'getStudentData', schoolId: schoolId);
 
     logger.d("School URL- $url");
     try {
@@ -680,6 +747,7 @@ class RemoteServices {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
+        // logger.d(data);
         return StudentModel.fromJson(data);
       } else {
         logger.d("Errorrrrr");
@@ -691,11 +759,12 @@ class RemoteServices {
     } catch (e) {
       logger.d("Error----->");
       logger.d(e);
-      throw Exception("Normal Error");
+
+      rethrow;
     }
   }
 
-  Future<IdCardListModel> getIdCardList(String schoolId) async {
+  Future<IdCardListModel> getIdCardList(String schoolId, int role) async {
     logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -705,9 +774,11 @@ class RemoteServices {
       'Authorization': 'Biatch $token',
     };
 
-    var url = userType == "superAdmin"
-        ? '$baseUrl/$userType/getIdCardsBySchool/$schoolId'
-        : '$baseUrl/$userType/getIdCardsBySchool';
+    // var url = userType == "superAdmin"
+    //     ? '$baseUrl/$userType/getIdCardsBySchool/$schoolId'
+    //     : '$baseUrl/$userType/getIdCardsBySchool';
+
+    String url = getUrl(role, 'getIdCardsBySchool', schoolId: schoolId);
 
     Response<String> response;
     try {

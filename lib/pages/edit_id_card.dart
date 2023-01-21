@@ -65,10 +65,10 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     });
   }
 
-  void _updatePostion(int pos, int x, int y, int height, int width) {
+  void _updatePostion( int dx, int dy) {
     setState(() {
-      _idCard.labels[pos].x = x;
-      _idCard.labels[pos].y = y;
+      _idCard.labels[editableIndex].x += dx;
+      _idCard.labels[editableIndex].y += dy;
     });
   }
 
