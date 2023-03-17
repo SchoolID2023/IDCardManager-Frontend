@@ -15,9 +15,7 @@ class AddSchoolAdmin extends StatefulWidget {
 class _AddSchoolAdminState extends State<AddSchoolAdmin> {
   final RemoteServices _remoteServices = RemoteServices();
   final TextEditingController _adminNameController = TextEditingController();
-  final TextEditingController _adminEmailController = TextEditingController();
-  final TextEditingController _adminPasswordController =
-      TextEditingController();
+
   final TextEditingController _adminContactController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -33,8 +31,8 @@ class _AddSchoolAdminState extends State<AddSchoolAdmin> {
                 .addSchoolAdmin(
               schoolId: widget.schoolId,
               name: _adminNameController.text,
-              email: _adminEmailController.text,
-              password: _adminPasswordController.text,
+              email: "_adminEmailController.text",
+              password: "_adminPasswordController.text",
               contact: _adminContactController.text,
             )
                 .then((value) {
@@ -48,28 +46,18 @@ class _AddSchoolAdminState extends State<AddSchoolAdmin> {
           onPressed: () => Navigator.pop(context),
         ),
       ],
-      content: SizedBox(
-        width: 400,
-        child: Column(
-          children: [
-            TextBox(
-              controller: _adminNameController,
-              header: "Admin Name",
-            ),
-            TextBox(
-              controller: _adminEmailController,
-              header: "Admin Email",
-            ),
-            TextBox(
-              controller: _adminPasswordController,
-              header: "Admin Password",
-            ),
-            TextBox(
-              controller: _adminContactController,
-              header: "Admin Contact",
-            ),
-          ],
-        ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextBox(
+            controller: _adminNameController,
+            header: "Admin Name",
+          ),
+          TextBox(
+            controller: _adminContactController,
+            header: "Admin Contact",
+          ),
+        ],
       ),
     );
   }

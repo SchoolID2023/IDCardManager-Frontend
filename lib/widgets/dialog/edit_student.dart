@@ -5,8 +5,10 @@ import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import '../../models/student_model.dart';
 
 class EditStudent extends StatefulWidget {
-  final Student student;
-  const EditStudent({Key? key, required this.student}) : super(key: key);
+  final String studentId;
+  final String schoolId;
+  const EditStudent({Key? key, required this.studentId, required this.schoolId})
+      : super(key: key);
 
   @override
   State<EditStudent> createState() => _EditStudentState();
@@ -15,6 +17,8 @@ class EditStudent extends StatefulWidget {
 class _EditStudentState extends State<EditStudent> {
   bool isLoading = true;
   late Student student;
+
+  late StudentController _studentController;
 
   Set<String> ignoredPlaceholders = {
     "_id",
@@ -30,14 +34,13 @@ class _EditStudentState extends State<EditStudent> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    student = widget.student;
+    _studentController = Get.put(StudentController(widget.schoolId));
+    student = _studentController.getStudentById(widget.studentId);
     isLoading = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    StudentController _studentController =
-        Get.put(StudentController(student.currentSchool));
     return ContentDialog(
       actions: [
         Button(
@@ -65,7 +68,6 @@ class _EditStudentState extends State<EditStudent> {
                   return Column(children: [
                     TextBox(
                       header: "Name",
-                      
                       controller: TextEditingController(text: student.name),
                       onChanged: (value) {
                         setState(() {
@@ -84,7 +86,8 @@ class _EditStudentState extends State<EditStudent> {
                     ),
                     TextBox(
                       header: "Class",
-                      controller: TextEditingController(text: student.studentClass),
+                      controller:
+                          TextEditingController(text: student.studentClass),
                       onChanged: (value) {
                         setState(() {
                           student.studentClass = value;
@@ -103,15 +106,15 @@ class _EditStudentState extends State<EditStudent> {
                   ]);
                 }
 
-                if (ignoredPlaceholders.contains(
-                    widget.student.data[index - 1].field.toString())) {
+                if (ignoredPlaceholders
+                    .contains(student.data[index - 1].field.toString())) {
                   return Container();
                 }
                 return TextBox(
                   // placeholder: widget.student.data[index - 1].value.toString(),
                   controller: TextEditingController(
-                      text: widget.student.data[index - 1].value.toString()),
-                  header: widget.student.data[index - 1].field.toString(),
+                      text: student.data[index - 1].value.toString()),
+                  header: student.data[index - 1].field.toString(),
                   onChanged: (value) {
                     student.data[index - 1].value = value;
                   },

@@ -221,22 +221,21 @@ class RemoteServices {
           password: password)
     ]);
 
-    final response = await http.post(
-      Uri.parse('$baseUrl/superAdmin/addSchoolAdmin'),
-      headers: {
-        'Authorization': 'Biatch $token',
-        "Content-Type": "application/json"
-      },
-      body: json.encode(_admins.toJson()),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/superAdmin/addSchoolAdmin'),
+        headers: {
+          'Authorization': 'Biatch $token',
+          "Content-Type": "application/json"
+        },
+        body: json.encode(_admins.toJson()),
+      );
 
-    logger.d(response);
-
-    if (response.statusCode == 200) {
+      logger.d(response);
       final data = json.decode(response.body);
       logger.d(data);
-    } else {
-      throw Exception(response.statusCode);
+    } catch (e) {
+      rethrow;
     }
   }
 

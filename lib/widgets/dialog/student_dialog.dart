@@ -38,7 +38,10 @@ class StudentDialog extends StatelessWidget {
             Navigator.of(context).pop();
             showDialog(
                 context: context,
-                builder: (context) => EditStudent(student: student));
+                builder: (context) => EditStudent(
+                      schoolId: student.currentSchool,
+                      studentId: student.id,
+                    ));
           },
         ),
         Button(

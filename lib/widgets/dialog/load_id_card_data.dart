@@ -41,10 +41,15 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
                         schoolId: widget.schoolId,
                         labels: widget.labels,
                         isDual: isDual,
-                        idCardWidth: double.parse(_idCardWidth.text) *
-                            (0.0393701 * 100.0 / pixelRatio),
-                        idCardHeight: double.parse(_idCardHeight.text) *
-                            (0.0393701 * 100.0 / pixelRatio),
+                        // idCardWidth: double.parse(_idCardWidth.text) *
+                        //     (0.0393701 * 100.0 / pixelRatio),
+                        // idCardHeight: double.parse(_idCardHeight.text) *
+                        //     (0.0393701 * 100.0 / pixelRatio),
+                        idCardWidth: (double.parse(_idCardWidth.text) / 25.4) *
+                            (100 / pixelRatio),
+                        idCardHeight:
+                            (double.parse(_idCardHeight.text) / 25.4) *
+                                (100 / pixelRatio),
                         excelPath: _excelPath.text,
                       )));
             }),

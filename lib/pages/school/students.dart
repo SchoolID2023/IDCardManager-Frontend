@@ -34,38 +34,52 @@ class _StudentsState extends State<Students> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = FluentTheme.of(context);
     return Obx(
       () {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            child: studentController.getStudents.isNotEmpty
-                ? Scrollbar(
-                    controller: controller,
-                    child: SingleChildScrollView(
-                      controller: controller,
-                      scrollDirection: Axis.horizontal,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: StudentTable(
-                            students: studentController.getStudents,
-                            isSelected: _selectedStudents,
-                            onSelected: updateSelectedStudents,
-                            classes: studentController.getSchool.classes,
-                            sections: studentController.getSchool.sections,
-                            schoolId: widget.schoolId,
-                            labels: studentController.getSchoolLabels.labels,
-                            photoLabels:
-                                studentController.getSchoolLabels.photoLabels,
+        return ListView(
+          shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                  "Double Tap an image to download it in the downloads folder",
+                  style: theme.typography.subtitle),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Card(
+                child: studentController.getStudents.isNotEmpty
+                    ? Scrollbar(
+                        controller: controller,
+                        child: SingleChildScrollView(
+                          controller: controller,
+                          scrollDirection: Axis.horizontal,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: StudentTable(
+                                students: studentController.getStudents,
+                                isSelected: _selectedStudents,
+                                onSelected: updateSelectedStudents,
+                                classes: studentController.getSchool.classes,
+                                sections: studentController.getSchool.sections,
+                                schoolId: widget.schoolId,
+                                labels:
+                                    studentController.getSchoolLabels.labels,
+                                photoLabels: studentController
+                                    .getSchoolLabels.photoLabels,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  )
-                : const Text("No Students"),
-          ),
+                      )
+                    : const Text("No Students"),
+              ),
+            ),
+          ],
         );
       },
     );

@@ -43,7 +43,7 @@ class StudentTable extends StatefulWidget {
 
 class _StudentTableState extends State<StudentTable> {
   bool isAllSelected = false;
-  int photoIndex = -1;
+  String photoLabel = "-1";
   bool isFiltering = false;
   // int filterIndex = -1;
   String filterField = '';
@@ -79,14 +79,11 @@ class _StudentTableState extends State<StudentTable> {
 
     logger.d("Length-> ${widget.students[0].data.length}");
 
-    // for (int i = 0; i < widget.students[0].data.length; i++) {
-    //   _isVisible[i] = false;
-    //   // logger.d("Field--> ${widget.students[0].data[i].field}");
-    // }
-
     for (var element in widget.labels) {
       _isVisible[element] = false;
     }
+
+    photoLabel = widget.photoLabels.isNotEmpty ? widget.photoLabels[0] : "-1";
 
     studentController = Get.put(StudentController(widget.schoolId));
   }
@@ -98,17 +95,6 @@ class _StudentTableState extends State<StudentTable> {
     List<DataColumn> columnName = [
       const DataColumn(
         label: Text('S. No.'),
-        // onSort: (int columnIndex, bool ascending) {
-        //   setState(() {
-        //     if (columnIndex == 0) {
-        //       widget.students.sort((a, b) => a.id.compareTo(b.id));
-        //     } else {
-        //       widget.students.sort((a, b) => a.data[columnIndex - 1].value
-        //           .toString()
-        //           .compareTo(b.data[columnIndex - 1].value.toString()));
-        //     }
-        //   });
-        // },
       ),
       DataColumn(
         label: const Text('Name'),
@@ -160,15 +146,18 @@ class _StudentTableState extends State<StudentTable> {
       ),
     ];
 
-    if (photoIndex != -1) {
-      columnName.add(
-        DataColumn(
-          label: Text(
-            widget.students[0].photo[photoIndex].field,
-          ),
-        ),
-      );
-    }
+    widget.photoLabels.isNotEmpty
+        ? columnName.add(
+            DataColumn(
+              label: Text(
+                widget.students[0].photo
+                    .firstWhere((element) => element.field == photoLabel,
+                        orElse: () => Photo(field: photoLabel, value: "value"))
+                    .field,
+              ),
+            ),
+          )
+        : Container();
 
     int getIndex(Student student, String field) {
       for (int i = 0; i < student.data.length; i++) {
@@ -206,13 +195,14 @@ class _StudentTableState extends State<StudentTable> {
       onSelectingRow,
       isSelected,
       _isVisible,
-      photoIndex,
+      photoLabel,
       isFiltering,
       filteredStudents,
       filterField,
       classFilter,
       sectionFilter,
       deleteStudent,
+      widget.schoolId,
     );
     return fluent.Column(
       children: [
@@ -258,6 +248,15 @@ class _StudentTableState extends State<StudentTable> {
                       child: fluent.TextBox(
                         placeholder: 'Search',
                         controller: _filter,
+                        onEditingComplete: () {
+                          logger.d("Editing Complete");
+                          setState(() {
+                            isFiltering = true;
+                            filteredStudents =
+                                _filter.text.toLowerCase().split(',').toList();
+                            logger.d(filteredStudents);
+                          });
+                        },
                       ),
                     ),
                     fluent.Button(
@@ -314,23 +313,25 @@ class _StudentTableState extends State<StudentTable> {
                     padding: const EdgeInsets.all(8.0),
                     child: SizedBox(
                       width: 250,
-                      child: widget.sections.isEmpty ? Container() : fluent.DropDownButton(
-                        title: sectionFilter != 'All'
-                            ? Text(
-                                'Students of Section ${sectionFilter.toUpperCase()}')
-                            : const Text('All Sections'),
-                        items: List<fluent.MenuFlyoutItem>.generate(
-                          widget.sections.length,
-                          (index) => fluent.MenuFlyoutItem(
-                            text: Text(widget.sections[index]),
-                            onPressed: () {
-                              setState(() {
-                                sectionFilter = widget.sections[index];
-                              });
-                            },
-                          ),
-                        ),
-                      ),
+                      child: widget.sections.isEmpty
+                          ? Container()
+                          : fluent.DropDownButton(
+                              title: sectionFilter != 'All'
+                                  ? Text(
+                                      'Students of Section ${sectionFilter.toUpperCase()}')
+                                  : const Text('All Sections'),
+                              items: List<fluent.MenuFlyoutItem>.generate(
+                                widget.sections.length,
+                                (index) => fluent.MenuFlyoutItem(
+                                  text: Text(widget.sections[index]),
+                                  onPressed: () {
+                                    setState(() {
+                                      sectionFilter = widget.sections[index];
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                   fluent.FilledButton(
@@ -422,7 +423,7 @@ class _StudentTableState extends State<StudentTable> {
                         ),
                       ),
               ),
-              widget.students[0].photo.isEmpty
+              widget.photoLabels.isEmpty
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -431,12 +432,12 @@ class _StudentTableState extends State<StudentTable> {
                         child: fluent.DropDownButton(
                           title: const Text('View Photo'),
                           items: List<fluent.MenuFlyoutItem>.generate(
-                            widget.students[0].photo.length,
+                            widget.photoLabels.length,
                             (index) => fluent.MenuFlyoutItem(
-                              text: Text(widget.students[0].photo[index].field),
+                              text: Text(widget.photoLabels[index]),
                               onPressed: () {
                                 setState(() {
-                                  photoIndex = index;
+                                  photoLabel = widget.photoLabels[index];
                                 });
                               },
                             ),
@@ -467,31 +468,35 @@ class MyData extends DataTableSource {
   final Function(String, bool) onSelected;
   final ValueNotifier<Map<String, bool>> isSelected;
   final Map<String, bool> _isVisible;
-  final int photoIndex;
+  final String photoLabel;
   final bool isFiltering;
   final List<String> filteredStudents;
   final String filterField;
   final String classFilter;
   final String sectionFilter;
+  final String schoolId;
+
+  String noPhoto =
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';
 
   final Function deleteFunction;
 
   BuildContext context;
   final List<List<String>> _data = [];
   MyData(
-    this.students,
-    this.context,
-    this.onSelected,
-    this.isSelected,
-    this._isVisible,
-    this.photoIndex,
-    this.isFiltering,
-    this.filteredStudents,
-    this.filterField,
-    this.classFilter,
-    this.sectionFilter,
-    this.deleteFunction,
-  ) {
+      this.students,
+      this.context,
+      this.onSelected,
+      this.isSelected,
+      this._isVisible,
+      this.photoLabel,
+      this.isFiltering,
+      this.filteredStudents,
+      this.filterField,
+      this.classFilter,
+      this.sectionFilter,
+      this.deleteFunction,
+      this.schoolId) {
     bool ifFilter(Student student) {
       bool value = false;
       logger.i(
@@ -626,72 +631,36 @@ class MyData extends DataTableSource {
         students[index].contact
       ];
 
-      if (photoIndex != -1 && students[index].photo.length > photoIndex) {
-        studentData.add(students[index].photo[photoIndex].value);
-      } else if (photoIndex != -1) {
-        studentData.add(
-            'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png');
-      }
-
-      // for (int i = 0; i < students[index].data.length; i++) {
-      //   if (_isVisible[i] ?? false) {
-      //     if (i < students[index].data.length - 1) {
-      //       logger.i("Hayyyyyyeeeee");
-      //       studentData.add("No Value");
-      //     } else {
-      //       studentData.add(students[index].data[i].value.toString());
-      //     }
-      //   }
+      // if (photoIndex != -1 && students[index].photo.length > photoIndex) {
+      //   studentData.add(students[index].photo[photoIndex].value);
+      // } else if (photoIndex != -1) {
+      //   studentData.add(
+      // 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png');
       // }
+
+      if (photoLabel != "-1") {
+        studentData.add(students[index]
+            .photo
+            .firstWhere((element) => element.field == photoLabel,
+                orElse: () => Photo(value: noPhoto, field: "No Value"))
+            .value);
+      }
 
       for (var label in _isVisible.keys) {
         if (_isVisible[label] ?? false) {
           studentData.add(students[index]
               .data
               .firstWhere((element) => element.field == label,
-                  orElse: () => Datum(value: "No Value", field: "No Value"))
+                  orElse: () => Datum(value: "", field: "No Value"))
               .value
               .toString());
         }
       }
 
+      studentData.add(students[index].id);
       _data.add(studentData);
     }
-
-    // _data = List.generate(
-    //   students.length,
-    //   (index) {
-
-    //     List<String> _studentData = [
-    //       index.toString(),
-    //       students[index].name,
-    //       students[index].studentClass,
-    //       students[index].section,
-    //       students[index].contact
-    //     ];
-
-    //     if (photoIndex != -1) {
-    //       _studentData.add(students[index].photo[photoIndex].value);
-    //     }
-
-    //     for (int i = 0; i < students[index].data.length; i++) {
-    //       if (_isVisible[i] ?? false) {
-    //         _studentData.add(students[index].data[i].value.toString());
-    //       }
-    //     }
-
-    //     return _studentData;
-
-    //     // "id": index,
-    //     // "name": students[index].name,
-    //     // "class": students[index].studentClass,
-    //     // "section": students[index].section,
-    //     // "contact": students[index].contact,
-    //   },
-    // );
   }
-
-  // Generate some made-up data
 
   @override
   bool get isRowCountApproximate => false;
@@ -711,8 +680,8 @@ class MyData extends DataTableSource {
         logger.d("Previous Value--> ${isSelected.value[students[index].id]}");
         isSelected.value[students[index].id] = value;
       },
-      cells: List<DataCell>.generate(_data[index].length, (value) {
-        if (value == 5 && photoIndex != -1) {
+      cells: List<DataCell>.generate(_data[index].length - 1, (value) {
+        if (value == 5 && photoLabel != "-1") {
           return DataCell(
             GestureDetector(
               onDoubleTap: () async {
@@ -728,11 +697,11 @@ class MyData extends DataTableSource {
                 } on DioError catch (e) {
                   print(e.message);
                 } finally {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Image Downloaded in Downloads Folder"),
-                    ),
-                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     content: Text("Image Downloaded in Downloads Folder"),
+                  //   ),
+                  // );
                 }
               },
               child: Image.network(
@@ -753,7 +722,10 @@ class MyData extends DataTableSource {
                   logger.d(students[index].id);
                   showDialog(
                     context: context,
-                    builder: (context) => EditStudent(student: students[index]),
+                    builder: (context) => EditStudent(
+                      studentId: _data[index].last,
+                      schoolId: schoolId,
+                    ),
                   );
                 },
           fluent.Row(
@@ -778,7 +750,7 @@ class MyData extends DataTableSource {
                                 type: "Student",
                                 name: _data[index][value],
                                 deleteFunction: () {
-                                  deleteFunction(students[index].id);
+                                  deleteFunction(_data[index].last);
                                 },
                               );
                             });
