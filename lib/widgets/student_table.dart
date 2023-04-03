@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -10,6 +11,7 @@ import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/student_dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import '../services/logger.dart';
 
 import '../models/student_model.dart';
@@ -452,9 +454,7 @@ class _StudentTableState extends State<StudentTable> {
           horizontalMargin: 10,
           dataRowHeight: 90,
 
-          rowsPerPage: isFiltering
-              ? min(10, filteredStudents.length)
-              : min(10, widget.students.length),
+          rowsPerPage:  min(10, widget.students.length),
           showCheckboxColumn: true,
           sortAscending: true,
         ),
@@ -601,6 +601,8 @@ class MyData extends DataTableSource {
         }
       }
 
+      logger.i("Filtering ${student.name} $value");
+
       return value;
     }
 
@@ -630,13 +632,6 @@ class MyData extends DataTableSource {
         students[index].section,
         students[index].contact
       ];
-
-      // if (photoIndex != -1 && students[index].photo.length > photoIndex) {
-      //   studentData.add(students[index].photo[photoIndex].value);
-      // } else if (photoIndex != -1) {
-      //   studentData.add(
-      // 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png');
-      // }
 
       if (photoLabel != "-1") {
         studentData.add(students[index]
@@ -686,8 +681,14 @@ class MyData extends DataTableSource {
             GestureDetector(
               onDoubleTap: () async {
                 // Download the image to the computer in downloads section
+
+                final Directory? downloadsDir = await getDownloadsDirectory();
+
+                final String downloadsPath = downloadsDir!.path;
                 String savePath =
-                    "C:/Users/chira/downloads/idcardImages/${_data[index][1]}.jpg";
+                    "$downloadsPath/idcardImages/${_data[index][1]}.jpg";
+
+
                 logger.i(savePath);
                 try {
                   await Dio().download(

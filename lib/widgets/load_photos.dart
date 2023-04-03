@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:archive/archive_io.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
+import 'package:idcard_maker_frontend/services/logger.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 
 import '../controllers/student_controller.dart';
@@ -24,6 +26,9 @@ class _LoadPhotosState extends State<LoadPhotos> {
 
   List<String> photoColumns = [];
 
+  int uploadedFiles = 0;
+  int totalFiles = 1;
+
   Future<void> uploadPhotos() async {
     var nav = Navigator.of(context);
     final result = await FilePicker.platform.pickFiles(
@@ -34,19 +39,53 @@ class _LoadPhotosState extends State<LoadPhotos> {
 
     var file = result?.files.first;
 
+    // int batchCounter = 0;
+
     String outputPath =
         "${file!.path.toString().substring(0, file.path.toString().lastIndexOf("\\") + 1)}file.zip";
+    setState(() {
+      totalFiles = result!.files.length;
+    });
 
-    encoder.create(outputPath);
-    for (var element in result!.files) {
-      await encoder.addFile(File(element.path.toString()));
+    for (int counter = 0; counter < result!.files.length;) {
+      if (counter % 10 == 0) {
+        encoder.create(outputPath);
+        for (int i = counter; i < min(counter + 10, totalFiles); i++) {
+          await encoder.addFile(File(result.files[i].path.toString()));
+        }
+        encoder.close();
+
+        await _remoteServices.uploadStudentPhotos(
+          photoColumns,
+          outputPath,
+          widget.schoolId,
+        );
+
+        setState(() {
+          counter = min(counter + 10, totalFiles);
+
+          uploadedFiles = counter;
+          logger.d("Uploaded $counter files");
+          logger.d("Value = ${(uploadedFiles /totalFiles) * 100}");
+        });
+        await File(outputPath).delete();
+
+        // batchCounter++;
+        // outputPath =
+        //     "${file.path.toString().substring(0, file.path.toString().lastIndexOf("\\") + 1)}file$batchCounter.zip";
+      }
     }
-    encoder.close();
-    await _remoteServices.uploadStudentPhotos(
-      photoColumns,
-      outputPath,
-      widget.schoolId,
-    );
+
+    // encoder.create(outputPath);
+    // for (var element in result!.files) {
+    //   await encoder.addFile(File(element.path.toString()));
+    // }
+    // encoder.close();
+    // await _remoteServices.uploadStudentPhotos(
+    //   photoColumns,
+    //   outputPath,
+    //   widget.schoolId,
+    // );
     nav.pop();
   }
 
@@ -70,14 +109,14 @@ class _LoadPhotosState extends State<LoadPhotos> {
       content: SizedBox(
         width: 500,
         child: isLoading
-            ? Center(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Text("Uploading Photos, Kindly Wait...."),
-                    ProgressBar(),
-                  ],
-                ),
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Photos Uploading -> $uploadedFiles/$totalFiles"),
+                  ProgressBar(
+                    value: (uploadedFiles/totalFiles) * 100,
+                  ),
+                ],
               )
             : Column(
                 mainAxisSize: MainAxisSize.min,

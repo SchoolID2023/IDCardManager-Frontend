@@ -205,8 +205,8 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     IMG.Image? img = IMG.decodeImage(data);
     IMG.Image resized = IMG.copyResize(
       img!,
-      width: img.width * (pixelRatio / 5) * double.parse(_dpi.text) ~/ 100,
-      height: img.height * (pixelRatio / 5) * double.parse(_dpi.text) ~/ 100,
+      width: img.width * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
+      height: img.height * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
     );
     resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
     return resizedData;
@@ -216,7 +216,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       Widget idCard, String path, String fileImage) async {
     Uint8List pngBytes = await screenshotController.captureFromWidget(
       idCard,
-      pixelRatio: 5,
+      pixelRatio: 10,
     );
 
     logger.d("Pixel Ratio -> $pixelRatio");

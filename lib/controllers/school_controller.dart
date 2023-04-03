@@ -41,6 +41,18 @@ class SchoolController extends GetxController {
     } finally {}
   }
 
+  Future<void> deleteSuperAdmin(String superAdminId) async {
+    try {
+      isLoading(true);
+      await _remoteServices.deleteSuperAdmin(superAdminId);
+      superAdmins.value
+          .removeWhere((element) => element.id == superAdminId);
+      fetchSuperAdmins();
+    } finally {
+      isLoading(false);
+    }
+  }
+
   void addSchool(School school) async {
     logger.d("<------>");
     logger.d("Name-> ${school.name}");

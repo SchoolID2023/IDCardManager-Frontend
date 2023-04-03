@@ -114,3 +114,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+
+msix_config:
+  display_name: ID Card Maker
+  publisher_display_name: School ID
+  identity_name: company.schoolId.idCardMaker
+  msix_version: 1.0.0.0
+  logo_path: C:\Users\chira\00_Data\projects\AA-2022\idcard_maker_frontend\icon\icon.png
+  certificate_path: C:\Users\chira\SCHOOLIDCERTIFICATE.pfx
+  certificate_password: Chirag1$
+  

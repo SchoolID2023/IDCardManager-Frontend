@@ -148,6 +148,41 @@ class RemoteServices {
     }
   }
 
+  Future<void> deleteSuperAdmin(String id) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    var headers = {
+      'Authorization': 'Biatch $token',
+    };
+
+    var response;
+
+    logger.d("Delete Super Admin Data:- $id");
+    logger.d('$baseUrl/superAdmin/deleteSuperAdmin/$id');
+
+    try {
+      response = await dio.delete(
+        '$baseUrl/superAdmin/deleteSuperAdmin/$id',
+        options: Options(
+          headers: headers,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        logger.d("Deleted Super Admin");
+      } else {
+        logger.d("Errorrrrr");
+        throw Exception(response.data);
+      }
+    } on DioError catch (e) {
+      logger.d(e.response);
+    } catch (e) {
+      logger.d("Error----->");
+      logger.d(e);
+    }
+  }
+
   Future<School> addSchool(School newSchool) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -705,6 +740,7 @@ class RemoteServices {
     var response;
 
     try {
+      logger.d("Request Sent");
       response = await dio.post(
         '$baseUrl/superAdmin/addStudentPhotos',
         data: formData,
@@ -712,6 +748,8 @@ class RemoteServices {
           headers: headers,
         ),
       );
+
+      logger.d(response);
 
       if (response.statusCode == 200) {
         logger.d("Added Student Photos");
@@ -765,7 +803,7 @@ class RemoteServices {
       }
     } on DioError catch (e) {
       logger.d(e.response);
-      throw Exception("Dio Error");
+      rethrow;
     } catch (e) {
       logger.d("Error----->");
       logger.d(e);

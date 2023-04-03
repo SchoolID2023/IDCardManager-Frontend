@@ -171,8 +171,8 @@ class _HomePageState extends State<HomePage> {
                                           name: schoolController
                                               .getSuperAdmins[index2].name,
                                           deleteFunction: () {
-                                            //         schoolController.deleteSuperAdmin(
-                                            // schoolController.getSuperAdmins[index2].id);
+                                                    schoolController.deleteSuperAdmin(
+                                            schoolController.getSuperAdmins[index2].id);
                                           });
                                     });
                               },
