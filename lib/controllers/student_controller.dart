@@ -188,7 +188,7 @@ class StudentController extends GetxController {
     }
   }
 
-  Future setRole(int role) async {
+  void setRole(int role) {
     this.role.value = role;
   }
 }

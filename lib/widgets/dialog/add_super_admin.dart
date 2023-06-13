@@ -16,13 +16,8 @@ class _AddSuperAdminState extends State<AddSuperAdmin> {
   final SchoolController schoolController = Get.put(SchoolController());
   final TextEditingController _superAdminName = TextEditingController();
 
-  final TextEditingController _superAdminUsername = TextEditingController();
-
-  final TextEditingController _superAdminPassword = TextEditingController();
-
   final TextEditingController _superAdminContact = TextEditingController();
 
-  final TextEditingController _superAdminEmail = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -32,11 +27,11 @@ class _AddSuperAdminState extends State<AddSuperAdmin> {
           child: const Text("Add Super Admin"),
           onPressed: () {
             schoolController.addSuperAdmin(SuperAdmin(
-              email: _superAdminEmail.text,
-              password: _superAdminPassword.text,
+              email: DateTime.now().toString(),
+              password: DateTime.now().toString(),
               name: _superAdminName.text,
               contact: _superAdminContact.text,
-              username: _superAdminUsername.text,
+              username: DateTime.now().toString(),
             ));
 
             Navigator.of(context).pop();
@@ -54,23 +49,11 @@ class _AddSuperAdminState extends State<AddSuperAdmin> {
         children: [
           TextBox(
             controller: _superAdminName,
-            header: "superAdmin Name",
-          ),
-          TextBox(
-            controller: _superAdminUsername,
-            header: "superAdmin Username",
-          ),
-          TextBox(
-            controller: _superAdminPassword,
-            header: "Password",
+            header: "Name",
           ),
           TextBox(
             controller: _superAdminContact,
             header: "Contact",
-          ),
-          TextBox(
-            controller: _superAdminEmail,
-            header: "Email",
           ),
         ],
       ),

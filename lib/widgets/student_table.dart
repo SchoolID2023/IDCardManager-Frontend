@@ -56,13 +56,11 @@ class _StudentTableState extends State<StudentTable> {
   List<String> filteredStudents = [];
 
   final ValueNotifier<bool> _isAllSelected = ValueNotifier(false);
-  final ValueNotifier<Map<String, bool>> isSelected = ValueNotifier(
-    <String, bool>{},
-  );
+   Map<String, bool> isSelected = <String, bool>{}; // = widget.isSelected;
 
   void onSelectingRow(String studentId, bool isSelected) {
     setState(() {
-      this.isSelected.value[studentId] = isSelected;
+      this.isSelected[studentId] = isSelected;
     });
     widget.onSelected(studentId, isSelected);
   }
@@ -79,6 +77,8 @@ class _StudentTableState extends State<StudentTable> {
     // TODO: implement initState
     super.initState();
 
+    isSelected = widget.isSelected;
+
     logger.d("Length-> ${widget.students[0].data.length}");
 
     for (var element in widget.labels) {
@@ -92,7 +92,7 @@ class _StudentTableState extends State<StudentTable> {
 
   @override
   Widget build(BuildContext context) {
-    isSelected.value = widget.isSelected;
+    
 
     List<DataColumn> columnName = [
       const DataColumn(
@@ -375,7 +375,7 @@ class _StudentTableState extends State<StudentTable> {
               widget.onSelected(student.id, selectedValue!);
             }
 
-            isSelected.value.updateAll((key, value) => value = selectedValue!);
+            isSelected.updateAll((key, value) => value = selectedValue!);
             setState(() {
               isAllSelected = selectedValue!;
             });
@@ -454,7 +454,7 @@ class _StudentTableState extends State<StudentTable> {
           horizontalMargin: 10,
           dataRowHeight: 90,
 
-          rowsPerPage:  min(10, widget.students.length),
+          rowsPerPage: min(10, widget.students.length),
           showCheckboxColumn: true,
           sortAscending: true,
         ),
@@ -466,7 +466,7 @@ class _StudentTableState extends State<StudentTable> {
 class MyData extends DataTableSource {
   final List<Student> students;
   final Function(String, bool) onSelected;
-  final ValueNotifier<Map<String, bool>> isSelected;
+  final Map<String, bool> isSelected;
   final Map<String, bool> _isVisible;
   final String photoLabel;
   final bool isFiltering;
@@ -499,8 +499,8 @@ class MyData extends DataTableSource {
       this.schoolId) {
     bool ifFilter(Student student) {
       bool value = false;
-      logger.i(
-          "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
+      // logger.i(
+      //     "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
       if (filterField == "") {
         for (var fields in _isVisible.keys) {
           if (fields == 'name') {
@@ -601,7 +601,7 @@ class MyData extends DataTableSource {
         }
       }
 
-      logger.i("Filtering ${student.name} $value");
+      // logger.i("Filtering ${student.name} $value");
 
       return value;
     }
@@ -667,13 +667,15 @@ class MyData extends DataTableSource {
   DataRow getRow(int index) {
     int ind = 0;
     return DataRow(
-      selected: isSelected.value[students[index].id] ?? true,
+      key: ValueKey(_data[index].last),
+      selected: isSelected[_data[index].last] ?? false,
       onSelectChanged: (value) {
+        logger.d("Row Number $index");
         logger.d("Selected Row: $value");
-        onSelected(students[index].id, value!);
+        onSelected(_data[index].last, value!);
 
-        logger.d("Previous Value--> ${isSelected.value[students[index].id]}");
-        isSelected.value[students[index].id] = value;
+        logger.d("Previous Value--> ${isSelected[students[index].id]}");
+        isSelected[students[index].id] = value;
       },
       cells: List<DataCell>.generate(_data[index].length - 1, (value) {
         if (value == 5 && photoLabel != "-1") {
@@ -687,7 +689,6 @@ class MyData extends DataTableSource {
                 final String downloadsPath = downloadsDir!.path;
                 String savePath =
                     "$downloadsPath/idcardImages/${_data[index][1]}.jpg";
-
 
                 logger.i(savePath);
                 try {

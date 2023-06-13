@@ -31,7 +31,7 @@ class _AddSchoolAdminState extends State<AddSchoolAdmin> {
                 .addSchoolAdmin(
               schoolId: widget.schoolId,
               name: _adminNameController.text,
-              email: "_adminEmailController.text",
+              email: DateTime.now().toString(),
               password: "_adminPasswordController.text",
               contact: _adminContactController.text,
             )

@@ -4,6 +4,7 @@ import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/pages/school/idcard.dart';
 import 'package:idcard_maker_frontend/pages/school/students.dart';
 import 'package:idcard_maker_frontend/services/download_data.dart';
+import 'package:idcard_maker_frontend/services/logger.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/add_student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,10 +37,9 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
     studentController = Get.put(StudentController(widget.schoolId));
 
     () async {
-      studentController.setLoading = true;
-      await studentController.setRole(widget.role);
-
       try {
+        studentController.setLoading = true;
+        studentController.setRole(widget.role);
         await studentController.fetchSchoolLabels(widget.schoolId);
         await studentController.fetchSchool(widget.schoolId);
         await studentController.fetchAdmins(widget.schoolId);
@@ -48,27 +48,30 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
         await studentController.fetchIdCardList(widget.schoolId);
         studentController.setLoading = false;
       } catch (e) {
-        showDialog(
-            context: context,
-            builder: (context) => ContentDialog(
-                  title: const Text("Error"),
-                  content: Text(e.toString()),
-                  actions: [
-                    Button(
-                      child: const Text("Log Out"),
-                      onPressed: () async {
-                        final SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        prefs.remove('token').then((value) =>
-                            Navigator.of(context).push(FluentPageRoute(
-                                builder: (context) => const LoginPage())));
-                      },
-                    ),
-                  ],
-                ));
+        try {
+          showDialog(
+              context: context,
+              builder: (context) => ContentDialog(
+                    title: const Text("Error"),
+                    content: Text(e.toString()),
+                    actions: [
+                      Button(
+                        child: const Text("Log Out"),
+                        onPressed: () async {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.remove('token').then((value) =>
+                              Navigator.of(context).push(FluentPageRoute(
+                                  builder: (context) => const LoginPage())));
+                        },
+                      ),
+                    ],
+                  ));
+        } catch (et) {
+          logger.e(e.toString());
+          logger.e(et.toString());
+        }
       }
-
-         
     }();
   }
 
@@ -165,7 +168,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
                   prefs.remove('token').then((value) => Navigator.of(context)
-                      .push(FluentPageRoute(
+                      .pushReplacement(FluentPageRoute(
                           builder: (context) => const LoginPage())));
                 },
               ),

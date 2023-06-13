@@ -45,8 +45,7 @@ class SchoolController extends GetxController {
     try {
       isLoading(true);
       await _remoteServices.deleteSuperAdmin(superAdminId);
-      superAdmins.value
-          .removeWhere((element) => element.id == superAdminId);
+      superAdmins.value.removeWhere((element) => element.id == superAdminId);
       fetchSuperAdmins();
     } finally {
       isLoading(false);
@@ -96,6 +95,7 @@ class SchoolController extends GetxController {
     try {
       isLoading(true);
       await _remoteServices.addSuperAdmin(superAdmin);
+      fetchSuperAdmins();
       // schools.value.schools.add(_newSuperAdmin);
     } finally {
       isLoading(false);

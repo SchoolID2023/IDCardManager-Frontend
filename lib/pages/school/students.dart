@@ -2,8 +2,10 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/models/student_model.dart';
+import 'package:idcard_maker_frontend/services/logger.dart';
 
 import '../../widgets/student_table.dart';
+import '../../widgets/student_table2.dart';
 
 class Students extends StatefulWidget {
   final String schoolId;
@@ -29,6 +31,7 @@ class _StudentsState extends State<Students> {
   }
 
   void updateSelectedStudents(String studentId, bool isSelected) {
+    logger.i("Selected $studentId");
     _selectedStudents[studentId] = isSelected;
   }
 

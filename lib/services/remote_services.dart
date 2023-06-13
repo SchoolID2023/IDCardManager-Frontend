@@ -795,7 +795,7 @@ class RemoteServices {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);
-        // logger.d(data);
+        logger.d(data);
         return StudentModel.fromJson(data);
       } else {
         logger.d("Errorrrrr");
