@@ -1,4 +1,3 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:idcard_maker_frontend/pages/homepage.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:idcard_maker_frontend/pages/login_screen.dart';
@@ -7,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/logger.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
   // doWhenWindowReady(() {
   //   const initialSize = Size(1200, 450);
@@ -26,9 +26,12 @@ class MyApp extends StatelessWidget {
     return FluentApp(
       debugShowCheckedModeBanner: false,
       title: 'ID Card Maker',
-      theme: ThemeData(brightness: Brightness.light, accentColor: Colors.blue),
+      theme: FluentThemeData(
+        brightness: Brightness.light,
+        accentColor: Colors.blue,
+      ),
       darkTheme:
-          ThemeData(brightness: Brightness.dark, accentColor: Colors.blue),
+          FluentThemeData(brightness: Brightness.dark, accentColor: Colors.blue,),
       home: LoginWrapper(),
     );
   }
@@ -69,7 +72,7 @@ class LoginWrapper extends StatelessWidget {
         }
       } catch (e) {
         Navigator.of(context)
-            .push(FluentPageRoute(builder: (context) => const LoginPage()));
+            .push(FluentPageRoute(builder: (context) => const LoginPage(),),);
 
         logger.d(e);
       }

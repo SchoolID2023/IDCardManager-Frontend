@@ -260,7 +260,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
             ? Container()
             : Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: CommandBarCard(
+                child: Card(
                   child: Row(
                     children: [
                       Padding(
@@ -586,7 +586,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   child: SizedBox(
                                     width: 100,
                                     child: TextBox(
-                                      header: 'Height',
+                                      placeholder: 'Height',
                                       controller: _heightController,
                                       onChanged: (_) {
                                         setState(() {
@@ -607,7 +607,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                   child: SizedBox(
                                     width: 100,
                                     child: TextBox(
-                                      header: 'Width',
+                                      placeholder: 'Width',
                                       controller: _widthController,
                                       onChanged: (_) {
                                         setState(() {
@@ -653,13 +653,22 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                       child: Text("Upload Front Image"),
                                       onPressed: uploadForegroundImage,
                                     )
-                                  : Image.file(
-                                      File(
-                                        frontfile.path.toString(),
+                                  :  Column(children: [
+                                    
+                                      Image.file(
+                                        File(
+                                          frontfile.path.toString(),
+                                        ),
+                                        width: 80,
+                                        height: 80,
                                       ),
-                                      width: 80,
-                                      height: 80,
-                                    ),
+                                      SizedBox( height:10),
+                                      FilledButton(
+                                        child: Text("Change Image"),
+                                        onPressed: uploadForegroundImage,
+                                      )
+                                    ]),
+                                  
                               _idCard.isDual
                                   ? Padding(
                                       padding: const EdgeInsets.all(8.0),

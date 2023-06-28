@@ -59,27 +59,27 @@ class _AddSchoolState extends State<AddSchool> {
         children: [
           TextBox(
             controller: _schoolName,
-            header: "School Name",
+            placeholder: "School Name",
           ),
           TextBox(
             controller: _schoolAddress,
-            header: "School Address",
+            placeholder: "School Address",
           ),
           TextBox(
             controller: _schoolClasses,
-            header: "Classes",
+            placeholder: "Classes",
           ),
           TextBox(
             controller: _schoolSections,
-            header: "Sections",
+            placeholder: "Sections",
           ),
           TextBox(
             controller: _schoolContact,
-            header: "Contact",
+            placeholder: "Contact",
           ),
           TextBox(
             controller: _schoolEmail,
-            header: "Email",
+            placeholder: "Email",
           ),
         ],
       ),

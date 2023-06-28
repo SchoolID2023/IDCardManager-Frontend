@@ -28,7 +28,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
   Widget build(BuildContext context) {
     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
     return ContentDialog(
-      backgroundDismiss: true,
+      // backgroundDismiss: true,
       title: Text("Generate ID Card"),
       actions: [
         Button(
@@ -60,7 +60,7 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
         children: [
           TextBox(
             controller: _title,
-            header: "Title",
+            prefix: Text( "Title"),
             placeholder: 'Enter title',
           ),
           Row(
@@ -68,14 +68,14 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
               Expanded(
                 child: TextBox(
                   controller: _idCardWidth,
-                  header: "ID Card Width (in mm)",
+                  prefix: Text( "ID Card Width (in mm)"),
                   placeholder: 'Enter width',
                 ),
               ),
               Expanded(
                 child: TextBox(
                   controller: _idCardHeight,
-                  header: "ID Card Height (in mm)",
+                  prefix: Text( "ID Card Height (in mm)"),
                   placeholder: 'Enter height',
                 ),
               ),

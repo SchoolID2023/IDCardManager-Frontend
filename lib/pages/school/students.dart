@@ -5,7 +5,7 @@ import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 
 import '../../widgets/student_table.dart';
-import '../../widgets/student_table2.dart';
+// import '../../widgets/student_table2.dart';
 
 class Students extends StatefulWidget {
   final String schoolId;
@@ -37,7 +37,7 @@ class _StudentsState extends State<Students> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
     return Obx(
       () {
         return ListView(

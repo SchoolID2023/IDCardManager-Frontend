@@ -24,6 +24,8 @@ class RemoteServices {
   Dio dio = Dio();
 
   final String baseUrl = 'http://3.7.239.25:3000';
+  
+  // final String baseUrl = 'http://192.168.2.1:3000';
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {
@@ -530,8 +532,8 @@ class RemoteServices {
     logger.d('Edit Id Card Id-> $idCardId');
     logger.i({
       "_id": idCardId,
-      "labels": List<dynamic>.from(labels.map((x) => x.toJson())),
-    });
+      "labels": List<dynamic>.from(labels.map((x) => x.toJson(),),),
+    },);
     Response<String> response = await dio.post(
       '$baseUrl/superAdmin/editIdCard',
       data: {
@@ -593,7 +595,7 @@ class RemoteServices {
         logger.d("Errorrrrr");
         throw Exception(response.data);
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       logger.d(e.response);
       rethrow;
     } catch (e) {
@@ -1047,7 +1049,7 @@ class RemoteServices {
         logger.d("Errorrrrr");
         throw Exception(response.data);
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       logger.d(e.response);
       throw Exception("Dio Error");
     } catch (e) {

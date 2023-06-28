@@ -20,18 +20,18 @@ class SchoolTile extends StatelessWidget {
         vertical: 8.0,
         horizontal: 16.0,
       ),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(FluentPageRoute(builder: (context) {
-          
-            return SchoolInfoPage(
-              schoolId: school.id,
-            );
-          }));
-        },
-        child: ListTile(
+      child:  ListTile(
             title: Text(school.name),
             subtitle: Text(school.address),
+            onPressed: () {
+              
+                Navigator.of(context).push(
+            FluentPageRoute(builder: (context) {
+              return SchoolInfoPage(
+                schoolId: school.id,
+              );
+            },),);
+            },
             trailing: SizedBox(
               width: 200,
               child: IconButton(
@@ -51,8 +51,7 @@ class SchoolTile extends StatelessWidget {
                   });
                 },
               ),
-            )),
-      ),
-    );
+            ),),);
+      
   }
 }

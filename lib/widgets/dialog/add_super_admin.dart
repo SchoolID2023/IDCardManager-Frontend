@@ -49,11 +49,11 @@ class _AddSuperAdminState extends State<AddSuperAdmin> {
         children: [
           TextBox(
             controller: _superAdminName,
-            header: "Name",
+            placeholder: "Name",
           ),
           TextBox(
             controller: _superAdminContact,
-            header: "Contact",
+            placeholder: "Contact",
           ),
         ],
       ),

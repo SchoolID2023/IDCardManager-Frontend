@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'dart:io';
-import 'dart:math';
+ 
+import 'dart:io'; 
 import 'dart:typed_data';
+import 'package:flutter/scheduler.dart';
 import 'package:image/image.dart' as IMG;
 
 import 'package:file_picker/file_picker.dart';
-import 'package:fluent_ui/fluent_ui.dart';
-// import 'package:flutter/material.dart';
+import 'package:fluent_ui/fluent_ui.dart'; 
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -16,19 +15,19 @@ import 'package:idcard_maker_frontend/models/id_card_generation_model.dart';
 import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:screenshot/screenshot.dart';
-import '../services/logger.dart';
-import 'dart:ui' as ui;
+import '../services/logger.dart'; 
 
 class GenerateIdCardList extends StatefulWidget {
   final String idCardId;
   final List<Student> students;
   final Map<String, bool> isSelected;
-  const GenerateIdCardList(
-      {Key? key,
-      required this.idCardId,
-      required this.students,
-      required this.isSelected})
-      : super(key: key);
+
+  const GenerateIdCardList({
+    Key? key,
+    required this.idCardId,
+    required this.students,
+    required this.isSelected,
+  }) : super(key: key);
 
   @override
   State<GenerateIdCardList> createState() => _GenerateIdCardListState();
@@ -49,30 +48,26 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   int totalCount = 0;
   int currentCount = 0;
   bool isStop = false;
+  int batchIndex = 0;
+  int imageIndex = 0;
 
-  late File errorFile;
+  late File errorFile = File('');
   String errors = "Errors While Generating ID Cards:\n";
 
   final RemoteServices _remoteServices = RemoteServices();
-  late IdCardAttachModel _idCardAttachModel;
-
-  List<Student> idCardGeneratedStudent = [];
+  late final IdCardAttachModel _idCardAttachModel = IdCardAttachModel(
+    idCard: widget.idCardId,
+    students: [],
+  );
 
   List<int> foregroundImageBytes = [];
   List<int> backgroundImageBytes = [];
-
-  Future<void> fetchIdCardGenerationModel() async {
-    _idCardGenerationModel =
-        await _remoteServices.getIdCardGenerationModel(widget.idCardId);
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
+  List<String> errorList = [];
   double pixelRatio = 1.0;
 
   @override
   void initState() {
+    super.initState();
     setState(() {
       _isLoading = true;
       _dpi.text = '600';
@@ -98,17 +93,19 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       }
     }();
 
-    for (var student in widget.students) {
-      if (widget.isSelected[student.id] == true) {
-        totalCount++;
-      }
-    }
-    super.initState();
+    totalCount = widget.students
+        .where((student) => widget.isSelected[student.id] == true)
+        .length;
 
-    _idCardAttachModel = IdCardAttachModel(
-      idCard: widget.idCardId,
-      students: [],
-    );
+       setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> fetchIdCardGenerationModel() async {
+    _idCardGenerationModel =
+        await _remoteServices.getIdCardGenerationModel(widget.idCardId);
+   
   }
 
   String getValue(Student student, bool isPhoto, String field) {
@@ -118,8 +115,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
     logger.d("<---Field --> $field $isPhoto <---${student.name}--->");
     if (isPhoto) {
-      // field = field.substring(0, field.length - 6);
-
       value = student.photo
           .firstWhere(
             (element) => element.field == field,
@@ -151,6 +146,10 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     return value;
   }
 
+  Widget frontWidget = const SizedBox(
+    height: 1.0,
+  );
+
   Future<void> chooseOutputPath() async {
     String? outputFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Please select an output destination:',
@@ -167,40 +166,32 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
     Directory destinationFolder = Directory('${outputFile}front');
     if (await destinationFolder.exists()) {
-      frontPath = destinationFolder.path;
+      
+        frontPath = destinationFolder.path;
     } else {
+      
       await destinationFolder.create(recursive: true);
+      // setState(()  {
       frontPath = destinationFolder.path;
+      // });
     }
 
     destinationFolder = Directory('${outputFile}back');
     if (await destinationFolder.exists()) {
-      backPath = destinationFolder.path;
+    
+      setState(() {
+        backPath = destinationFolder.path;
+      });
     } else {
       await destinationFolder.create(recursive: true);
-      backPath = destinationFolder.path;
+      // setState(() {
+        backPath = destinationFolder.path;
+      // });
     }
   }
 
-  Future<void> capturePng(GlobalKey key, String path, String fileImage) async {
-    final RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-    final ui.Image image = await boundary.toImage();
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List pngBytes = byteData!.buffer.asUint8List();
-    var dpi = 300;
-    pngBytes[13] = 1;
-    pngBytes[14] = (dpi >> 8);
-    pngBytes[15] = (dpi & 0xff);
-    pngBytes[16] = (dpi >> 8);
-    pngBytes[17] = (dpi & 0xff);
-    await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
-
-    logger.d("Png Captured --> $path\\$fileImage.png");
-  }
-
   Uint8List resizeImage(Uint8List data) {
+    print('inside the resizeImage');
     Uint8List? resizedData = data;
     IMG.Image? img = IMG.decodeImage(data);
     IMG.Image resized = IMG.copyResize(
@@ -214,25 +205,38 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
   Future<void> captureScreenshot(
       Widget idCard, String path, String fileImage) async {
-    Uint8List pngBytes = await screenshotController.captureFromWidget(
-      idCard,
-      pixelRatio: 10,
-    );
+    try {
+      Uint8List pngBytes = await screenshotController.captureFromWidget(
+        idCard,
+        pixelRatio: 10,
+      );
 
-    logger.d("Pixel Ratio -> $pixelRatio");
+      logger.d("Pixel Ratio -> $pixelRatio");
 
-    pngBytes = resizeImage(pngBytes);
+      pngBytes = resizeImage(pngBytes);
 
-    await File('$path\\$fileImage.jpeg').writeAsBytes(pngBytes);
-    logger.d("SS Png Captured --> $path\\$fileImage.jpeg");
+      await File('$path\\$fileImage.jpeg').writeAsBytes(pngBytes);
+      logger.d("SS Png Captured --> $path\\$fileImage.jpeg");
+    } catch (e) {
+      logger.e("Error capturing screenshot: $e");
+
+      logger.e("ID Card Gen Error $fileImage --> $e");
+      errors += "ID Card Gen Error ${fileImage}\n";
+      errorList.add("ID Card Gen Error ${fileImage}: $e");
+    }
   }
 
-  final Widget _widget = const Text("Start");
-  Widget frontWidget = const SizedBox(
-    height: 1.0,
-  );
+  List<List<T>> splitList<T>(List<T> list, int batchSize) {
+    final result = <List<T>>[];
+    final length = list.length;
 
-  int index = 0;
+    for (var i = 0; i < length; i += batchSize) {
+      final end = (i + batchSize < length) ? i + batchSize : length;
+      result.add(list.sublist(i, end));
+    }
+
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -302,73 +306,66 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                         ),
                         if (!_isGenerating)
                           Button(
-                            onPressed: (() async {
+                            onPressed: () async {
                               setState(() {
                                 _isGenerating = true;
                               });
 
-                              // await Future.forEach<Student>(widget.students,
-                              //     (student) async {
+                              final imageMap = <String, List<int>>{};
+                              final labelList = <Widget>[];
+                              final labelBackList = <Widget>[];
 
-                              for (Student student in widget.students) {
-                                if (isStop) {
-                                  break;
-                                }
+                              // Create batches of 30 students at a time
+                              final studentBatches = splitList(
+                                widget.students
+                                    .where((student) =>
+                                        widget.isSelected[student.id]!)
+                                    .toList(),
+                                30,
+                              );
 
-                                if (widget.isSelected[student.id]!) {
-                                  logger.d(
-                                      "-=------>   ${student.name} ${student.contact} ${student.studentClass}");
-                                  try {
-                                    GlobalKey globalFrontKey = GlobalKey();
-                                    GlobalKey globalBackKey = GlobalKey();
-                                    final labelList = <Widget>[];
-                                    final labelBackList = <Widget>[];
+                              int totalCount = 0;
+                              for (final studentBatch in studentBatches) {
+                                totalCount += studentBatch.length;
+                              }
 
-                                    Map<String, List<int>> imageMap = {};
+                              for (final studentBatch in studentBatches) {
+                                batchIndex++;
+                                imageIndex = 0;
+                                await Future.wait(
+                                    studentBatch.map((student) async {
+                                  if (isStop) {
+                                    return;
+                                  }
 
-                                    for (int i = 0;
-                                        i < student.photo.length;
-                                        i++) {
-                                      ByteData tempImage =
-                                          (await NetworkAssetBundle(Uri.parse(
-                                                  student.photo[i].value))
-                                              .load(student.photo[i].value));
-                                      Uint8List audioUint8List =
-                                          tempImage.buffer.asUint8List(
-                                              tempImage.offsetInBytes,
-                                              tempImage.lengthInBytes);
-                                      imageMap[student.photo[i].field] =
-                                          audioUint8List.cast<int>();
-                                      logger.d(student.photo[i].field);
-                                    }
-
-                                    for (int i = 0;
-                                        i <
-                                            _idCardGenerationModel
-                                                .idcard.labels.length;
-                                        i++) {
-                                      if (_idCardGenerationModel
-                                          .idcard.labels[i].isPhoto) {
-                                        logger.d(
-                                            "Photo--> ${_idCardGenerationModel.idcard.labels[i].title}");
-                                      }
-                                    }
-                                    labelList.add(
-                                      SizedBox(
-                                        width:
-                                            _idCardGenerationModel.idcard.width,
-                                        height: _idCardGenerationModel
-                                            .idcard.height,
-                                        child: Image.memory(
-                                          Uint8List.fromList(
-                                              foregroundImageBytes),
-                                          fit: BoxFit.fill,
-                                        ),
-                                      ),
+                                  if (widget.isSelected[student.id]!) {
+                                    logger.d(
+                                      "-=------>   ${student.name} ${student.contact} ${student.studentClass}",
                                     );
+                                    try {
+                                      for (int i = 0;
+                                          i < student.photo.length;
+                                          i++) {
+                                        final tempImage =
+                                            await NetworkAssetBundle(Uri.parse(
+                                                    student.photo[i].value))
+                                                .load(student.photo[i].value);
+                                        imageMap[student.photo[i].field] =
+                                            tempImage.buffer.asUint8List();
 
-                                    if (_idCardGenerationModel.idcard.isDual) {
-                                      labelBackList.add(
+                                        logger.d(
+                                            'The type is ${student.photo[i].field}');
+                                      }
+
+                                      _idCardGenerationModel.idcard.labels
+                                          .forEach((label) {
+                                        if (label.isPhoto) {
+                                          logger.d("Photo--> ${label.title}");
+                                        }
+                                      });
+
+                                      labelList.clear();
+                                      labelList.add(
                                         SizedBox(
                                           width: _idCardGenerationModel
                                               .idcard.width,
@@ -376,305 +373,227 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                               .idcard.height,
                                           child: Image.memory(
                                             Uint8List.fromList(
-                                                backgroundImageBytes),
+                                                foregroundImageBytes),
                                             fit: BoxFit.fill,
                                           ),
                                         ),
                                       );
-                                    }
 
-                                    for (int i = 0;
-                                        i <
-                                            _idCardGenerationModel
-                                                .idcard.labels.length;
-                                        i++) {
                                       if (_idCardGenerationModel
-                                              .idcard.labels[i].isPrinted &&
-                                          _idCardGenerationModel
-                                              .idcard.labels[i].isFront) {
-                                        labelList.add(
-                                          Positioned(
-                                            top: _idCardGenerationModel
-                                                .idcard.labels[i].y
-                                                .toDouble(),
-                                            left: _idCardGenerationModel
-                                                .idcard.labels[i].x
-                                                .toDouble(),
-                                            child: Container(
-                                              height: _idCardGenerationModel
-                                                  .idcard.labels[i].height
-                                                  .toDouble(),
-                                              width: _idCardGenerationModel
-                                                  .idcard.labels[i].width
-                                                  .toDouble(),
-                                              decoration: BoxDecoration(
-                                                image: _idCardGenerationModel
-                                                        .idcard
-                                                        .labels[i]
-                                                        .isPhoto
-                                                    ? DecorationImage(
-                                                        // image: NetworkImage(
-                                                        //   getValue(
-                                                        //     student,
-                                                        //     _idCardGenerationModel
-                                                        //         .idcard
-                                                        //         .labels[i]
-                                                        //         .isPhoto,
-                                                        // _idCardGenerationModel
-                                                        //     .idcard.labels[i].title,
-                                                        //   ),
-                                                        // ),
-                                                        image: MemoryImage(
-                                                          Uint8List.fromList(imageMap[
-                                                              _idCardGenerationModel
-                                                                  .idcard
-                                                                  .labels[i]
-                                                                  .title
-                                                                  .toLowerCase()]!),
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : null,
-                                              ),
-                                              child: _idCardGenerationModel
-                                                      .idcard.labels[i].isPhoto
-                                                  ? Container()
-                                                  : Text(
-                                                      textAlign: _idCardGenerationModel
-                                                                  .idcard
-                                                                  .labels[i]
-                                                                  .textAlign ==
-                                                              "left"
-                                                          ? TextAlign.left
-                                                          : _idCardGenerationModel
-                                                                      .idcard
-                                                                      .labels[i]
-                                                                      .textAlign ==
-                                                                  "right"
-                                                              ? TextAlign.right
-                                                              : TextAlign
-                                                                  .center,
-                                                      getValue(
-                                                        student,
-                                                        _idCardGenerationModel
-                                                            .idcard
-                                                            .labels[i]
-                                                            .isPhoto,
-                                                        _idCardGenerationModel
-                                                            .idcard
-                                                            .labels[i]
-                                                            .title,
-                                                      ),
-                                                      //
-                                                      style: GoogleFonts
-                                                              .asMap()[
-                                                          _idCardGenerationModel
-                                                              .idcard
-                                                              .labels[i]
-                                                              .fontName]!(
-                                                        color: Color(
-                                                          int.parse(
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .color,
-                                                            radix: 16,
-                                                          ),
-                                                        ),
-                                                        fontSize:
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .fontSize
-                                                                .toDouble(),
-                                                        fontWeight:
-                                                            _idCardGenerationModel
-                                                                    .idcard
-                                                                    .labels[i]
-                                                                    .isBold
-                                                                ? FontWeight
-                                                                    .bold
-                                                                : FontWeight
-                                                                    .normal,
-                                                        fontStyle:
-                                                            _idCardGenerationModel
-                                                                    .idcard
-                                                                    .labels[i]
-                                                                    .isItalic
-                                                                ? FontStyle
-                                                                    .italic
-                                                                : FontStyle
-                                                                    .normal,
-                                                        decoration:
-                                                            _idCardGenerationModel
-                                                                    .idcard
-                                                                    .labels[i]
-                                                                    .isUnderline
-                                                                ? TextDecoration
-                                                                    .underline
-                                                                : TextDecoration
-                                                                    .none,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-                                        );
-                                      } else if (_idCardGenerationModel
-                                          .idcard.labels[i].isPrinted) {
+                                          .idcard.isDual) {
+                                        labelBackList.clear();
                                         labelBackList.add(
-                                          Positioned(
-                                            top: _idCardGenerationModel
-                                                .idcard.labels[i].y
-                                                .toDouble(),
-                                            left: _idCardGenerationModel
-                                                .idcard.labels[i].x
-                                                .toDouble(),
-                                            child: Container(
-                                              height: _idCardGenerationModel
-                                                  .idcard.labels[i].height
-                                                  .toDouble(),
-                                              width: _idCardGenerationModel
-                                                  .idcard.labels[i].width
-                                                  .toDouble(),
-                                              decoration: BoxDecoration(
-                                                image: _idCardGenerationModel
-                                                        .idcard
-                                                        .labels[i]
-                                                        .isPhoto
-                                                    ? DecorationImage(
-                                                        image: NetworkImage(
-                                                          getValue(
-                                                            student,
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .isPhoto,
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .title,
-                                                          ),
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : null,
-                                              ),
-                                              child: _idCardGenerationModel
-                                                      .idcard.labels[i].isPhoto
-                                                  ? Container()
-                                                  : Text(
-                                                      getValue(
-                                                        student,
-                                                        _idCardGenerationModel
-                                                            .idcard
-                                                            .labels[i]
-                                                            .isPhoto,
-                                                        _idCardGenerationModel
-                                                            .idcard
-                                                            .labels[i]
-                                                            .title,
-                                                      ),
-                                                      style: TextStyle(
-                                                        fontSize:
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .fontSize
-                                                                .toDouble(),
-                                                        color: Color(
-                                                          int.parse(
-                                                            _idCardGenerationModel
-                                                                .idcard
-                                                                .labels[i]
-                                                                .color,
-                                                            radix: 16,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
+                                          SizedBox(
+                                            width: _idCardGenerationModel
+                                                .idcard.width,
+                                            height: _idCardGenerationModel
+                                                .idcard.height,
+                                            child: Image.memory(
+                                              Uint8List.fromList(
+                                                  backgroundImageBytes),
+                                              fit: BoxFit.fill,
                                             ),
                                           ),
                                         );
                                       }
-                                    }
 
-                                    frontWidget = SizedBox(
-                                      height: _idCardGenerationModel
-                                          .idcard.height
-                                          .toDouble(),
-                                      width: _idCardGenerationModel.idcard.width
-                                          .toDouble(),
-                                      child: Stack(children: labelList),
-                                    );
+                                      for (final label in _idCardGenerationModel
+                                          .idcard.labels) {
+                                        final isPrinted = label.isPrinted &&
+                                            (!label.isFront ||
+                                                !_idCardGenerationModel
+                                                    .idcard.isDual);
+                                        final isFront = label.isFront ||
+                                            !_idCardGenerationModel
+                                                .idcard.isDual;
 
-                                    // frontWidget = Stack(children: labelList);
-
-                                    Widget backWidget = _idCardGenerationModel
-                                            .idcard.isDual
-                                        ? Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Colors.black,
-                                                width: 1,
+                                        if (isPrinted && isFront) {
+                                          labelList.add(
+                                            Positioned(
+                                              top: label.y.toDouble(),
+                                              left: label.x.toDouble(),
+                                              child: Container(
+                                                height: label.height.toDouble(),
+                                                width: label.width.toDouble(),
+                                                decoration: BoxDecoration(
+                                                  image: label.isPhoto
+                                                      ? DecorationImage(
+                                                          image: MemoryImage(
+                                                              Uint8List.fromList(
+                                                                  imageMap[label
+                                                                      .title
+                                                                      .toLowerCase()]!)),
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : null,
+                                                ),
+                                                child: label.isPhoto
+                                                    ? Container()
+                                                    : Text(
+                                                        getValue(
+                                                            student,
+                                                            label.isPhoto,
+                                                            label.title),
+                                                        textAlign: label
+                                                                    .textAlign ==
+                                                                "left"
+                                                            ? TextAlign.left
+                                                            : label.textAlign ==
+                                                                    "right"
+                                                                ? TextAlign
+                                                                    .right
+                                                                : TextAlign
+                                                                    .center,
+                                                        style:
+                                                            GoogleFonts.asMap()[
+                                                                label
+                                                                    .fontName]!(
+                                                          color: Color(
+                                                              int.parse(
+                                                                  label.color,
+                                                                  radix: 16)),
+                                                          fontSize: label
+                                                              .fontSize
+                                                              .toDouble(),
+                                                          fontWeight: label
+                                                                  .isBold
+                                                              ? FontWeight.bold
+                                                              : FontWeight
+                                                                  .normal,
+                                                          fontStyle: label
+                                                                  .isItalic
+                                                              ? FontStyle.italic
+                                                              : FontStyle
+                                                                  .normal,
+                                                          decoration: label
+                                                                  .isUnderline
+                                                              ? TextDecoration
+                                                                  .underline
+                                                              : TextDecoration
+                                                                  .none,
+                                                        ),
+                                                      ),
                                               ),
                                             ),
-                                            child: RepaintBoundary(
-                                              key: globalBackKey,
-                                              child: SizedBox(
-                                                height: _idCardGenerationModel
-                                                    .idcard.height
-                                                    .toDouble(),
-                                                width: _idCardGenerationModel
-                                                    .idcard.width
-                                                    .toDouble(),
-                                                child: Stack(
-                                                    children: labelBackList),
+                                          );
+                                        } else if (isPrinted) {
+                                          labelBackList.add(
+                                            Positioned(
+                                              top: label.y.toDouble(),
+                                              left: label.x.toDouble(),
+                                              child: Container(
+                                                height: label.height.toDouble(),
+                                                width: label.width.toDouble(),
+                                                decoration: BoxDecoration(
+                                                  image: label.isPhoto
+                                                      ? DecorationImage(
+                                                          image: NetworkImage(
+                                                              getValue(
+                                                                  student,
+                                                                  label.isPhoto,
+                                                                  label.title)),
+                                                          fit: BoxFit.cover,
+                                                        )
+                                                      : null,
+                                                ),
+                                                child: label.isPhoto
+                                                    ? Container()
+                                                    : Text(
+                                                        getValue(
+                                                            student,
+                                                            label.isPhoto,
+                                                            label.title),
+                                                        style: TextStyle(
+                                                          fontSize: label
+                                                              .fontSize
+                                                              .toDouble(),
+                                                          color: Color(
+                                                              int.parse(
+                                                                  label.color,
+                                                                  radix: 16)),
+                                                        ),
+                                                      ),
                                               ),
                                             ),
-                                          )
-                                        : Container();
+                                          );
+                                        }
+                                      }
 
-                                    logger.d(
-                                        "FrontKey : ${globalFrontKey.currentState.toString()}");
-                                    logger.d(
-                                        "BackKey : ${globalBackKey.currentState.toString()}");
+                                      final frontWidget = SizedBox(
+                                        height: _idCardGenerationModel
+                                            .idcard.height
+                                            .toDouble(),
+                                        width: _idCardGenerationModel
+                                            .idcard.width
+                                            .toDouble(),
+                                        child: Stack(children: labelList),
+                                      );
 
-                                    logger.d(
-                                        "Height and Width : ${_idCardGenerationModel.idcard.height} ${_idCardGenerationModel.idcard.width}");
+                                      Widget backWidget = _idCardGenerationModel
+                                              .idcard.isDual
+                                          ? Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: Colors.black,
+                                                  width: 1,
+                                                ),
+                                              ),
+                                              child: RepaintBoundary(
+                                                // key: globalBackKey,
+                                                child: SizedBox(
+                                                  height: _idCardGenerationModel
+                                                      .idcard.height
+                                                      .toDouble(),
+                                                  width: _idCardGenerationModel
+                                                      .idcard.width
+                                                      .toDouble(),
+                                                  child: Stack(
+                                                      children: labelBackList),
+                                                ),
+                                              ),
+                                            )
+                                          : Container();
 
-                                    // await capturePng(
-                                    //     _globalFrontKey, "front", student.username);
-                                    await captureScreenshot(
-                                        frontWidget, "front", student.username);
-                                    if (_idCardGenerationModel.idcard.isDual) {
-                                      await captureScreenshot(
-                                          backWidget, "back", student.username);
+                                      print('the front path is $frontPath');
+                                      await captureScreenshot(frontWidget,
+                                          frontPath, student.username);
+                                      if (_idCardGenerationModel
+                                          .idcard.isDual) {
+                                        print('the back path is $backPath');
+                                        await captureScreenshot(backWidget,
+                                            backPath, student.username);
+                                      }
+
+                                      _idCardAttachModel.students.add(student);
+                                      setState(() {
+                                        imageIndex++;
+                                        currentCount++;
+                                      });
+                                      
+                                    } catch (e) {
+                                      logger.e(
+                                          "ID Card Gen Error ${student.name} --> $e");
+                                      errors +=
+                                          "ID Card Gen Error ${student.name}\n";
+                                      // TODO
                                     }
-
-                                    _idCardAttachModel.students.add(student);
-                                  } catch (e) {
-                                    logger.e(
-                                        "ID Card Gen Error ${student.name} --> $e");
-                                    errors +=
-                                        "ID Card Gen Error ${student.name}\n";
-                                    // TODO
                                   }
-                                }
-
-                                setState(() {
-                                  currentCount++;
-                                });
-
-                                // if (_idCardGenerationModel.idcard.isDual) {
-                                //   await capturePng(
-                                //       _globalBackKey, "back", student.username);
-                                // }
+                                }));
                               }
 
+                              await errorFile.writeAsString(errors);
                               await _remoteServices
                                   .attachIDCard(_idCardAttachModel);
+
+                             
+                              SchedulerBinding.instance!
+                                  .addPostFrameCallback((_) {
+                                setState(() {
+                                  currentCount = totalCount;
+                                });
+                              });
                               errorFile.writeAsString(errors);
-                            }),
+                            },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -684,7 +603,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                     child: SizedBox(
                                       width: 350,
                                       child: TextBox(
-                                        header:
+                                        placeholder:
                                             'DPI of the ID Card to be generated:- ',
                                         controller: _dpi,
                                       ),
@@ -697,15 +616,31 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                           )
                         else
                           currentCount >= totalCount
-                              ? Container(
-                                  child: Text(
-                                    "All ID Cards generated successfully !",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                              ? Column(
+                                  children: [
+                                    Text(
+                                      "All ID Cards generated successfully !",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
                                     ),
-                                  ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    SizedBox(
+                                      height: 200,
+                                      child: ListView.builder(
+                                        itemCount: errorList.length,
+                                        itemBuilder: (context, index) {
+                                          return ListTile(
+                                            title: Text(errorList[index]),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 )
                               : Row(
                                   children: [
@@ -715,7 +650,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                           height: 100,
                                           child: Center(
                                             child: Text(
-                                              "Generating... $currentCount/$totalCount",
+                                              "Generating... $currentCount/$totalCount and $imageIndex  and $batchIndex ",
                                               style: const TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
@@ -747,3 +682,25 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     );
   }
 }
+
+
+
+
+// Future<void> capturePng(GlobalKey key, String path, String fileImage) async {
+//   print('inside the capturePng');
+//   final RenderRepaintBoundary boundary =
+//       key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+//   final ui.Image image = await boundary.toImage();
+//   final ByteData? byteData =
+//       await image.toByteData(format: ui.ImageByteFormat.png);
+//   final Uint8List pngBytes = byteData!.buffer.asUint8List();
+//   var dpi = 300;
+//   pngBytes[13] = 1;
+//   pngBytes[14] = (dpi >> 8);
+//   pngBytes[15] = (dpi & 0xff);
+//   pngBytes[16] = (dpi >> 8);
+//   pngBytes[17] = (dpi & 0xff);
+//   await File('$path\\$fileImage.png').writeAsBytes(pngBytes);
+
+//   logger.d("Png Captured --> $path\\$fileImage.png");
+// }

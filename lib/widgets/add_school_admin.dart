@@ -51,11 +51,11 @@ class _AddSchoolAdminState extends State<AddSchoolAdmin> {
         children: [
           TextBox(
             controller: _adminNameController,
-            header: "Admin Name",
+            placeholder: "Admin Name",
           ),
           TextBox(
             controller: _adminContactController,
-            header: "Admin Contact",
+            placeholder: "Admin Contact",
           ),
         ],
       ),

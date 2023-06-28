@@ -132,7 +132,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                       Expanded(
                         child: DropDownButton(
                           title: const Text("Select Columns"),
-                          items: List<MenuFlyoutItem>.generate(
+                          items: List<MenuFlyoutItemBase>.generate(
                             widget.fields.length,
                             (index) => MenuFlyoutItem(
                               leading: Checkbox(

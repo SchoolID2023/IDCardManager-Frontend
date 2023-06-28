@@ -1,9 +1,6 @@
-import 'dart:ui';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:idcard_maker_frontend/pages/homepage.dart';
-import 'package:idcard_maker_frontend/pages/school_admin_login.dart';
 import 'package:idcard_maker_frontend/pages/school_info_page.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import '../services/logger.dart';
@@ -26,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     double cwidth = MediaQuery.of(context).size.width;
     double cheight = MediaQuery.of(context).size.height;
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
 
     return ScaffoldPage(
       content: Center(

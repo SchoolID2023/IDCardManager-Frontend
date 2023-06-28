@@ -169,7 +169,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                       await SharedPreferences.getInstance();
                   prefs.remove('token').then((value) => Navigator.of(context)
                       .pushReplacement(FluentPageRoute(
-                          builder: (context) => const LoginPage())));
+                          builder: (context) => const LoginPage(),),),);
                 },
               ),
             ),
@@ -187,31 +187,39 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
             PaneItem(
               icon: const Icon(FluentIcons.home),
               title: const Text("Home"),
+              body: Home(
+                schoolId: widget.schoolId,
+              ),
             ),
             PaneItem(
               icon: const Icon(FluentIcons.people),
               title: const Text("Students"),
+              body: Students(
+                schoolId: widget.schoolId,
+              ),
             ),
             PaneItem(
-              icon: const Icon(FluentIcons.i_d_badge),
-              title: const Text("ID Cards"),
-            ),
+                icon: const Icon(FluentIcons.i_d_badge),
+                title: const Text("ID Cards"),
+                body: IdCard(
+                  schoolId: widget.schoolId,
+                )),
           ],
         ),
-        content: NavigationBody(
-          index: index,
-          children: [
-            Home(
-              schoolId: widget.schoolId,
-            ),
-            Students(
-              schoolId: widget.schoolId,
-            ),
-            IdCard(
-              schoolId: widget.schoolId,
-            )
-          ],
-        ),
+        // content: NavigationBody(
+        //   index: index,
+        //   children: [
+        //     Home(
+        //       schoolId: widget.schoolId,
+        //     ),
+        //     Students(
+        //       schoolId: widget.schoolId,
+        //     ),
+        //     IdCard(
+        //       schoolId: widget.schoolId,
+        //     )
+        //   ],
+        // ),
       );
     });
   }

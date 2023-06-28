@@ -1,9 +1,6 @@
-import 'dart:convert';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/material.dart' as mat;
 import 'package:get/get.dart';
-
 import '../../controllers/student_controller.dart';
 import '../../models/student_model.dart';
 import '../generate_id_card_list.dart';
@@ -35,7 +32,7 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
     return ContentDialog(
       title: Text(
         'Select the ID Card Template you want to use',
@@ -56,12 +53,15 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       FluentPageRoute(
+                        
+                        // ScaffoldPageList
                         builder: (context) => GenerateIdCardList(
                           idCardId: studentController.getIdCards[index].id,
                           students: widget.students,
                           isSelected: widget.isSelected,
                         ),
                       ),
+
                     );
                   },
                   child: Padding(

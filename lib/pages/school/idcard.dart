@@ -35,7 +35,7 @@ class _IdCardState extends State<IdCard> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
 
     return Obx(() {
       return Padding(

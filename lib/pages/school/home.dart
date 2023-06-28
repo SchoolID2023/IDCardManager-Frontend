@@ -28,7 +28,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
     return Obx(
       () {
         return Padding(

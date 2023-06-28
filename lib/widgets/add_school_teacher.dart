@@ -59,27 +59,27 @@ class _AddSchoolTeacherState extends State<AddSchoolTeacher> {
           children: [
             TextBox(
               controller: _teacherNameController,
-              header: "Teacher Name",
+              placeholder: "Teacher Name",
             ),
             TextBox(
               controller: _teacherEmailController,
-              header: "Teacher Username",
+              placeholder: "Teacher Username",
             ),
             TextBox(
               controller: _teacherPasswordController,
-              header: "Teacher Password",
+              placeholder: "Teacher Password",
             ),
             TextBox(
               controller: _teacherContactController,
-              header: "Teacher Contact",
+              placeholder: "Teacher Contact",
             ),
             TextBox(
               controller: _teacherClassController,
-              header: "Teacher Class",
+              placeholder: "Teacher Class",
             ),
             TextBox(
               controller: _teacherSectionController,
-              header: "Teacher Section",
+              placeholder: "Teacher Section",
             ),
 
 

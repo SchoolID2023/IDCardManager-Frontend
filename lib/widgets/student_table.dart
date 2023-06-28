@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
@@ -55,8 +54,23 @@ class _StudentTableState extends State<StudentTable> {
 
   List<String> filteredStudents = [];
 
-  final ValueNotifier<bool> _isAllSelected = ValueNotifier(false);
-   Map<String, bool> isSelected = <String, bool>{}; // = widget.isSelected;
+     late Map<String, bool> isSelected;
+
+  @override
+  void initState() {
+    isSelected = widget.isSelected ?? {};
+
+    logger.d("Length-> ${widget.students[0].data.length}");
+
+    for (var element in widget.labels) {
+      _isVisible[element] = false;
+    }
+
+    photoLabel = widget.photoLabels.isNotEmpty ? widget.photoLabels[0] : "-1";
+
+    studentController = Get.put(StudentController(widget.schoolId));
+    super.initState();
+  }
 
   void onSelectingRow(String studentId, bool isSelected) {
     setState(() {
@@ -70,24 +84,6 @@ class _StudentTableState extends State<StudentTable> {
 
   void deleteStudent(String studentId) {
     studentController.deleteStudent(studentId, widget.schoolId);
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    isSelected = widget.isSelected;
-
-    logger.d("Length-> ${widget.students[0].data.length}");
-
-    for (var element in widget.labels) {
-      _isVisible[element] = false;
-    }
-
-    photoLabel = widget.photoLabels.isNotEmpty ? widget.photoLabels[0] : "-1";
-
-    studentController = Get.put(StudentController(widget.schoolId));
   }
 
   @override
@@ -170,8 +166,7 @@ class _StudentTableState extends State<StudentTable> {
       return 0;
     }
 
-    for (String label in widget.labels) {
-      // logger.d("Field--> ${element.field}");
+    for (String label in widget.labels) { 
       if (_isVisible[label] ?? false) {
         columnName.add(
           DataColumn(
@@ -224,17 +219,9 @@ class _StudentTableState extends State<StudentTable> {
                               title: filterField != ''
                                   ? Text(filterField)
                                   : const Text('Search Data by'),
-                              items: List<fluent.MenuFlyoutItem>.generate(
+                              items: List<fluent.MenuFlyoutItemBase>.generate(
                                 widget.labels.length,
                                 (index) => fluent.MenuFlyoutItem(
-                                  // leading: fluent.Checkbox(
-                                  //   checked: _isVisible[index] ?? false,
-                                  //   onChanged: (value) {
-                                  //     setState(() {
-                                  //       _isVisible[index] = !(_isVisible[index] ?? false);
-                                  //     });
-                                  //   },
-                                  // ),
                                   text: Text(widget.labels[index]),
                                   onPressed: () {
                                     setState(() {
@@ -297,7 +284,7 @@ class _StudentTableState extends State<StudentTable> {
                                   ? Text(
                                       'Students of Class ${classFilter.toUpperCase()}')
                                   : const Text('All Classes'),
-                              items: List<fluent.MenuFlyoutItem>.generate(
+                              items: List<fluent.MenuFlyoutItemBase>.generate(
                                 widget.classes.length,
                                 (index) => fluent.MenuFlyoutItem(
                                   text: Text(widget.classes[index]),
@@ -322,7 +309,7 @@ class _StudentTableState extends State<StudentTable> {
                                   ? Text(
                                       'Students of Section ${sectionFilter.toUpperCase()}')
                                   : const Text('All Sections'),
-                              items: List<fluent.MenuFlyoutItem>.generate(
+                              items: List<fluent.MenuFlyoutItemBase>.generate(
                                 widget.sections.length,
                                 (index) => fluent.MenuFlyoutItem(
                                   text: Text(widget.sections[index]),
@@ -395,7 +382,7 @@ class _StudentTableState extends State<StudentTable> {
                         width: 150,
                         child: fluent.DropDownButton(
                           title: const Text('View Data'),
-                          items: List<fluent.MenuFlyoutItem>.generate(
+                          items:  List<fluent.MenuFlyoutItemBase>.generate(
                             widget.labels.length - 5,
                             (index) {
                               index += 5;
@@ -429,11 +416,11 @@ class _StudentTableState extends State<StudentTable> {
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
+                      child: SizedBox(  
                         width: 150,
                         child: fluent.DropDownButton(
                           title: const Text('View Photo'),
-                          items: List<fluent.MenuFlyoutItem>.generate(
+                          items: List<fluent.MenuFlyoutItemBase>.generate(
                             widget.photoLabels.length,
                             (index) => fluent.MenuFlyoutItem(
                               text: Text(widget.photoLabels[index]),
@@ -503,7 +490,7 @@ class MyData extends DataTableSource {
       //     "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
       if (filterField == "") {
         for (var fields in _isVisible.keys) {
-          if (fields == 'name') {
+           if (fields == 'name') {
             for (var element in filteredStudents) {
               if (student.name.toLowerCase().contains(element.toLowerCase())) {
                 value = true;
@@ -656,7 +643,7 @@ class MyData extends DataTableSource {
       _data.add(studentData);
     }
   }
-
+Set<int> selectedRows = Set<int>();
   @override
   bool get isRowCountApproximate => false;
   @override
@@ -664,8 +651,7 @@ class MyData extends DataTableSource {
   @override
   int get selectedRowCount => 0;
   @override
-  DataRow getRow(int index) {
-    int ind = 0;
+  DataRow getRow(int index) { 
     return DataRow(
       key: ValueKey(_data[index].last),
       selected: isSelected[_data[index].last] ?? false,

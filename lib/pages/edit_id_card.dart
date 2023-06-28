@@ -245,7 +245,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: CommandBarCard(
+                      child: Card(
                         child: Row(
                           children: [
                             Padding(
@@ -584,7 +584,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         child: SizedBox(
                                           width: 100,
                                           child: TextBox(
-                                            header: 'Height',
+                                            placeholder: 'Height',
                                             controller: _heightController,
                                             onChanged: (_) {
                                               setState(() {
@@ -606,7 +606,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                         child: SizedBox(
                                           width: 100,
                                           child: TextBox(
-                                            header: 'Width',
+                                            placeholder: 'Width',
                                             controller: _widthController,
                                             onChanged: (_) {
                                               setState(() {
