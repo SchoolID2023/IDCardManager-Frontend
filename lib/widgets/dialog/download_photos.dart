@@ -47,22 +47,20 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
   }
 
   Future<void> downloadAndSavePhotos() async {
-    final String response = await rootBundle.loadString('./data.json');
-    final data = await json.decode(response) as Map<String, dynamic>;
-
-    // final photosList = PhotosList.fromJson(data);
+    toSaveLabelName = toSaveLabelName.isEmpty ? selectedLabel : toSaveLabelName ;
     final photosList = await RemoteServices().downloadPhotos(
       widget.schoolId,
       selectedClass,
       selectedSection,
       selectedLabel,
+      toSaveLabelName
     );
     final classes = photosList.classes;
 
     for (int i = 0; i < classes.length; i++) {
       for (int j = 0; j < classes[i].sections.length; j++) {
         for (int k = 0; k < classes[i].sections[j].photos.length; k++) {
-          final photo = classes[i].sections[j].photos[k];
+          final photo = classes[i].sections[j].photos[k]; 
           String savename = photo.name;
           String savePath =
               "$selectedPath/${classes[i].name}/${classes[i].sections[j].name}/$savename";
@@ -71,7 +69,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
             await Dio().download(photo.url, savePath,
                 onReceiveProgress: (received, total) {
               if (total != -1) {
-                // print((received / total * 100).toStringAsFixed(0) + "%");
+                // print((receiv`ed / total * 100).toStringAsFixed(0) + "%");
               }
             });
           } catch (e) {
@@ -93,6 +91,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
   String selectedClass = "All";
   String selectedSection = "All";
   String selectedLabel = "";
+  String toSaveLabelName = '';
 
   @override
   void initState() {
@@ -116,48 +115,76 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
       title: Text(isDownloading ? 'Downloading Photos' : 'Download Photos'),
       content: isDownloading
           ? ProgressRing()
-          : Container(
-              child: Row(
-                children: [
-                  DropDownButton(
-                    items: classes
-                        .map((e) => MenuFlyoutItem(
-                            text: Text(e),
-                            onPressed: () {
-                              setState(() {
-                                selectedClass = e;
-                              });
-                            }))
-                        .toList(),
-                    title: Text("${selectedClass} Class"),
-                  ),
-                  DropDownButton(
-                    items: sections
-                        .map((e) => MenuFlyoutItem(
-                            text: Text(e),
-                            onPressed: () {
-                              setState(() {
-                                selectedSection = e;
-                              });
-                            }))
-                        .toList(),
-                    title: Text("${selectedSection} Section"),
-                  ),
-                  DropDownButton(
-                    items: labels
-                        .map((e) => MenuFlyoutItem(
-                            text: Text(e),
-                            onPressed: () {
-                              setState(() {
-                                selectedLabel = e;
-                              });
-                            }))
-                        .toList(),
-                    title: Text(selectedLabel),
-                  ),
-                ],
-              ),
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    DropDownButton(
+                      items: classes
+                          .map((e) => MenuFlyoutItem(
+                              text: Text(e),
+                              onPressed: () {
+                                setState(() {
+                                  selectedClass = e;
+                                });
+                              }))
+                          .toList(),
+                      title: Text("${selectedClass} Class"),
+                    ),
+                    const SizedBox(width: 10),
+                    DropDownButton(
+                      items: sections
+                          .map((e) => MenuFlyoutItem(
+                              text: Text(e),
+                              onPressed: () {
+                                setState(() {
+                                  selectedSection = e;
+                                });
+                              }))
+                          .toList(),
+                      title: Text("${selectedSection} Section"),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    DropDownButton(
+                      items: labels
+                          .map((e) => MenuFlyoutItem(
+                              text: Text(e),
+                              onPressed: () {
+                                setState(() {
+                                  selectedLabel = e;
+                                });
+                              }))
+                          .toList(),
+                      title: Text(selectedLabel),
+                    ),
+                    const SizedBox(width: 10),
+                    DropDownButton(
+                      items: labels
+                          .map(
+                            (e) => MenuFlyoutItem(
+                              text: Text(e),
+                              onPressed: () {
+                                setState(() {
+                                  toSaveLabelName = e;
+                                });
+                              },
+                            ),
+                          )
+                          .toList(),
+                      title: toSaveLabelName.isNotEmpty
+                          ? Text(toSaveLabelName)
+                          : const Text('Save in Label ?'),
+                    ),
+                  ],
+                ),
+              ],
             ),
+
       actions: [
         Button(
           onPressed: () {

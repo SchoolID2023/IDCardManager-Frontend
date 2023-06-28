@@ -28,11 +28,12 @@ class _LoadPhotosState extends State<LoadPhotos> {
 
   int uploadedFiles = 0;
   int totalFiles = 1;
+  bool uploadForAll = false;
 
   Future<void> uploadPhotos() async {
     var nav = Navigator.of(context);
     final result = await FilePicker.platform.pickFiles(
-      allowMultiple: true,
+      allowMultiple: !uploadForAll,
     );
 
     var encoder = ZipFileEncoder();
@@ -59,6 +60,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
           photoColumns,
           outputPath,
           widget.schoolId,
+          uploadForAll,
         );
 
         setState(() {
@@ -66,26 +68,13 @@ class _LoadPhotosState extends State<LoadPhotos> {
 
           uploadedFiles = counter;
           logger.d("Uploaded $counter files");
-          logger.d("Value = ${(uploadedFiles /totalFiles) * 100}");
+          logger.d("Value = ${(uploadedFiles / totalFiles) * 100}");
         });
         await File(outputPath).delete();
 
-        // batchCounter++;
-        // outputPath =
-        //     "${file.path.toString().substring(0, file.path.toString().lastIndexOf("\\") + 1)}file$batchCounter.zip";
-      }
+        }
     }
 
-    // encoder.create(outputPath);
-    // for (var element in result!.files) {
-    //   await encoder.addFile(File(element.path.toString()));
-    // }
-    // encoder.close();
-    // await _remoteServices.uploadStudentPhotos(
-    //   photoColumns,
-    //   outputPath,
-    //   widget.schoolId,
-    // );
     nav.pop();
   }
 
@@ -93,15 +82,9 @@ class _LoadPhotosState extends State<LoadPhotos> {
 
   @override
   Widget build(BuildContext context) {
-    StudentController _studentController =
-        Get.put(StudentController(widget.schoolId));
     return ContentDialog(
       title: const Text("Upload Photos"),
       actions: [
-        // Button(
-        //   child: Text("OK"),
-        //   onPressed: () {},
-        // ),
         Button(
             child: const Text("CANCEL"),
             onPressed: () => Navigator.pop(context)),
@@ -114,24 +97,19 @@ class _LoadPhotosState extends State<LoadPhotos> {
                 children: [
                   Text("Photos Uploading -> $uploadedFiles/$totalFiles"),
                   ProgressBar(
-                    value: (uploadedFiles/totalFiles) * 100,
+                    value: (uploadedFiles / totalFiles) * 100,
                   ),
                 ],
               )
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  const SizedBox(height: 10),
                   Row(
                     children: [
-                      // Expanded(
-                      //   child: TextBox(
-                      //     controller: _columns,
-                      //     header: "Photo Colums",
-                      //   ),
-                      // ),
                       Expanded(
                         child: DropDownButton(
-                          title: const Text("Select Columns"),
+                          title: photoColumns.length > 0 ? Text(photoColumns.join(", ")) :  Text("Select Columns"),
                           items: List<MenuFlyoutItemBase>.generate(
                             widget.fields.length,
                             (index) => MenuFlyoutItem(
@@ -164,18 +142,56 @@ class _LoadPhotosState extends State<LoadPhotos> {
                           ),
                         ),
                       ),
-                      Button(
-                        child: const Text("Upload Photos"),
-                        onPressed: () async {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          await uploadPhotos();
-                        },
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: Button(
+                          child: const Text("Upload Photos"),
+                          onPressed: () async {
+                            try {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              await uploadPhotos();
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                          },
+                        ),
                       ),
                     ],
                   ),
-                  Text("Selected Columns: ${photoColumns.join(", ")}"),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Row(
+                      children: [
+                        const Text("Selected Columns : ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                            )),
+                        Text(photoColumns.join(", ")),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+                  
+                  Row(
+                    children: [
+                      Checkbox(
+                        checked: uploadForAll,
+                        onChanged: (value) {
+                          setState(() {
+                            uploadForAll = value ?? false;
+                          });
+                        },
+                      ),
+                      const Text("  Upload dummy image for all"),
+                    ],
+                  ),
+
                 ],
               ),
       ),

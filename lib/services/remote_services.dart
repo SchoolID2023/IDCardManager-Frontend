@@ -16,7 +16,6 @@ import '../models/teacher_model.dart';
 import '../models/admins_model.dart';
 import '../models/id_card_generation_model.dart';
 import '../models/schools_model.dart';
-
 import '../services/logger.dart';
 
 class RemoteServices {
@@ -158,7 +157,7 @@ class RemoteServices {
       'Authorization': 'Biatch $token',
     };
 
-    var response;
+    Response response;
 
     logger.d("Delete Super Admin Data:- $id");
     logger.d('$baseUrl/superAdmin/deleteSuperAdmin/$id');
@@ -651,7 +650,7 @@ class RemoteServices {
       'Authorization': 'Biatch $token',
     };
 
-    var response;
+    Response response;
 
     logger.d("Edited Student Data:- ${newStudent.toJson()}");
 
@@ -686,7 +685,7 @@ class RemoteServices {
       'Authorization': 'Biatch $token',
     };
 
-    var response;
+    Response response;
 
     logger.d("Deleted Student Data:- $studentId");
 
@@ -716,7 +715,7 @@ class RemoteServices {
   }
 
   Future<void> uploadStudentPhotos(
-      List<String> columns, String filePath, String schoolId) async {
+      List<String> columns, String filePath, String schoolId, bool? uploadForAll) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -733,13 +732,14 @@ class RemoteServices {
         filePath,
         filename: 'file.zip',
       ),
+      'uploadForAll': uploadForAll,
     };
 
     logger.d(formMap);
 
     var formData = FormData.fromMap(formMap);
 
-    var response;
+    Response response;
 
     try {
       logger.d("Request Sent");
@@ -885,7 +885,7 @@ class RemoteServices {
         ? '$baseUrl/$userType/generateExcel'
         : '$baseUrl/$userType/generateExcel';
 
-    final response;
+    final Response response;
     try {
       response = await dio.download(
         url,
@@ -930,7 +930,7 @@ class RemoteServices {
 
     var url = '$baseUrl/$userType/attachId';
 
-    final response;
+    final Response response;
 
     try {
       response = await dio.post(
@@ -965,7 +965,7 @@ class RemoteServices {
   }
 
   Future<PhotosList> downloadPhotos(
-      String schoolId, String className, String section, String label) async {
+      String schoolId, String className, String section, String label, String? toSaveLabelName) async {
     logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -979,7 +979,8 @@ class RemoteServices {
       "school": schoolId,
       "class": className,
       "section": section,
-      "photos": label
+      "photos": label,
+      'toSaveLabelName': toSaveLabelName
     };
 
     logger.i(body);
