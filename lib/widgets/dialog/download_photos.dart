@@ -98,8 +98,8 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
     // TODO: implement initState
     studentController = Get.put(StudentController(widget.schoolId));
 
-    classes = studentController.getSchool.classes;
-    sections = studentController.getSchool.sections;
+    classes = studentController.getSchool.classes!;
+    sections = studentController.getSchool.sections!;
     schoolName = studentController.getSchool.name;
     labels = studentController.getSchoolLabels.photoLabels;
     classes.insert(0, "All");

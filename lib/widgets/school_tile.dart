@@ -13,34 +13,36 @@ class SchoolTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 8.0,
         horizontal: 16.0,
       ),
-      child:  ListTile(
-            title: Text(school.name),
-            subtitle: Text(school.address),
+      child: ListTile(
+        title: Text(school.name),
+        subtitle: Text(school.address!),
+        onPressed: () {
+          Navigator.of(context).push(
+            FluentPageRoute(
+              builder: (context) {
+                return SchoolInfoPage(
+                  schoolId: school.id,
+                );
+              },
+            ),
+          );
+        },
+        trailing: SizedBox(
+          width: 200,
+          child: IconButton(
+            icon: Icon(
+              FluentIcons.delete,
+              color: Colors.red,
+            ),
             onPressed: () {
-              
-                Navigator.of(context).push(
-            FluentPageRoute(builder: (context) {
-              return SchoolInfoPage(
-                schoolId: school.id,
-              );
-            },),);
-            },
-            trailing: SizedBox(
-              width: 200,
-              child: IconButton(
-                icon: Icon(
-                  FluentIcons.delete,
-                  color: Colors.red,
-                ),
-                onPressed: () {
-                  showDialog(context: context, builder: (context) {
+              showDialog(
+                  context: context,
+                  builder: (context) {
                     return ConfirmDelete(
                       type: "School",
                       name: school.name,
@@ -49,9 +51,10 @@ class SchoolTile extends StatelessWidget {
                       },
                     );
                   });
-                },
-              ),
-            ),),);
-      
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

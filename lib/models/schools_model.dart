@@ -34,35 +34,34 @@ class SchoolsModel {
       };
 }
 
-
-SchoolLabels schoolLabelsFromJson(String str) => SchoolLabels.fromJson(json.decode(str));
+SchoolLabels schoolLabelsFromJson(String str) =>
+    SchoolLabels.fromJson(json.decode(str));
 
 String schoolLabelsToJson(SchoolLabels data) => json.encode(data.toJson());
 
 class SchoolLabels {
-    SchoolLabels({
-        required this.success,        
-        required this.photoLabels,
-        required this.labels,
-    });
+  SchoolLabels({
+    required this.success,
+    required this.photoLabels,
+    required this.labels,
+  });
 
-    final bool success;
-    List<String> labels = [];
-    List<String> photoLabels;
+  final bool success;
+  List<String> labels = [];
+  List<String> photoLabels;
 
-    factory SchoolLabels.fromJson(Map<String, dynamic> json) => SchoolLabels(
+  factory SchoolLabels.fromJson(Map<String, dynamic> json) => SchoolLabels(
         success: json["success"],
         labels: List<String>.from(json["labels"] ?? [].map((x) => x)),
         photoLabels: List<String>.from(json["photoLabels"] ?? [].map((x) => x)),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "success": success,
         "labels": List<dynamic>.from(labels.map((x) => x)),
         "photoLabels": List<dynamic>.from(photoLabels.map((x) => x)),
-    };
+      };
 }
-
 
 class School {
   School({
