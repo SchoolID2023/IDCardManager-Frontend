@@ -45,7 +45,6 @@ class _StudentTableState extends State<StudentTable> {
   bool isAllSelected = false;
   String photoLabel = "-1";
   bool isFiltering = false;
-  // int filterIndex = -1;
   String filterField = '';
   String classFilter = 'All';
   String sectionFilter = 'All';
@@ -171,10 +170,18 @@ class _StudentTableState extends State<StudentTable> {
           )
         : Container();
 
+    // int getIndex(Student student, String field) {
+    //   for (int i = 0; i < student.data.length; i++) {
+    //     if (student.data[i].field == field) {
+    //       return i;
+    //     }
+    //   }
+    //   return 0;
+    // }
     int getIndex(Student student, String field) {
       for (int i = 0; i < student.data.length; i++) {
         if (student.data[i].field == field) {
-          return i;
+          return i + 1; // Start the index from 1
         }
       }
       return 0;
@@ -366,7 +373,6 @@ class _StudentTableState extends State<StudentTable> {
           ),
         ),
         PaginatedDataTable(
-          initialFirstRowIndex: 1,
           checkboxHorizontalMargin: 30,
           key: tableKey,
           actions: [
@@ -462,7 +468,6 @@ class _StudentTableState extends State<StudentTable> {
           columns: columnName,
           columnSpacing: 50,
           horizontalMargin: 10,
-          // dataRowHeight: 70,
           dataRowHeight: MediaQuery.of(context).size.height / 16,
           showFirstLastButtons: true,
           rowsPerPage: min(10, widget.students.length),
@@ -648,7 +653,7 @@ class MyData extends DataTableSource {
       }
 
       List<String> studentData = [
-        (index).toString(),
+        (index + 1).toString(),
         students[index].admno,
         students[index].name,
         students[index].studentClass,
