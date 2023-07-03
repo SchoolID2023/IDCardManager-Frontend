@@ -366,6 +366,8 @@ class _StudentTableState extends State<StudentTable> {
           ),
         ),
         PaginatedDataTable(
+          initialFirstRowIndex: 1,
+          checkboxHorizontalMargin: 30,
           key: tableKey,
           actions: [
             SizedBox(
@@ -391,7 +393,6 @@ class _StudentTableState extends State<StudentTable> {
 
             logger.d(isAllSelected);
           },
-          // sortColumnIndex: 2,
           source: data,
           header: Row(
             children: [
@@ -461,8 +462,9 @@ class _StudentTableState extends State<StudentTable> {
           columns: columnName,
           columnSpacing: 50,
           horizontalMargin: 10,
-          dataRowHeight: 90,
-
+          // dataRowHeight: 70,
+          dataRowHeight: MediaQuery.of(context).size.height / 16,
+          showFirstLastButtons: true,
           rowsPerPage: min(10, widget.students.length),
           showCheckboxColumn: true,
           sortAscending: true,
@@ -508,8 +510,6 @@ class MyData extends DataTableSource {
       this.schoolId) {
     bool ifFilter(Student student) {
       bool value = false;
-      // logger.i(
-      //     "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
       if (filterField == "") {
         for (var fields in _isVisible.keys) {
           if (fields == 'admno') {
@@ -648,7 +648,7 @@ class MyData extends DataTableSource {
       }
 
       List<String> studentData = [
-        (index + 1).toString(),
+        (index).toString(),
         students[index].admno,
         students[index].name,
         students[index].studentClass,

@@ -5,11 +5,11 @@ import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 
 import '../../widgets/student_table.dart';
-// import '../../widgets/student_table2.dart';
 
 class Students extends StatefulWidget {
   final String schoolId;
-  const Students({super.key, required this.schoolId});
+
+  const Students({Key? key, required this.schoolId}) : super(key: key);
 
   @override
   State<Students> createState() => _StudentsState();
@@ -18,21 +18,26 @@ class Students extends StatefulWidget {
 class _StudentsState extends State<Students> {
   late StudentController studentController;
   final Map<String, bool> _selectedStudents = {};
-
   final controller = ScrollController();
 
   @override
   void initState() {
+    super.initState();
     studentController = Get.put(StudentController(widget.schoolId));
+    _initializeSelectedStudents();
+  }
+
+  void _initializeSelectedStudents() {
     for (Student element in studentController.getStudents) {
       _selectedStudents[element.id] = false;
     }
-    super.initState();
   }
 
   void updateSelectedStudents(String studentId, bool isSelected) {
     logger.i("Selected $studentId");
-    _selectedStudents[studentId] = isSelected;
+    setState(() {
+      _selectedStudents[studentId] = isSelected;
+    });
   }
 
   @override
@@ -42,13 +47,13 @@ class _StudentsState extends State<Students> {
       () {
         return ListView(
           shrinkWrap: true,
-          // physics: NeverScrollableScrollPhysics(),
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                  "Double Tap an image to download it in the downloads folder",
-                  style: theme.typography.subtitle),
+                "Double Tap an image to download it in the downloads folder",
+                style: theme.typography.subtitle,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -62,7 +67,7 @@ class _StudentsState extends State<Students> {
                           child: SingleChildScrollView(
                             scrollDirection: Axis.vertical,
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width,
+                              width: MediaQuery.of(context).size.shortestSide,
                               child: StudentTable(
                                 students: studentController.getStudents,
                                 isSelected: _selectedStudents,
