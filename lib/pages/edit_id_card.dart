@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
@@ -65,7 +62,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
     });
   }
 
-  void _updatePostion( int dx, int dy) {
+  void _updatePostion(int dx, int dy) {
     setState(() {
       _idCard.labels[editableIndex].x += dx;
       _idCard.labels[editableIndex].y += dy;
@@ -124,6 +121,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
   double scaleFactor = 100.0;
 
   Student dummyStudent = Student(
+    admno: 'Dummy Admno',
     name: 'Dummy Name',
     contact: 'Dummy Contact',
     currentSchool: 'currentSchool',

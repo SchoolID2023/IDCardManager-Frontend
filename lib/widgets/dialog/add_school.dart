@@ -26,6 +26,17 @@ class _AddSchoolState extends State<AddSchool> {
   final TextEditingController _schoolEmail = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    _schoolName.text = '';
+    _schoolAddress.text = 'no address available';
+    _schoolClasses.text = '';
+    _schoolSections.text = '';
+    _schoolContact.text = 'no contact available';
+    _schoolEmail.text = 'no email available';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ContentDialog(
       title: const Text("School Details"),
@@ -61,26 +72,26 @@ class _AddSchoolState extends State<AddSchool> {
             controller: _schoolName,
             placeholder: "School Name",
           ),
-          TextBox(
-            controller: _schoolAddress,
-            placeholder: "School Address",
-          ),
-          TextBox(
-            controller: _schoolClasses,
-            placeholder: "Classes",
-          ),
-          TextBox(
-            controller: _schoolSections,
-            placeholder: "Sections",
-          ),
-          TextBox(
-            controller: _schoolContact,
-            placeholder: "Contact",
-          ),
-          TextBox(
-            controller: _schoolEmail,
-            placeholder: "Email",
-          ),
+          // TextBox(
+          //   controller: _schoolAddress,
+          //   placeholder: "School Address",
+          // ),
+          // TextBox(
+          //   controller: _schoolClasses,
+          //   placeholder: "Classes",
+          // ),
+          // TextBox(
+          //   controller: _schoolSections,
+          //   placeholder: "Sections",
+          // ),
+          // TextBox(
+          //   controller: _schoolContact,
+          //   placeholder: "Contact",
+          // ),
+          // TextBox(
+          //   controller: _schoolEmail,
+          //   placeholder: "Email",
+          // ),
         ],
       ),
     );

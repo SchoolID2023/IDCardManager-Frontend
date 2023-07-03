@@ -31,11 +31,11 @@ class _EditSchoolDialogState extends State<EditSchoolDialog> {
     super.initState();
     editSchool = widget.school;
     _schoolName.text = editSchool.name;
-    _schoolAddress.text = editSchool.address!;
-    _schoolClasses.text = editSchool.classes!.join(',');
-    _schoolSections.text = editSchool.sections!.join(',');
-    _schoolContact.text = editSchool.contact!;
-    _schoolEmail.text = editSchool.email!;
+    _schoolAddress.text = editSchool.address;
+    _schoolClasses.text = editSchool.classes.join(',');
+    _schoolSections.text = editSchool.sections.join(',');
+    _schoolContact.text = editSchool.contact;
+    _schoolEmail.text = editSchool.email;
     studentController = Get.put(StudentController(editSchool.id));
     schoolController = Get.put(SchoolController());
   }

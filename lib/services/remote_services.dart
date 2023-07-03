@@ -26,6 +26,8 @@ class RemoteServices {
 
   // final String baseUrl = 'http://192.168.2.1:3000';
 
+  // final String baseUrl = 'http://127.0.0.1:3000';
+
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {
       return '$baseUrl/superAdmin/$endpoint/${schoolId ?? ""}';
@@ -640,7 +642,7 @@ class RemoteServices {
         logger.d("Errorrrrr");
         throw Exception(response.data);
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       logger.d(e.response);
     } catch (e) {
       logger.d("Error----->");
@@ -720,8 +722,8 @@ class RemoteServices {
     }
   }
 
-  Future<void> uploadStudentPhotos(
-      List<String> columns, String filePath, String schoolId, bool? uploadForAll) async {
+  Future<void> uploadStudentPhotos(List<String> columns, String filePath,
+      String schoolId, bool? uploadForAll) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -786,10 +788,6 @@ class RemoteServices {
 
     logger.d("School ID-> $schoolId");
 
-    // var url = userType == "superAdmin"
-    //     ? '$baseUrl/$userType/getStudentData/$schoolId'
-    //     : '$baseUrl/$userType/getStudentData';
-
     var url = getUrl(role, 'getStudentData', schoolId: schoolId);
 
     logger.d("School URL- $url");
@@ -809,7 +807,7 @@ class RemoteServices {
         logger.d("Errorrrrr");
         throw Exception(response.data);
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       logger.d(e.response);
       rethrow;
     } catch (e) {
@@ -970,8 +968,8 @@ class RemoteServices {
     }
   }
 
-  Future<PhotosList> downloadPhotos(
-      String schoolId, String className, String section, String label, String? toSaveLabelName) async {
+  Future<PhotosList> downloadPhotos(String schoolId, String className,
+      String section, String label, String? toSaveLabelName) async {
     logger.d("School ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');

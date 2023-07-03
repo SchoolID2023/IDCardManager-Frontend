@@ -2,7 +2,6 @@
 //
 //     final photosList = photosListFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 PhotosList photosListFromJson(String str) =>

@@ -1,7 +1,7 @@
-import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 
+import '../../models/schools_model.dart';
 import '../../models/student_model.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +18,11 @@ class EditStudent extends StatefulWidget {
 class _EditStudentState extends State<EditStudent> {
   bool isLoading = true;
   late Student student;
-  late Student editingStudent; // New
-
+  late Student editingStudent;
   late StudentController _studentController;
+  List<String> classOptions = [];
+  List<String> sectionOptions = [];
+  late School schoolData;
 
   Set<String> ignoredPlaceholders = {
     "_id",
@@ -36,9 +38,18 @@ class _EditStudentState extends State<EditStudent> {
   void initState() {
     super.initState();
     _studentController = Get.put(StudentController(widget.schoolId));
+
     student = _studentController.getStudentById(widget.studentId);
-    editingStudent = Student.fromJson(student.toJson()); // Initialize editingStudent with a copy of student
-    isLoading = false;
+    editingStudent = Student.fromJson(student.toJson());
+    () async {
+      await _studentController.fetchSchool(widget.schoolId);
+      schoolData = _studentController.school.value;
+      setState(() {
+        classOptions = schoolData.classes;
+        sectionOptions = schoolData.sections;
+        isLoading = false;
+      });
+    }();
   }
 
   @override
@@ -60,44 +71,58 @@ class _EditStudentState extends State<EditStudent> {
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     shrinkWrap: true,
-                    itemCount: editingStudent.data.length + 4,
+                    itemCount: editingStudent.data.length + 5,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return buildTextBox(
                           "Name",
-                          editingStudent
-                              .name, // Use editingStudent instead of student
-                          (value) { 
-                              editingStudent.name =
-                                  value; // Update editingStudent instead of student 
+                          editingStudent.name,
+                          (value) {
+                            editingStudent.name = value;
                           },
                         );
                       } else if (index == 1) {
                         return buildTextBox(
                           "Contact",
                           editingStudent.contact,
-                          (value) { 
-                              editingStudent.contact = value; 
+                          (value) {
+                            editingStudent.contact = value;
                           },
                         );
                       } else if (index == 2) {
-                        return buildTextBox(
+                        return buildDropdown(
                           "Class",
                           editingStudent.studentClass,
-                          (value) { 
-                              editingStudent.studentClass = value; 
+                          (value) {
+                            setState(() {
+                              editingStudent.studentClass =
+                                  value!.isNotEmpty ? value : '';
+                            });
                           },
+                          classOptions,
                         );
                       } else if (index == 3) {
-                        return buildTextBox(
+                        return buildDropdown(
                           "Section",
                           editingStudent.section,
-                          (value) { 
-                              editingStudent.section = value; 
+                          (value) {
+                            setState(() {
+                              editingStudent.section =
+                                  value!.isNotEmpty ? value : '';
+                            });
+                          },
+                          sectionOptions,
+                        );
+                      } else if (index == 4) {
+                        return buildTextBox(
+                          "Admn. No.",
+                          editingStudent.admno,
+                          (value) {
+                            editingStudent.admno = value;
                           },
                         );
                       } else {
-                        final dataIndex = index - 4;
+                        final dataIndex = index - 5;
                         final data = editingStudent.data[dataIndex];
                         if (ignoredPlaceholders.contains(data.field)) {
                           return const SizedBox.shrink();
@@ -105,8 +130,8 @@ class _EditStudentState extends State<EditStudent> {
                         return buildTextBox(
                           data.field,
                           data.value.toString(),
-                          (value) { 
-                              editingStudent.data[dataIndex].value = value; 
+                          (value) {
+                            editingStudent.data[dataIndex].value = value;
                           },
                         );
                       }
@@ -126,8 +151,7 @@ class _EditStudentState extends State<EditStudent> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop();
-                    _studentController.editStudent(
-                        editingStudent); // Apply the changes from editingStudent to student
+                    _studentController.editStudent(editingStudent);
                   },
                   child: const Text("Save"),
                 ),
@@ -139,15 +163,37 @@ class _EditStudentState extends State<EditStudent> {
     );
   }
 
+  Widget buildDropdown(
+    String placeholder,
+    String? value,
+    void Function(String?)? onChanged,
+    List<String> options,
+  ) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: placeholder,
+      ),
+      dropdownColor: Theme.of(context).cardColor,
+      value: value,
+      onChanged: onChanged,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
+    );
+  }
+
   Widget buildTextBox(
     String placeholder,
     String value,
     Function(String) onChanged,
   ) {
     final textEditingController = TextEditingController(text: value);
-    final selection = TextSelection.fromPosition(
-      TextPosition(offset: textEditingController.text.length),
-    );
+    // final selection = TextSelection.fromPosition(
+    //   TextPosition(offset: textEditingController.text.length),
+    // );
 
     return TextFormField(
       decoration: InputDecoration(
@@ -161,9 +207,9 @@ class _EditStudentState extends State<EditStudent> {
       cursorWidth: 2.0,
       cursorRadius: const Radius.circular(2.0),
       enableInteractiveSelection: true,
-      onTap: () {
-        textEditingController.selection = selection;
-      },
+      // onTap: () {
+      //   textEditingController.selection = selection;
+      // },
     );
   }
 }

@@ -134,6 +134,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
   double scaleFactor = 100.0;
 
   Student dummyStudent = Student(
+    admno: 'Dummy Admn No',
     name: 'Dummy Name',
     contact: 'Dummy Contact',
     currentSchool: 'currentSchool',
@@ -653,8 +654,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                       child: Text("Upload Front Image"),
                                       onPressed: uploadForegroundImage,
                                     )
-                                  :  Column(children: [
-                                    
+                                  : Column(children: [
                                       Image.file(
                                         File(
                                           frontfile.path.toString(),
@@ -662,13 +662,12 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
                                         width: 80,
                                         height: 80,
                                       ),
-                                      SizedBox( height:10),
+                                      SizedBox(height: 10),
                                       FilledButton(
                                         child: Text("Change Image"),
                                         onPressed: uploadForegroundImage,
                                       )
                                     ]),
-                                  
                               _idCard.isDual
                                   ? Padding(
                                       padding: const EdgeInsets.all(8.0),

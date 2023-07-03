@@ -25,14 +25,14 @@ class StudentController extends GetxController {
       TeacherListModel(success: false, message: "Teachers", teachers: []).obs;
 
   var school = School(
-    address: "",
-    classes: [],
-    sections: [],
-    contact: "",
-    email: "",
-    name: "",
-    id: "",
-  ).obs;
+          address: "",
+          classes: [],
+          sections: [],
+          contact: "",
+          email: "",
+          name: "",
+          id: "")
+      .obs;
 
   var schoolLabels = SchoolLabels(
     success: false,

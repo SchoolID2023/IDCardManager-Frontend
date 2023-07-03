@@ -1,15 +1,11 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/school_controller.dart';
-import 'package:idcard_maker_frontend/models/superadmin_model.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/add_super_admin.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/titlebar/navigation_app_bar.dart';
-import 'package:idcard_maker_frontend/widgets/titlebar/window_buttons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/schools_model.dart';
 import 'login_screen.dart';
 import '../widgets/dialog/add_school.dart';
 import '../widgets/school_tile.dart';
@@ -99,7 +95,7 @@ class _HomePageState extends State<HomePage> {
           items: [
             PaneItem(
               icon: const Icon(FluentIcons.office_store_logo),
-              title: const Text("Manage Schools"), 
+              title: const Text("Manage Schools"),
               body: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Card(
@@ -127,163 +123,64 @@ class _HomePageState extends State<HomePage> {
             ),
             PaneItem(
               icon: const Icon(FluentIcons.local_admin),
-              title: const Text("Manage Super Admins"), 
-              body:  Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Card(
-                child: ListView.builder(
-                  itemCount: schoolController.getSuperAdmins.length,
-                  itemBuilder: (context, index2) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: theme.accentColor,
+              title: const Text("Manage Super Admins"),
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Card(
+                  child: ListView.builder(
+                    itemCount: schoolController.getSuperAdmins.length,
+                    itemBuilder: (context, index2) {
+                      return Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: theme.accentColor,
+                            ),
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ListTile(
-                          title: Text(schoolController.getSuperAdmins[index2].name
-                              .toString()),
-                          subtitle: Text(schoolController
-                              .getSuperAdmins[index2].contact
-                              .toString()),
-                          trailing: SizedBox(
-                            width: 200,
-                            child: IconButton(
-                              icon: Icon(
-                                FluentIcons.delete,
-                                color: Colors.red,
+                          child: ListTile(
+                            title: Text(schoolController
+                                .getSuperAdmins[index2].name
+                                .toString()),
+                            subtitle: Text(schoolController
+                                .getSuperAdmins[index2].contact
+                                .toString()),
+                            trailing: SizedBox(
+                              width: 200,
+                              child: IconButton(
+                                icon: Icon(
+                                  FluentIcons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ConfirmDelete(
+                                            type: "Super Admin",
+                                            name: schoolController
+                                                .getSuperAdmins[index2].name,
+                                            deleteFunction: () {
+                                              schoolController.deleteSuperAdmin(
+                                                  schoolController
+                                                      .getSuperAdmins[index2]
+                                                      .id);
+                                            });
+                                      });
+                                },
                               ),
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return ConfirmDelete(
-                                          type: "Super Admin",
-                                          name: schoolController
-                                              .getSuperAdmins[index2].name,
-                                          deleteFunction: () {
-                                                    schoolController.deleteSuperAdmin(
-                                            schoolController.getSuperAdmins[index2].id);
-                                          });
-                                    });
-                              },
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-            ),
           ],
         ),
-        // content: NavigationBody(
-        //   index: index,
-        //   children: [
-        //     Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: Card(
-        //         child: ListView.builder(
-        //           itemCount: schoolController.getSchools.length,
-        //           itemBuilder: (context, index2) {
-        //             return Padding(
-        //               padding: const EdgeInsets.all(4.0),
-        //               child: Container(
-        //                 decoration: BoxDecoration(
-        //                     border: Border.all(
-        //                       color: theme.accentColor,
-        //                     ),
-        //                     borderRadius: BorderRadius.circular(8.0),
-        //                   ),
-        //                 child: SchoolTile(
-        //                   school: schoolController.getSchools[index2],
-        //                 ),
-        //               ),
-        //             );
-        //           },
-        //         ),
-        //       ),
-        //     ),
-        //     Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: Card(
-        //         child: ListView.builder(
-        //           itemCount: schoolController.getSuperAdmins.length,
-        //           itemBuilder: (context, index2) {
-        //             return Padding(
-        //               padding: const EdgeInsets.all(4.0),
-        //               child: Container(
-        //                 decoration: BoxDecoration(
-        //                   border: Border.all(
-        //                     color: theme.accentColor,
-        //                   ),
-        //                   borderRadius: BorderRadius.circular(8.0),
-        //                 ),
-        //                 child: ListTile(
-        //                   title: Text(schoolController.getSuperAdmins[index2].name
-        //                       .toString()),
-        //                   subtitle: Text(schoolController
-        //                       .getSuperAdmins[index2].contact
-        //                       .toString()),
-        //                   trailing: SizedBox(
-        //                     width: 200,
-        //                     child: IconButton(
-        //                       icon: Icon(
-        //                         FluentIcons.delete,
-        //                         color: Colors.red,
-        //                       ),
-        //                       onPressed: () {
-        //                         showDialog(
-        //                             context: context,
-        //                             builder: (context) {
-        //                               return ConfirmDelete(
-        //                                   type: "Super Admin",
-        //                                   name: schoolController
-        //                                       .getSuperAdmins[index2].name,
-        //                                   deleteFunction: () {
-        //                                             schoolController.deleteSuperAdmin(
-        //                                     schoolController.getSuperAdmins[index2].id);
-        //                                   });
-        //                             });
-        //                       },
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //             );
-        //           },
-        //         ),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-
-        // content: ScaffoldPage(
-        //   header: Padding(
-        //     padding: const EdgeInsets.symmetric(
-        //       horizontal: 16.0,
-        //       vertical: 8.0,
-        //     ),
-        //     child: Row(
-        //       children: [
-        //         Text(
-        //           "Your Schools",
-        //           style: TextStyle(
-        //             fontSize: 28,
-        //             color: Colors.blue,
-        //           ),
-        //         ),
-        //         const Spacer(),
-
-        //       ],
-        //     ),
-        //   ),
-        // ),
       );
     });
   }

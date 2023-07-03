@@ -1,14 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart' as mat;
 import 'package:get/get.dart';
-
+import '../../controllers/school_controller.dart';
 import '../../controllers/student_controller.dart';
 import '../../models/id_card_model.dart';
 import '../../services/logger.dart';
+
 class LoadExcel extends StatefulWidget {
   final String schoolId;
 
@@ -23,6 +24,17 @@ class _LoadExcelState extends State<LoadExcel> {
   final TextEditingController _excelPath = TextEditingController();
   bool isDual = false;
   bool isLoading = false;
+
+  late StudentController studentController;
+  late SchoolController schoolController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    studentController = Get.put(StudentController(widget.schoolId));
+    schoolController = Get.put(SchoolController());
+  }
 
   Future<void> uploadExcel() async {
     // setState(() {
@@ -68,123 +80,115 @@ class _LoadExcelState extends State<LoadExcel> {
 
   @override
   Widget build(BuildContext context) {
-    StudentController studentController =
-        Get.put(StudentController(widget.schoolId));
     return ContentDialog(
       title: const Text("Upload Excel"),
       actions: [
-        isLoading ?  const mat.CircularProgressIndicator() :
-        Button( 
-          child:  const Text("OK"),
-          onPressed: isLoading
-              ? null
-              : () async {
-                  List<String> problemStudents = [];
-                  try {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    problemStudents = await studentController.addStudents(
-                      widget.schoolId,
-                      _excelPath.text,
-                    );
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return ContentDialog(
-                          title: const Text("Error"),
-                          content: Text(e.toString()),
-                          actions: [
-                            Button(
-                              child: const Text("OK"),
-                              onPressed: () => Navigator.pop(context),
-                            )
-                          ],
-                        );
-                      },
-                    );
-                  } finally {
-                    setState(() {
-                      isLoading = false;
-                    });
-                  }
-
-                  if (problemStudents.isNotEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) {
-                        return ContentDialog(
-                          title: Text(
-                            "Problem with ${problemStudents.length} students",
-                          ),
-                          content: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: problemStudents.length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(4.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(problemStudents[index]),
-                                  ),
-                                ),
+        isLoading
+            ? const mat.CircularProgressIndicator()
+            : Button(
+                onPressed: isLoading
+                    ? null
+                    : () async {
+                        List<String> problemStudents = [];
+                        setState(() {
+                          isLoading = true;
+                        });
+                        try {
+                          problemStudents = await studentController.addStudents(
+                            widget.schoolId,
+                            _excelPath.text,
+                          );
+                        } catch (e) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ContentDialog(
+                                title: const Text("Error"),
+                                content: Text(e.toString()),
+                                actions: [
+                                  Button(
+                                    child: const Text("OK"),
+                                    onPressed: () => Navigator.pop(context),
+                                  )
+                                ],
                               );
                             },
-                          ),
-                          actions: [
-                            Button(
-                              child: const Text("OK"),
-                              onPressed: () => Navigator.pop(context),
-                            )
-                          ],
-                        );
+                          );
+                        }
+
+                        if (problemStudents.isNotEmpty) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ContentDialog(
+                                title: Text(
+                                  "Problem with ${problemStudents.length} students",
+                                ),
+                                content: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: problemStudents.length,
+                                  itemBuilder: (context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(4.0),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(problemStudents[index]),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                actions: [
+                                  Button(
+                                    child: const Text("OK"),
+                                    onPressed: () => Navigator.pop(context),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        }
+                        Navigator.pop(context);
                       },
-                    );
-                  }
-
-                  Navigator.pop(context);
-                },
-        ),
-
+                child: const Text("OK"),
+              ),
         Button(
-          onPressed: 
-        isLoading ? null : () => Navigator.pop(context),
+          onPressed: isLoading ? null : () => Navigator.pop(context),
           child: const Text("CANCEL"),
         ),
       ],
-      content:   Row(
-              children: [
-                Expanded(
-                  child: TextBox(
-                    controller: _excelPath,
-                    placeholder: "Excel Path",
-                    readOnly: true,
-                  ), 
-                ),
-                isLoading
-          ?
-           Button(
+      content: Row(
+        children: [
+          Expanded(
+            child: TextBox(
+              controller: _excelPath,
+              placeholder: "Excel Path",
+              readOnly: true,
+            ),
+          ),
+          isLoading
+              ? Button(
                   child: const Text(" Uploading"),
-                  onPressed: ()  {
-                  },
-                ):
-          
-          //  const Row(
-          //   mainAxisAlignment : MainAxisAlignment.center,
-          //   children:  [Expanded(child: mat.CircularProgressIndicator(),)],) :
-                Button(
+                  onPressed: () {},
+                )
+              :
+
+              //  const Row(
+              //   mainAxisAlignment : MainAxisAlignment.center,
+              //   children:  [Expanded(child: mat.CircularProgressIndicator(),)],) :
+              Button(
                   child: const Text("Upload Excel"),
                   onPressed: () async {
                     await uploadExcel();
                   },
                 ),
-              ],
-            ),
+        ],
+      ),
     );
   }
 }

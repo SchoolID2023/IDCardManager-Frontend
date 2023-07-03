@@ -20,7 +20,7 @@ class SchoolTile extends StatelessWidget {
       ),
       child: ListTile(
         title: Text(school.name),
-        subtitle: Text(school.address!),
+        subtitle: Text(school.address),
         onPressed: () {
           Navigator.of(context).push(
             FluentPageRoute(

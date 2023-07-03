@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/pages/school/idcard.dart';
 import 'package:idcard_maker_frontend/pages/school/students.dart';
-import 'package:idcard_maker_frontend/services/download_data.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/add_student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,7 +113,9 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                     builder: (context) => LoadExcel(
                       schoolId: widget.schoolId,
                     ),
-                  );
+                  ).then((value) async {
+                    await studentController.fetchSchool(widget.schoolId);
+                  });
                 },
               ),
             ),
@@ -167,9 +168,13 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.remove('token').then((value) => Navigator.of(context)
-                      .pushReplacement(FluentPageRoute(
-                          builder: (context) => const LoginPage(),),),);
+                  prefs.remove('token').then(
+                        (value) => Navigator.of(context).pushReplacement(
+                          FluentPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        ),
+                      );
                 },
               ),
             ),

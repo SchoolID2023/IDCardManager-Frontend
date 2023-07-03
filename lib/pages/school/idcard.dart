@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
@@ -157,11 +155,10 @@ class _IdCardState extends State<IdCard> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Image.network(
-                                      
-                                        studentController
-                                            .getIdCards[selectedIndex]
-                                            .foregroundImagePath,
-                                      
+                                      studentController
+                                          .getIdCards[selectedIndex]
+                                          .foregroundImagePath,
+
                                       // height: 200,
                                       fit: BoxFit.cover,
                                     ),

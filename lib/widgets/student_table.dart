@@ -9,7 +9,6 @@ import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
-import 'package:idcard_maker_frontend/widgets/dialog/student_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import '../services/logger.dart';
 
@@ -26,7 +25,7 @@ class StudentTable extends StatefulWidget {
   final Function(String, bool) onSelected;
   // final ScrollController ScrollController() = ScrollController();
 
-  StudentTable({
+  const StudentTable({
     Key? key,
     required this.students,
     required this.isSelected,
@@ -54,11 +53,12 @@ class _StudentTableState extends State<StudentTable> {
 
   List<String> filteredStudents = [];
 
-     late Map<String, bool> isSelected;
+  late Map<String, bool> isSelected;
 
   @override
   void initState() {
-    isSelected = widget.isSelected ?? {};
+    super.initState();
+    isSelected = widget.isSelected;
 
     logger.d("Length-> ${widget.students[0].data.length}");
 
@@ -69,7 +69,6 @@ class _StudentTableState extends State<StudentTable> {
     photoLabel = widget.photoLabels.isNotEmpty ? widget.photoLabels[0] : "-1";
 
     studentController = Get.put(StudentController(widget.schoolId));
-    super.initState();
   }
 
   void onSelectingRow(String studentId, bool isSelected) {
@@ -88,17 +87,29 @@ class _StudentTableState extends State<StudentTable> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     List<DataColumn> columnName = [
       const DataColumn(
         label: Text('S. No.'),
       ),
       DataColumn(
-        label: const Text('Name'),
+        label: const Text('Admn. No.'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 1) {
+              widget.students.sort((a, b) => a.admno.compareTo(b.admno));
+            } else {
+              widget.students.sort((a, b) => a.data[columnIndex - 1].value
+                  .toString()
+                  .compareTo(b.data[columnIndex - 1].value.toString()));
+            }
+          });
+        },
+      ),
+      DataColumn(
+        label: const Text('Name'),
+        onSort: (int columnIndex, bool ascending) {
+          setState(() {
+            if (columnIndex == 2) {
               widget.students.sort((a, b) => a.name.compareTo(b.name));
             } else {
               widget.students.sort((a, b) => a.data[columnIndex - 1].value
@@ -112,7 +123,7 @@ class _StudentTableState extends State<StudentTable> {
         label: const Text('Class'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
-            if (columnIndex == 2) {
+            if (columnIndex == 3) {
               widget.students
                   .sort((a, b) => a.studentClass.compareTo(b.studentClass));
             } else {
@@ -128,7 +139,7 @@ class _StudentTableState extends State<StudentTable> {
         onSort: (int columnIndex, bool ascending) {
           setState(
             () {
-              if (columnIndex == 3) {
+              if (columnIndex == 4) {
                 widget.students.sort((a, b) => a.section.compareTo(b.section));
               } else {
                 widget.students.sort((a, b) => a.data[columnIndex - 1].value
@@ -141,6 +152,9 @@ class _StudentTableState extends State<StudentTable> {
       ),
       const DataColumn(
         label: Text('Contact'),
+      ),
+      const DataColumn(
+        label: Text('Actions'),
       ),
     ];
 
@@ -166,7 +180,7 @@ class _StudentTableState extends State<StudentTable> {
       return 0;
     }
 
-    for (String label in widget.labels) { 
+    for (String label in widget.labels) {
       if (_isVisible[label] ?? false) {
         columnName.add(
           DataColumn(
@@ -232,6 +246,9 @@ class _StudentTableState extends State<StudentTable> {
                               ),
                             ),
                           ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     fluent.SizedBox(
                       width: 400,
                       child: fluent.TextBox(
@@ -248,6 +265,9 @@ class _StudentTableState extends State<StudentTable> {
                         },
                       ),
                     ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     fluent.Button(
                         child: const Text("Filter"),
                         onPressed: () {
@@ -258,6 +278,9 @@ class _StudentTableState extends State<StudentTable> {
                             logger.d(filteredStudents);
                           });
                         }),
+                    SizedBox(
+                      width: 10,
+                    ),
                     fluent.Button(
                         child: const Text("Clear Filter"),
                         onPressed: () {
@@ -343,7 +366,6 @@ class _StudentTableState extends State<StudentTable> {
           ),
         ),
         PaginatedDataTable(
-          // controller: ScrollController(),
           key: tableKey,
           actions: [
             SizedBox(
@@ -382,7 +404,7 @@ class _StudentTableState extends State<StudentTable> {
                         width: 150,
                         child: fluent.DropDownButton(
                           title: const Text('View Data'),
-                          items:  List<fluent.MenuFlyoutItemBase>.generate(
+                          items: List<fluent.MenuFlyoutItemBase>.generate(
                             widget.labels.length - 5,
                             (index) {
                               index += 5;
@@ -416,7 +438,7 @@ class _StudentTableState extends State<StudentTable> {
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(  
+                      child: SizedBox(
                         width: 150,
                         child: fluent.DropDownButton(
                           title: const Text('View Photo'),
@@ -490,7 +512,14 @@ class MyData extends DataTableSource {
       //     "Filtering ${student.name} ${filterField} ${filteredStudents.toString()}");
       if (filterField == "") {
         for (var fields in _isVisible.keys) {
-           if (fields == 'name') {
+          if (fields == 'admno') {
+            for (var element in filteredStudents) {
+              if (student.admno.toLowerCase().contains(element.toLowerCase())) {
+                value = true;
+                break;
+              }
+            }
+          } else if (fields == 'name') {
             for (var element in filteredStudents) {
               if (student.name.toLowerCase().contains(element.toLowerCase())) {
                 value = true;
@@ -542,8 +571,14 @@ class MyData extends DataTableSource {
           }
         }
       }
-
-      if (filterField == 'name') {
+      if (filterField == 'admno') {
+        for (var element in filteredStudents) {
+          if (student.admno.toLowerCase().contains(element.toLowerCase())) {
+            value = true;
+            break;
+          }
+        }
+      } else if (filterField == 'name') {
         for (var element in filteredStudents) {
           if (student.name.toLowerCase().contains(element.toLowerCase())) {
             value = true;
@@ -613,11 +648,13 @@ class MyData extends DataTableSource {
       }
 
       List<String> studentData = [
-        index.toString(),
+        (index + 1).toString(),
+        students[index].admno,
         students[index].name,
         students[index].studentClass,
         students[index].section,
-        students[index].contact
+        students[index].contact,
+        ""
       ];
 
       if (photoLabel != "-1") {
@@ -643,7 +680,7 @@ class MyData extends DataTableSource {
       _data.add(studentData);
     }
   }
-Set<int> selectedRows = Set<int>();
+  Set<int> selectedRows = Set<int>();
   @override
   bool get isRowCountApproximate => false;
   @override
@@ -651,7 +688,7 @@ Set<int> selectedRows = Set<int>();
   @override
   int get selectedRowCount => 0;
   @override
-  DataRow getRow(int index) { 
+  DataRow getRow(int index) {
     return DataRow(
       key: ValueKey(_data[index].last),
       selected: isSelected[_data[index].last] ?? false,
@@ -664,7 +701,7 @@ Set<int> selectedRows = Set<int>();
         isSelected[students[index].id] = value;
       },
       cells: List<DataCell>.generate(_data[index].length - 1, (value) {
-        if (value == 5 && photoLabel != "-1") {
+        if (value == 7 && photoLabel != "-1") {
           return DataCell(
             GestureDetector(
               onDoubleTap: () async {
@@ -682,7 +719,7 @@ Set<int> selectedRows = Set<int>();
                     _data[index][value],
                     savePath,
                   );
-                } on DioError catch (e) {
+                } on DioException catch (e) {
                   print(e.message);
                 } finally {
                   // ScaffoldMessenger.of(context).showSnackBar(
@@ -728,7 +765,7 @@ Set<int> selectedRows = Set<int>();
                   // overflow: TextOverflow.ellipsis,
                 ),
               ),
-              value == 1
+              value == 6
                   ? IconButton(
                       onPressed: () {
                         showDialog(
@@ -736,7 +773,7 @@ Set<int> selectedRows = Set<int>();
                             builder: (context) {
                               return ConfirmDelete(
                                 type: "Student",
-                                name: _data[index][value],
+                                name: students[index].name,
                                 deleteFunction: () {
                                   deleteFunction(_data[index].last);
                                 },
