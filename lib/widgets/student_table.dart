@@ -53,6 +53,7 @@ class _StudentTableState extends State<StudentTable> {
   List<String> filteredStudents = [];
 
   late Map<String, bool> isSelected;
+  int currentPageIndex = 0;
 
   @override
   void initState() {
@@ -70,11 +71,15 @@ class _StudentTableState extends State<StudentTable> {
     studentController = Get.put(StudentController(widget.schoolId));
   }
 
+  final tableKey = GlobalKey<PaginatedDataTableState>();
+
   void onSelectingRow(String studentId, bool isSelected) {
     setState(() {
       this.isSelected[studentId] = isSelected;
     });
     widget.onSelected(studentId, isSelected);
+    // Set the current page index after the selection is made
+    tableKey.currentState?.pageTo(currentPageIndex);
   }
 
   final Map<String, bool> _isVisible = <String, bool>{};
@@ -206,7 +211,6 @@ class _StudentTableState extends State<StudentTable> {
         );
       }
     }
-    final tableKey = GlobalKey<PaginatedDataTableState>();
     final DataTableSource data = MyData(
       widget.students,
       context,
@@ -375,6 +379,11 @@ class _StudentTableState extends State<StudentTable> {
         PaginatedDataTable(
           checkboxHorizontalMargin: 30,
           key: tableKey,
+          onPageChanged: (pageIndex) {
+            setState(() {
+              currentPageIndex = pageIndex;
+            });
+          },
           actions: [
             SizedBox(
               width: 150,
