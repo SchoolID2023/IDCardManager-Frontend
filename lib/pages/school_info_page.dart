@@ -150,18 +150,19 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 },
               ),
             ),
-            if (studentController.getSchoolLabels.photoLabels.isNotEmpty)
-              Button(
-                child: Text("Download Photos"),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => DownloadPhotosDialog(
-                      schoolId: widget.schoolId,
-                    ),
-                  );
-                },
-              ),
+            studentController.getSchoolLabels.photoLabels.isEmpty
+                ? Container()
+                : Button(
+                    child: Text("Download Photos"),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => DownloadPhotosDialog(
+                          schoolId: widget.schoolId,
+                          fields: studentController.getSchoolLabels.labels,
+                        ),
+                      );
+                    }),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Button(

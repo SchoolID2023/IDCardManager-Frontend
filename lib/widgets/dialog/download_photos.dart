@@ -14,7 +14,9 @@ import '../../services/logger.dart';
 
 class DownloadPhotosDialog extends StatefulWidget {
   final String schoolId;
-  const DownloadPhotosDialog({super.key, required this.schoolId});
+  
+  final List<String>? fields;
+  const DownloadPhotosDialog({super.key, required this.schoolId,  this.fields});
 
   @override
   State<DownloadPhotosDialog> createState() => _DownloadPhotosDialogState();
@@ -164,8 +166,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
                     ),
                     const SizedBox(width: 10),
                     DropDownButton(
-                      items: labels
-                          .map(
+                      items: widget.fields!.map(
                             (e) => MenuFlyoutItem(
                               text: Text(e),
                               onPressed: () {
