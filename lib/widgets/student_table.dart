@@ -746,7 +746,7 @@ class MyData extends DataTableSource {
         return DataCell(
           // showEditIcon: value == 0 ? true : false,
 
-          onTap: value == 1
+          onTap: value == 6
               ? null
               : () {
                   logger.d(students[index].id);
