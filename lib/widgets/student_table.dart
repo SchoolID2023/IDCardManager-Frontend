@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -500,6 +501,7 @@ class MyData extends DataTableSource {
   final String classFilter;
   final String sectionFilter;
   final String schoolId;
+  String outputFile = '';
 
   String noPhoto =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';
@@ -701,6 +703,7 @@ class MyData extends DataTableSource {
   int get rowCount => _data.length;
   @override
   int get selectedRowCount => 0;
+
   @override
   DataRow getRow(int index) {
     return DataRow(
@@ -721,13 +724,20 @@ class MyData extends DataTableSource {
               onDoubleTap: () async {
                 // Download the image to the computer in downloads section
 
-                final Directory? downloadsDir = await getDownloadsDirectory();
+                List<String> parts = _data[index][7].split('/');
+                String lastItem = parts.last;
 
-                final String downloadsPath = downloadsDir!.path;
-                String savePath =
-                    "$downloadsPath/idcardImages/${_data[index][1]}.jpg";
+                if (outputFile.isEmpty) {
+                  String? location = await FilePicker.platform.saveFile(
+                    dialogTitle:
+                        'Please select where you want to download the file at:',
+                    fileName: lastItem,
+                  );
+                  outputFile = location ?? '';
+                }
 
-                logger.i(savePath);
+                String savePath = "$outputFile/idcardImages/$lastItem";
+
                 try {
                   await Dio().download(
                     _data[index][value],
@@ -743,18 +753,18 @@ class MyData extends DataTableSource {
                   // );
                 }
               },
-              child: Image.network(
-                _data[index][value],
-                height: 90,
-                // width: 100,
+              child: fluent.Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Image.network(
+                  _data[index][value],
+                  height: 90,
+                ),
               ),
             ),
           );
         }
 
         return DataCell(
-          // showEditIcon: value == 0 ? true : false,
-
           onTap: value == 6
               ? null
               : () {
@@ -776,7 +786,6 @@ class MyData extends DataTableSource {
                 child: Text(
                   _data[index][value].toString(),
                   maxLines: 3,
-                  // overflow: TextOverflow.ellipsis,
                 ),
               ),
               value == 6

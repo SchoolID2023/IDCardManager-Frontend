@@ -1,4 +1,3 @@
-
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import '../../controllers/student_controller.dart';
@@ -53,7 +52,6 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                   onTap: () {
                     Navigator.of(context).pushReplacement(
                       FluentPageRoute(
-                        
                         // ScaffoldPageList
                         builder: (context) => GenerateIdCardList(
                           idCardId: studentController.getIdCards[index].id,
@@ -61,7 +59,6 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
                           isSelected: widget.isSelected,
                         ),
                       ),
-
                     );
                   },
                   child: Padding(
