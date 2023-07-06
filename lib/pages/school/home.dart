@@ -48,7 +48,7 @@ class _HomeState extends State<Home> {
                             radius: 120,
                             backgroundColor: Colors.white,
                             child: Text(
-                              studentController.getSchool.name[0],
+                              studentController.getSchool.name[0].toUpperCase(),
                               style: const TextStyle(
                                 fontSize: 50,
                                 color: Colors.black,
@@ -67,7 +67,7 @@ class _HomeState extends State<Home> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            studentController.getSchool.address,
+                            studentController.getSchool.address.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: theme.typography.bodyLarge,
                           ),
@@ -153,7 +153,8 @@ class _HomeState extends State<Home> {
                                                       return Text(
                                                         studentController
                                                             .getSchool
-                                                            .classes[index],
+                                                            .classes[index]
+                                                            .toUpperCase(),
                                                         textAlign:
                                                             TextAlign.center,
                                                       );
@@ -185,7 +186,8 @@ class _HomeState extends State<Home> {
                                                       return Text(
                                                         studentController
                                                             .getSchool
-                                                            .sections[index],
+                                                            .sections[index]
+                                                            .toUpperCase(),
                                                         textAlign:
                                                             TextAlign.center,
                                                       );
@@ -202,7 +204,7 @@ class _HomeState extends State<Home> {
                                       child: Divider(),
                                     ),
                                     Text(
-                                      "E Mail:- ${studentController.getSchool.email}",
+                                      "E Mail:- ${studentController.getSchool.email.toUpperCase()}",
                                       style: theme.typography.bodyLarge,
                                     ),
                                     const Padding(
@@ -210,7 +212,7 @@ class _HomeState extends State<Home> {
                                       child: Divider(),
                                     ),
                                     Text(
-                                      "Phone:- ${studentController.getSchool.contact}",
+                                      "Phone:- ${studentController.getSchool.contact.toUpperCase()}",
                                       style: theme.typography.bodyLarge,
                                     ),
                                   ],
@@ -230,7 +232,7 @@ class _HomeState extends State<Home> {
                                               child: Column(
                                                 children: [
                                                   Text(
-                                                    "Admins",
+                                                    "ADMINS",
                                                     style: theme
                                                         .typography.bodyLarge,
                                                   ),
@@ -284,7 +286,8 @@ class _HomeState extends State<Home> {
                                                                     studentController
                                                                         .getAdmins[
                                                                             index]
-                                                                        .name,
+                                                                        .name
+                                                                        .toUpperCase(),
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -296,7 +299,8 @@ class _HomeState extends State<Home> {
                                                                     studentController
                                                                         .getAdmins[
                                                                             index]
-                                                                        .contact,
+                                                                        .contact
+                                                                        .toUpperCase(),
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -324,7 +328,7 @@ class _HomeState extends State<Home> {
                                               child: Column(
                                                 children: [
                                                   Text(
-                                                    "Teachers",
+                                                    "TEACHERS",
                                                     style: theme
                                                         .typography.bodyLarge,
                                                   ),
@@ -379,7 +383,8 @@ class _HomeState extends State<Home> {
                                                                     studentController
                                                                         .getTeachers[
                                                                             index]
-                                                                        .name,
+                                                                        .name
+                                                                        .toUpperCase(),
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,
@@ -388,7 +393,7 @@ class _HomeState extends State<Home> {
                                                                         .bodyLarge,
                                                                   ),
                                                                   Text(
-                                                                    "${studentController.getTeachers[index].teacherClass} - ${studentController.getTeachers[index].section}",
+                                                                    "${studentController.getTeachers[index].teacherClass.toUpperCase()} - ${studentController.getTeachers[index].section.toUpperCase()}",
                                                                     textAlign:
                                                                         TextAlign
                                                                             .center,

@@ -22,10 +22,12 @@ NavigationAppBar customNavigationAppBar(
     title: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        title,
+        title.toUpperCase(),
         style: const TextStyle(
           fontSize: 24,
         ),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 1,
       ),
     ),
     actions: Row(

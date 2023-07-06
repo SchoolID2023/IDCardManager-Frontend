@@ -77,9 +77,13 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () async {
                     final SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.remove('token').then((value) => Navigator.of(context)
-                        .push(FluentPageRoute(
-                            builder: (context) => const LoginPage())));
+                    prefs.remove('token').then(
+                          (value) => Navigator.of(context).push(
+                            FluentPageRoute(
+                              builder: (context) => const LoginPage(),
+                            ),
+                          ),
+                        );
                   },
                 ),
               ),

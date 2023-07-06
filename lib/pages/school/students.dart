@@ -60,30 +60,47 @@ class _StudentsState extends State<Students> {
               padding: const EdgeInsets.all(8.0),
               child: Card(
                 child: studentController.getStudents.isNotEmpty
-                    ? Scrollbar(
-                        controller: controller,
-                        child: SingleChildScrollView(
-                          controller: controller,
-                          scrollDirection: Axis.horizontal,
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.shortestSide,
-                              child: StudentTable(
-                                students: studentController.getStudents,
-                                isSelected: _selectedStudents,
-                                onSelected: updateSelectedStudents,
-                                classes: studentController.getSchool.classes,
-                                sections: studentController.getSchool.sections,
-                                schoolId: widget.schoolId,
-                                labels:
-                                    studentController.getSchoolLabels.labels,
-                                photoLabels: studentController
-                                    .getSchoolLabels.photoLabels,
+                    ? LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Scrollbar(
+                            interactive: true,
+                            style: const ScrollbarThemeData(
+                              thickness: 8,
+                            ),
+                            controller: controller,
+                            child: SingleChildScrollView(
+                              controller: controller,
+                              scrollDirection: Axis.horizontal,
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minWidth: constraints.maxWidth,
+                                ),
+                                child: IntrinsicWidth(
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.vertical,
+                                    child: SizedBox(
+                                      width: constraints.maxWidth,
+                                      child: StudentTable(
+                                        students: studentController.getStudents,
+                                        isSelected: _selectedStudents,
+                                        onSelected: updateSelectedStudents,
+                                        classes:
+                                            studentController.getSchool.classes,
+                                        sections: studentController
+                                            .getSchool.sections,
+                                        schoolId: widget.schoolId,
+                                        labels: studentController
+                                            .getSchoolLabels.labels,
+                                        photoLabels: studentController
+                                            .getSchoolLabels.photoLabels,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       )
                     : const Text("No Students"),
               ),

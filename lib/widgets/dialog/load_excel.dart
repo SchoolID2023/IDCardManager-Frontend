@@ -1,4 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -78,6 +79,102 @@ class _LoadExcelState extends State<LoadExcel> {
     // });
   }
 
+  Future<void> showProblemStudentsDialog(List<String> problemStudents) async {
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return mat.AlertDialog(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Problem with ${problemStudents.length} students",
+              ),
+              SizedBox(
+                height: 8,
+              ),
+              const Text(
+                "(missing one or more mandatory columns)",
+                style: TextStyle(fontSize: 12),
+              )
+            ],
+          ),
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: mat.DataTable(
+                columns: const [
+                  mat.DataColumn(label: Text("S.No")),
+                  mat.DataColumn(label: Text("Admno")),
+                  mat.DataColumn(label: Text("Name")),
+                  mat.DataColumn(label: Text("Contact")),
+                  mat.DataColumn(label: Text("Class")),
+                  mat.DataColumn(label: Text("Section")),
+                ],
+                rows: problemStudents.asMap().entries.map((entry) {
+                  final int index = entry.key;
+                  final String student = entry.value;
+                  final studentData = jsonDecode(student);
+                  return mat.DataRow(
+                    color: mat.MaterialStateProperty.resolveWith<Color?>(
+                      (Set<mat.MaterialState> states) {
+                        if (states.contains(mat.MaterialState.selected)) {
+                          return mat.Colors.blue[100];
+                        }
+                        if (index % 2 != 0) {
+                          return Color.fromARGB(107, 0, 0, 0);
+                        }
+                        return null;
+                      },
+                    ),
+                    cells: [
+                      mat.DataCell(Text((index + 1).toString())),
+                      mat.DataCell(Text(studentData["admno"])),
+                      mat.DataCell(Text(studentData["name"])),
+                      mat.DataCell(Text(studentData["contact"])),
+                      mat.DataCell(Text(studentData["class"])),
+                      mat.DataCell(Text(studentData["section"])),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                mat.ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: mat.ButtonStyle(
+                    padding: mat.MaterialStateProperty.resolveWith<
+                        EdgeInsetsGeometry?>((Set<mat.MaterialState> states) {
+                      return const EdgeInsets.all(12);
+                    }),
+                    backgroundColor:
+                        mat.MaterialStateProperty.resolveWith<Color?>(
+                            (Set<mat.MaterialState> states) {
+                      return Colors.blue;
+                    }),
+                  ),
+                  child: const Text(
+                    "OK",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ContentDialog(
@@ -91,7 +188,7 @@ class _LoadExcelState extends State<LoadExcel> {
                     : () async {
                         List<String> problemStudents = [];
                         setState(() {
-                          isLoading = true;
+                          isLoading = !isLoading;
                         });
                         try {
                           problemStudents = await studentController.addStudents(
@@ -117,41 +214,7 @@ class _LoadExcelState extends State<LoadExcel> {
                         }
 
                         if (problemStudents.isNotEmpty) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ContentDialog(
-                                title: Text(
-                                  "Problem with ${problemStudents.length} students",
-                                ),
-                                content: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: problemStudents.length,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(4.0),
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(problemStudents[index]),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                actions: [
-                                  Button(
-                                    child: const Text("OK"),
-                                    onPressed: () => Navigator.pop(context),
-                                  )
-                                ],
-                              );
-                            },
-                          );
+                          await showProblemStudentsDialog(problemStudents);
                         }
                         Navigator.pop(context);
                       },

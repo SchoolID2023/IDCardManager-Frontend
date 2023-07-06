@@ -19,8 +19,8 @@ class SchoolTile extends StatelessWidget {
         horizontal: 16.0,
       ),
       child: ListTile(
-        title: Text(school.name),
-        subtitle: Text(school.address),
+        title: Text(school.name.toUpperCase()),
+        subtitle: Text(school.address.toUpperCase()),
         onPressed: () {
           Navigator.of(context).push(
             FluentPageRoute(
@@ -45,7 +45,7 @@ class SchoolTile extends StatelessWidget {
                   builder: (context) {
                     return ConfirmDelete(
                       type: "School",
-                      name: school.name,
+                      name: school.name.toUpperCase(),
                       deleteFunction: () {
                         _schoolController.deleteSchool(school.id);
                       },

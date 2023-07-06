@@ -10,7 +10,6 @@ import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
-import 'package:path_provider/path_provider.dart';
 import '../services/logger.dart';
 
 import '../models/student_model.dart';
@@ -90,6 +89,10 @@ class _StudentTableState extends State<StudentTable> {
     studentController.deleteStudent(studentId, widget.schoolId);
   }
 
+  // void removeStudentImage(String studentId) {
+  //   studentController.editStudent(studentId);
+  // }
+
   @override
   Widget build(BuildContext context) {
     List<DataColumn> columnName = [
@@ -97,7 +100,7 @@ class _StudentTableState extends State<StudentTable> {
         label: Text('S. No.'),
       ),
       DataColumn(
-        label: const Text('Admn. No.'),
+        label: const Text('ADMN. No.'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 1) {
@@ -111,7 +114,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: const Text('Name'),
+        label: const Text('NAME'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 2) {
@@ -125,7 +128,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: const Text('Class'),
+        label: const Text('CLASS'),
         onSort: (int columnIndex, bool ascending) {
           setState(() {
             if (columnIndex == 3) {
@@ -140,7 +143,7 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       DataColumn(
-        label: const Text('Section'),
+        label: const Text('SECTION'),
         onSort: (int columnIndex, bool ascending) {
           setState(
             () {
@@ -156,10 +159,10 @@ class _StudentTableState extends State<StudentTable> {
         },
       ),
       const DataColumn(
-        label: Text('Contact'),
+        label: Text('CONTACT'),
       ),
       const DataColumn(
-        label: Text('Actions'),
+        label: Text('ACTION'),
       ),
     ];
 
@@ -168,9 +171,13 @@ class _StudentTableState extends State<StudentTable> {
             DataColumn(
               label: Text(
                 widget.students[0].photo
-                    .firstWhere((element) => element.field == photoLabel,
+                    .firstWhere(
+                        (element) =>
+                            element.field.toUpperCase() ==
+                            photoLabel.toUpperCase(),
                         orElse: () => Photo(field: photoLabel, value: "value"))
-                    .field,
+                    .field
+                    .toUpperCase(),
               ),
             ),
           )
@@ -197,7 +204,7 @@ class _StudentTableState extends State<StudentTable> {
       if (_isVisible[label] ?? false) {
         columnName.add(
           DataColumn(
-            label: Text(label),
+            label: Text(label.toUpperCase()),
             onSort: (int columnIndex, bool ascending) {
               setState(() {
                 if (true) {
@@ -258,7 +265,7 @@ class _StudentTableState extends State<StudentTable> {
                               ),
                             ),
                           ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     fluent.SizedBox(
@@ -277,7 +284,7 @@ class _StudentTableState extends State<StudentTable> {
                         },
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     fluent.Button(
@@ -290,7 +297,7 @@ class _StudentTableState extends State<StudentTable> {
                             logger.d(filteredStudents);
                           });
                         }),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     fluent.Button(
@@ -412,7 +419,7 @@ class _StudentTableState extends State<StudentTable> {
           source: data,
           header: Row(
             children: [
-              const Text('Students'),
+              const Text('STUDENTS'),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: widget.labels.length <= 5
@@ -437,7 +444,9 @@ class _StudentTableState extends State<StudentTable> {
                                     });
                                   },
                                 ),
-                                text: Text(_isVisible.keys.elementAt(index)),
+                                text: Text(_isVisible.keys
+                                    .elementAt(index)
+                                    .toUpperCase()),
                                 onPressed: () {
                                   setState(() {
                                     _isVisible[
@@ -462,10 +471,12 @@ class _StudentTableState extends State<StudentTable> {
                           items: List<fluent.MenuFlyoutItemBase>.generate(
                             widget.photoLabels.length,
                             (index) => fluent.MenuFlyoutItem(
-                              text: Text(widget.photoLabels[index]),
+                              text:
+                                  Text(widget.photoLabels[index].toUpperCase()),
                               onPressed: () {
                                 setState(() {
-                                  photoLabel = widget.photoLabels[index];
+                                  photoLabel =
+                                      widget.photoLabels[index].toUpperCase();
                                 });
                               },
                             ),
@@ -665,11 +676,11 @@ class MyData extends DataTableSource {
 
       List<String> studentData = [
         (index + 1).toString(),
-        students[index].admno,
-        students[index].name,
-        students[index].studentClass,
-        students[index].section,
-        students[index].contact,
+        students[index].admno.toUpperCase(),
+        students[index].name.toUpperCase(),
+        students[index].studentClass.toUpperCase(),
+        students[index].section.toUpperCase(),
+        students[index].contact.toUpperCase(),
         ""
       ];
 
@@ -685,7 +696,9 @@ class MyData extends DataTableSource {
         if (_isVisible[label] ?? false) {
           studentData.add(students[index]
               .data
-              .firstWhere((element) => element.field == label,
+              .firstWhere(
+                  (element) =>
+                      element.field.toUpperCase() == label.toUpperCase(),
                   orElse: () => Datum(value: "", field: "No Value"))
               .value
               .toString());
@@ -720,46 +733,71 @@ class MyData extends DataTableSource {
       cells: List<DataCell>.generate(_data[index].length - 1, (value) {
         if (value == 7 && photoLabel != "-1") {
           return DataCell(
-            GestureDetector(
-              onDoubleTap: () async {
-                // Download the image to the computer in downloads section
+            fluent.Row(
+              children: [
+                GestureDetector(
+                  onDoubleTap: () async {
+                    // Download the image to the computer in downloads section
 
-                List<String> parts = _data[index][7].split('/');
-                String lastItem = parts.last;
+                    List<String> parts = _data[index][7].split('/');
+                    String lastItem = parts.last;
 
-                if (outputFile.isEmpty) {
-                  String? location = await FilePicker.platform.saveFile(
-                    dialogTitle:
-                        'Please select where you want to download the file at:',
-                    fileName: lastItem,
-                  );
-                  outputFile = location ?? '';
-                }
+                    if (outputFile.isEmpty) {
+                      String? location = await FilePicker.platform.saveFile(
+                        dialogTitle:
+                            'Please select where you want to download the file at:',
+                        fileName: lastItem,
+                      );
+                      outputFile = location ?? '';
+                    }
 
-                String savePath = "$outputFile/idcardImages/$lastItem";
+                    String savePath = "$outputFile/idcardImages/$lastItem";
 
-                try {
-                  await Dio().download(
-                    _data[index][value],
-                    savePath,
-                  );
-                } on DioException catch (e) {
-                  print(e.message);
-                } finally {
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   SnackBar(
-                  //     content: Text("Image Downloaded in Downloads Folder"),
-                  //   ),
-                  // );
-                }
-              },
-              child: fluent.Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Image.network(
-                  _data[index][value],
-                  height: 90,
+                    try {
+                      await Dio().download(
+                        _data[index][value],
+                        savePath,
+                      );
+                    } on DioException catch (e) {
+                      print(e.message);
+                    } finally {
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(
+                      //     content: Text("Image Downloaded in Downloads Folder"),
+                      //   ),
+                      // );
+                    }
+                  },
+                  child: fluent.Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Image.network(
+                      _data[index][value],
+                      height: 90,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  width: 10,
+                ),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ConfirmDelete(
+                              type: "Student",
+                              name: students[index].name.toUpperCase(),
+                              deleteFunction: () {
+                                deleteFunction(_data[index].last);
+                              },
+                            );
+                          });
+                    },
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ))
+              ],
             ),
           );
         }
@@ -784,19 +822,20 @@ class MyData extends DataTableSource {
                   maxWidth: 150,
                 ),
                 child: Text(
-                  _data[index][value].toString(),
+                  _data[index][value].toString().toUpperCase(),
                   maxLines: 3,
                 ),
               ),
               value == 6
                   ? IconButton(
                       onPressed: () {
+                        Student studentData = students[index];
                         showDialog(
                             context: context,
                             builder: (context) {
                               return ConfirmDelete(
                                 type: "Student",
-                                name: students[index].name,
+                                name: students[index].name.toUpperCase(),
                                 deleteFunction: () {
                                   deleteFunction(_data[index].last);
                                 },
@@ -806,7 +845,8 @@ class MyData extends DataTableSource {
                       icon: const Icon(
                         Icons.delete,
                         color: Colors.red,
-                      ))
+                      ),
+                    )
                   : Container(),
             ],
           ),

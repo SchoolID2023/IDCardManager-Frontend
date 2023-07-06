@@ -54,46 +54,49 @@ class _AddStudentState extends State<AddStudent> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: widget.labels.length,
-              itemBuilder: (context, index) {
-                if (widget.labels[index].toLowerCase() == 'class') {
-                  return buildDropdown(
+            SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.labels.length,
+                itemBuilder: (context, index) {
+                  if (widget.labels[index].toLowerCase() == 'class') {
+                    return buildDropdown(
+                      widget.labels[index].toUpperCase(),
+                      studentDetails[widget.labels[index]],
+                      (value) {
+                        setState(() {
+                          studentDetails[widget.labels[index]] =
+                              value!.isNotEmpty ? value : '';
+                        });
+                      },
+                      classOptions,
+                    );
+                  }
+                  if (widget.labels[index].toLowerCase() == 'section') {
+                    return buildDropdown(
+                      widget.labels[index].toUpperCase(),
+                      studentDetails[widget.labels[index]],
+                      (value) {
+                        setState(() {
+                          studentDetails[widget.labels[index]] =
+                              value!.isNotEmpty ? value : '';
+                        });
+                      },
+                      sectionOptions,
+                    );
+                  }
+                  return buildTextField(
                     widget.labels[index].toUpperCase(),
-                    studentDetails[widget.labels[index]],
+                    studentDetails[widget.labels[index]] == null
+                        ? ''
+                        : studentDetails[widget.labels[index]].toString(),
                     (value) {
-                      setState(() {
-                        studentDetails[widget.labels[index]] =
-                            value!.isNotEmpty ? value : '';
-                      });
+                      studentDetails[widget.labels[index]] = value;
                     },
-                    classOptions,
                   );
-                }
-                if (widget.labels[index].toLowerCase() == 'section') {
-                  return buildDropdown(
-                    widget.labels[index].toUpperCase(),
-                    studentDetails[widget.labels[index]],
-                    (value) {
-                      setState(() {
-                        studentDetails[widget.labels[index]] =
-                            value!.isNotEmpty ? value : '';
-                      });
-                    },
-                    sectionOptions,
-                  );
-                }
-                return buildTextField(
-                  widget.labels[index].toUpperCase(),
-                  studentDetails[widget.labels[index]] == null
-                      ? ''
-                      : studentDetails[widget.labels[index]].toString(),
-                  (value) {
-                    studentDetails[widget.labels[index]] = value;
-                  },
-                );
-              },
+                },
+              ),
             ),
             const SizedBox(height: 28.0),
             Row(

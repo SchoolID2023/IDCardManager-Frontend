@@ -22,11 +22,11 @@ class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  final String baseUrl = 'http://3.7.239.25:3000';
+  // final String baseUrl = 'http://3.7.239.25:3000';
 
   // final String baseUrl = 'http://192.168.2.1:3000';
 
-  // final String baseUrl = 'http://127.0.0.1:3000';
+  final String baseUrl = 'http://127.0.0.1:3000';
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {
@@ -594,8 +594,10 @@ class RemoteServices {
             "Problems -> ${data["success"]} ${data["message"]} ${data["problem"]}");
 
         List<String> problemStudents = [];
-        data["problem"]
-            .forEach((problem) => problemStudents.add(json.encode(problem)));
+        if (data["problem"] != null) {
+          data["problem"]
+              .forEach((problem) => problemStudents.add(json.encode(problem)));
+        }
 
         return problemStudents;
       } else {
@@ -798,6 +800,7 @@ class RemoteServices {
           headers: headers,
         ),
       );
+      logger.d('the data => ${response}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.data!);

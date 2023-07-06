@@ -88,7 +88,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
 
       return NavigationView(
         appBar: customNavigationAppBar(
-          "School Info",
+          studentController.getSchool.name.toUpperCase(),
           context,
           actions: [
             Padding(
@@ -153,7 +153,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
             studentController.getSchoolLabels.photoLabels.isEmpty
                 ? Container()
                 : Button(
-                    child: Text("Download Photos"),
+                    child: const Text("Download Photos"),
                     onPressed: () {
                       showDialog(
                         context: context,

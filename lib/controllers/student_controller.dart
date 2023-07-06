@@ -59,7 +59,7 @@ class StudentController extends GetxController {
       isLoading(true);
       return await _remoteServices.addStudentData(schoolId, excelFile);
     } finally {
-      fetchStudents(schoolId);
+      await fetchStudents(schoolId);
       isLoading(false);
     }
   }

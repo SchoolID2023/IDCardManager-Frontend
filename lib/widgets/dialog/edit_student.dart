@@ -64,78 +64,84 @@ class _EditStudentState extends State<EditStudent> {
           children: [
             const Text(
               "Edit Student",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 16.0),
             isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: editingStudent.data.length + 5,
-                    itemBuilder: (context, index) {
-                      if (index == 0) {
-                        return buildTextBox(
-                          "Name",
-                          editingStudent.name,
-                          (value) {
-                            editingStudent.name = value;
-                          },
-                        );
-                      } else if (index == 1) {
-                        return buildTextBox(
-                          "Contact",
-                          editingStudent.contact,
-                          (value) {
-                            editingStudent.contact = value;
-                          },
-                        );
-                      } else if (index == 2) {
-                        return buildDropdown(
-                          "Class",
-                          editingStudent.studentClass,
-                          (value) {
-                            setState(() {
-                              editingStudent.studentClass =
-                                  value!.isNotEmpty ? value : '';
-                            });
-                          },
-                          classOptions,
-                        );
-                      } else if (index == 3) {
-                        return buildDropdown(
-                          "Section",
-                          editingStudent.section,
-                          (value) {
-                            setState(() {
-                              editingStudent.section =
-                                  value!.isNotEmpty ? value : '';
-                            });
-                          },
-                          sectionOptions,
-                        );
-                      } else if (index == 4) {
-                        return buildTextBox(
-                          "Admn. No.",
-                          editingStudent.admno,
-                          (value) {
-                            editingStudent.admno = value;
-                          },
-                        );
-                      } else {
-                        final dataIndex = index - 5;
-                        final data = editingStudent.data[dataIndex];
-                        if (ignoredPlaceholders.contains(data.field)) {
-                          return const SizedBox.shrink();
+                : SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: editingStudent.data.length + 5,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          return buildTextBox(
+                            "Name",
+                            editingStudent.name,
+                            (value) {
+                              editingStudent.name = value;
+                            },
+                          );
+                        } else if (index == 1) {
+                          return buildTextBox(
+                            "Contact",
+                            editingStudent.contact,
+                            (value) {
+                              editingStudent.contact = value;
+                            },
+                          );
+                        } else if (index == 2) {
+                          return buildDropdown(
+                            "Class",
+                            editingStudent.studentClass,
+                            (value) {
+                              setState(() {
+                                editingStudent.studentClass =
+                                    value!.isNotEmpty ? value : '';
+                              });
+                            },
+                            classOptions,
+                          );
+                        } else if (index == 3) {
+                          return buildDropdown(
+                            "Section",
+                            editingStudent.section,
+                            (value) {
+                              setState(() {
+                                editingStudent.section =
+                                    value!.isNotEmpty ? value : '';
+                              });
+                            },
+                            sectionOptions,
+                          );
+                        } else if (index == 4) {
+                          return buildTextBox(
+                            "Admn. No.",
+                            editingStudent.admno,
+                            (value) {
+                              editingStudent.admno = value;
+                            },
+                          );
+                        } else {
+                          final dataIndex = index - 5;
+                          final data = editingStudent.data[dataIndex];
+                          if (ignoredPlaceholders.contains(data.field)) {
+                            return const SizedBox.shrink();
+                          }
+                          return buildTextBox(
+                            data.field,
+                            data.value.toString(),
+                            (value) {
+                              editingStudent.data[dataIndex].value = value;
+                            },
+                          );
                         }
-                        return buildTextBox(
-                          data.field,
-                          data.value.toString(),
-                          (value) {
-                            editingStudent.data[dataIndex].value = value;
-                          },
-                        );
-                      }
-                    },
+                      },
+                    ),
                   ),
             const SizedBox(height: 16.0),
             Row(
