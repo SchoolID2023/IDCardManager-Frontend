@@ -44,6 +44,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
       studentController.setRole(widget.role);
       await studentController.fetchSchoolLabels(widget.schoolId);
       await studentController.fetchSchool(widget.schoolId);
+      // await adminController.fetchAdmins(widget.schoolId);
       await studentController.fetchAdmins(widget.schoolId);
       await studentController.fetchTeachers(widget.schoolId);
       await studentController.fetchStudents(widget.schoolId);

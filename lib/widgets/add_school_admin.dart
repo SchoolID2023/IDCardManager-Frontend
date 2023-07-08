@@ -29,10 +29,9 @@ class _AddSchoolAdminState extends State<AddSchoolAdmin> {
           onPressed: () async {
             await _remoteServices
                 .addSchoolAdmin(
+              id: "",
               schoolId: widget.schoolId,
               name: _adminNameController.text,
-              email: DateTime.now().toString(),
-              password: "_adminPasswordController.text",
               contact: _adminContactController.text,
             )
                 .then((value) {

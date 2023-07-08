@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
@@ -87,6 +86,17 @@ class _StudentTableState extends State<StudentTable> {
 
   void deleteStudent(String studentId) {
     studentController.deleteStudent(studentId, widget.schoolId);
+  }
+
+  Future<bool> deleteStudentPhoto(String photoUrl, String studentId) async {
+    try {
+      bool deleteStatus = await studentController.deleteStudentPhoto(
+          photoUrl, studentId, widget.schoolId);
+      return deleteStatus ? true : false;
+    } catch (e) {
+      logger.d(e);
+      return false;
+    }
   }
 
   // void removeStudentImage(String studentId) {
@@ -232,6 +242,7 @@ class _StudentTableState extends State<StudentTable> {
       classFilter,
       sectionFilter,
       deleteStudent,
+      deleteStudentPhoto,
       widget.schoolId,
     );
     return fluent.Column(
@@ -518,6 +529,7 @@ class MyData extends DataTableSource {
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';
 
   final Function deleteFunction;
+  final Function deleteStudentPhotoFunction;
 
   BuildContext context;
   final List<List<String>> _data = [];
@@ -534,6 +546,7 @@ class MyData extends DataTableSource {
       this.classFilter,
       this.sectionFilter,
       this.deleteFunction,
+      this.deleteStudentPhotoFunction,
       this.schoolId) {
     bool ifFilter(Student student) {
       bool value = false;
@@ -779,24 +792,31 @@ class MyData extends DataTableSource {
                 const SizedBox(
                   width: 10,
                 ),
-                IconButton(
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return ConfirmDelete(
-                              type: "Student",
-                              name: students[index].name.toUpperCase(),
-                              deleteFunction: () {
-                                deleteFunction(_data[index].last);
-                              },
-                            );
-                          });
-                    },
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
-                    ))
+                !_data[index][value].contains(
+                        "https://idcardmaker1.s3.ap-south-1.amazonaws.com/")
+                    ? const SizedBox.shrink()
+                    : IconButton(
+                        onPressed: () {
+                          Student studentData = students[index];
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ConfirmDelete(
+                                  type: "Student",
+                                  name: students[index].name.toUpperCase(),
+                                  deleteDialogueFunction: () async {
+                                    await deleteStudentPhotoFunction(
+                                        _data[index][value], studentData.id);
+                                  },
+                                  deletePhoto: false,
+                                );
+                              });
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      ),
               ],
             ),
           );
@@ -829,16 +849,16 @@ class MyData extends DataTableSource {
               value == 6
                   ? IconButton(
                       onPressed: () {
-                        Student studentData = students[index];
                         showDialog(
                             context: context,
                             builder: (context) {
                               return ConfirmDelete(
                                 type: "Student",
                                 name: students[index].name.toUpperCase(),
-                                deleteFunction: () {
-                                  deleteFunction(_data[index].last);
+                                deleteDialogueFunction: () async {
+                                  await deleteFunction(_data[index].last);
                                 },
+                                deletePhoto: false,
                               );
                             });
                       },

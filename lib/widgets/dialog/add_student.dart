@@ -9,7 +9,8 @@ class AddStudent extends StatefulWidget {
   final String currentSchool;
 
   const AddStudent(
-      {super.key, required this.labels, required this.currentSchool});
+      {Key? key, required this.labels, required this.currentSchool})
+      : super(key: key);
 
   @override
   State<AddStudent> createState() => _AddStudentState();
@@ -24,7 +25,6 @@ class _AddStudentState extends State<AddStudent> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     studentController = Get.put(StudentController(widget.currentSchool));
     studentDetails["currentSchool"] = widget.currentSchool;
@@ -46,7 +46,6 @@ class _AddStudentState extends State<AddStudent> {
         padding: const EdgeInsets.all(30.0),
         width: 400,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
@@ -54,10 +53,8 @@ class _AddStudentState extends State<AddStudent> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
-            SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+            Expanded(
               child: ListView.builder(
-                shrinkWrap: true,
                 itemCount: widget.labels.length,
                 itemBuilder: (context, index) {
                   if (widget.labels[index].toLowerCase() == 'class') {
@@ -105,7 +102,8 @@ class _AddStudentState extends State<AddStudent> {
                 ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color?>(
-                        Theme.of(context).cardColor),
+                      Theme.of(context).cardColor,
+                    ),
                   ),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -134,19 +132,22 @@ class _AddStudentState extends State<AddStudent> {
     void Function(String?)? onChanged,
     List<String> options,
   ) {
-    return DropdownButtonFormField<String>(
-      decoration: InputDecoration(
-        labelText: placeholder,
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: DropdownButtonFormField<String>(
+        decoration: InputDecoration(
+          labelText: placeholder,
+        ),
+        dropdownColor: Theme.of(context).cardColor,
+        value: value,
+        onChanged: onChanged,
+        items: options.map((String option) {
+          return DropdownMenuItem<String>(
+            value: option,
+            child: Text(option),
+          );
+        }).toList(),
       ),
-      dropdownColor: Theme.of(context).cardColor,
-      value: value,
-      onChanged: onChanged,
-      items: options.map((String option) {
-        return DropdownMenuItem<String>(
-          value: option,
-          child: Text(option),
-        );
-      }).toList(),
     );
   }
 
@@ -156,25 +157,22 @@ class _AddStudentState extends State<AddStudent> {
     Function(String) onChanged,
   ) {
     final textEditingController = TextEditingController(text: value);
-    // final selection = TextSelection.fromPosition(
-    //   TextPosition(offset: textEditingController.text.length),
-    // );
 
-    return TextField(
-      decoration: InputDecoration(
-        labelText: placeholder,
+    return Padding(
+      padding: const EdgeInsets.only(left: 10, right: 10),
+      child: TextField(
+        decoration: InputDecoration(
+          labelText: placeholder,
+        ),
+        controller: textEditingController,
+        onChanged: onChanged,
+        autofocus: false,
+        textInputAction: TextInputAction.next,
+        keyboardType: TextInputType.text,
+        cursorWidth: 2.0,
+        cursorRadius: const Radius.circular(2.0),
+        enableInteractiveSelection: true,
       ),
-      controller: textEditingController,
-      onChanged: onChanged,
-      autofocus: false,
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.text,
-      cursorWidth: 2.0,
-      cursorRadius: const Radius.circular(2.0),
-      enableInteractiveSelection: true,
-      // onTap: () {
-      //   textEditingController.selection = selection;
-      // },
     );
   }
 }

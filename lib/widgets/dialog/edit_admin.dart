@@ -1,27 +1,24 @@
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
-
+import '../../models/admins_model.dart';
 import '../../models/schools_model.dart';
-import '../../models/student_model.dart';
 import 'package:flutter/material.dart';
 
-class EditStudent extends StatefulWidget {
-  final String studentId;
+class EditAdmin extends StatefulWidget {
+  final String adminId;
   final String schoolId;
-  const EditStudent({Key? key, required this.studentId, required this.schoolId})
+  const EditAdmin({Key? key, required this.adminId, required this.schoolId})
       : super(key: key);
 
   @override
-  State<EditStudent> createState() => _EditStudentState();
+  State<EditAdmin> createState() => _EditAdminState();
 }
 
-class _EditStudentState extends State<EditStudent> {
+class _EditAdminState extends State<EditAdmin> {
   bool isLoading = true;
-  late Student student;
-  late Student editingStudent;
+  late SchoolAdmin admin;
+  late SchoolAdmin editingAdmin;
   late StudentController _studentController;
-  List<String> classOptions = [];
-  List<String> sectionOptions = [];
   late School schoolData;
 
   Set<String> ignoredPlaceholders = {
@@ -39,17 +36,9 @@ class _EditStudentState extends State<EditStudent> {
     super.initState();
     _studentController = Get.put(StudentController(widget.schoolId));
 
-    student = _studentController.getStudentById(widget.studentId);
-    editingStudent = Student.fromJson(student.toJson());
-    () async {
-      await _studentController.fetchSchool(widget.schoolId);
-      schoolData = _studentController.school.value;
-      setState(() {
-        classOptions = schoolData.classes;
-        sectionOptions = schoolData.sections;
-        isLoading = false;
-      });
-    }();
+    admin = _studentController.getAdminById(widget.adminId);
+    editingAdmin = SchoolAdmin.fromJson(admin.toJson());
+    isLoading = false;
   }
 
   @override
@@ -63,7 +52,7 @@ class _EditStudentState extends State<EditStudent> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              "Edit Student",
+              "Edit Admin",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -78,72 +67,28 @@ class _EditStudentState extends State<EditStudent> {
                         ? const Center(child: CircularProgressIndicator())
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: editingStudent.data.length + 5,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: 2,
                             itemBuilder: (context, index) {
                               if (index == 0) {
                                 return buildTextBox(
                                   "Name",
-                                  editingStudent.name,
+                                  editingAdmin.name,
                                   (value) {
-                                    editingStudent.name = value;
-                                  },
-                                );
-                              } else if (index == 1) {
-                                return buildTextBox(
-                                  "Contact",
-                                  editingStudent.contact,
-                                  (value) {
-                                    editingStudent.contact = value;
-                                  },
-                                );
-                              } else if (index == 2) {
-                                return buildDropdown(
-                                  "Class",
-                                  editingStudent.studentClass,
-                                  (value) {
-                                    setState(() {
-                                      editingStudent.studentClass =
-                                          value!.isNotEmpty ? value : '';
-                                    });
-                                  },
-                                  classOptions,
-                                );
-                              } else if (index == 3) {
-                                return buildDropdown(
-                                  "Section",
-                                  editingStudent.section,
-                                  (value) {
-                                    setState(() {
-                                      editingStudent.section =
-                                          value!.isNotEmpty ? value : '';
-                                    });
-                                  },
-                                  sectionOptions,
-                                );
-                              } else if (index == 4) {
-                                return buildTextBox(
-                                  "Admn. No.",
-                                  editingStudent.admno,
-                                  (value) {
-                                    editingStudent.admno = value;
-                                  },
-                                );
-                              } else {
-                                final dataIndex = index - 5;
-                                final data = editingStudent.data[dataIndex];
-                                if (ignoredPlaceholders.contains(data.field)) {
-                                  return const SizedBox.shrink();
-                                }
-                                return buildTextBox(
-                                  data.field,
-                                  data.value.toString(),
-                                  (value) {
-                                    editingStudent.data[dataIndex].value =
-                                        value;
+                                    editingAdmin.name = value;
                                   },
                                 );
                               }
+                              if (index == 1) {
+                                return buildTextBox(
+                                  "Contact",
+                                  editingAdmin.contact,
+                                  (value) {
+                                    editingAdmin.contact = value;
+                                  },
+                                );
+                              }
+                              return null;
                             },
                           ),
                     const SizedBox(height: 16.0),
@@ -167,7 +112,7 @@ class _EditStudentState extends State<EditStudent> {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pop();
-                      _studentController.editStudent(editingStudent);
+                      _studentController.editSchoolAdmin(editingAdmin);
                     },
                     child: const Text("Save"),
                   ),

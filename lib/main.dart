@@ -30,8 +30,10 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         accentColor: Colors.blue,
       ),
-      darkTheme:
-          FluentThemeData(brightness: Brightness.dark, accentColor: Colors.blue,),
+      darkTheme: FluentThemeData(
+        brightness: Brightness.dark,
+        accentColor: Colors.blue,
+      ),
       home: LoginWrapper(),
     );
   }
@@ -71,8 +73,11 @@ class LoginWrapper extends StatelessWidget {
           }
         }
       } catch (e) {
-        Navigator.of(context)
-            .push(FluentPageRoute(builder: (context) => const LoginPage(),),);
+        Navigator.of(context).push(
+          FluentPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
 
         logger.d(e);
       }

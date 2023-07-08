@@ -162,15 +162,16 @@ class _HomePageState extends State<HomePage> {
                                       context: context,
                                       builder: (context) {
                                         return ConfirmDelete(
-                                            type: "Super Admin",
-                                            name: schoolController
-                                                .getSuperAdmins[index2].name,
-                                            deleteFunction: () {
-                                              schoolController.deleteSuperAdmin(
-                                                  schoolController
-                                                      .getSuperAdmins[index2]
-                                                      .id);
-                                            });
+                                          type: "Super Admin",
+                                          name: schoolController
+                                              .getSuperAdmins[index2].name,
+                                          deleteDialogueFunction: () {
+                                            schoolController.deleteSuperAdmin(
+                                                schoolController
+                                                    .getSuperAdmins[index2].id);
+                                          },
+                                          deletePhoto: false,
+                                        );
                                       });
                                 },
                               ),

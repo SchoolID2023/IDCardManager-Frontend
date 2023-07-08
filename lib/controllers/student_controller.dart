@@ -52,6 +52,12 @@ class StudentController extends GetxController {
   Student getStudentById(String studentId) =>
       students.value.students.firstWhere((element) => element.id == studentId);
 
+  SchoolAdmin getAdminById(String adminId) =>
+      admins.value.schoolAdmins.firstWhere((element) => element.id == adminId);
+
+  Teacher getTeacherById(String teacherId) =>
+      teachers.value.teachers.firstWhere((element) => element.id == teacherId);
+
   set setLoading(bool value) => isLoading.value = value;
 
   Future<List<String>> addStudents(String schoolId, String excelFile) async {
@@ -185,6 +191,60 @@ class StudentController extends GetxController {
       await _remoteServices.deleteStudent(studentId);
     } finally {
       fetchStudents(schoolId);
+    }
+  }
+
+  Future<bool> deleteStudentPhoto(
+      String photoUrl, String studentId, String schoolId) async {
+    try {
+      await _remoteServices.deleteStudentPhoto(photoUrl, studentId);
+      return true;
+    } catch (e) {
+      return false;
+    } finally {
+      fetchStudents(schoolId);
+    }
+  }
+
+  void editSchoolAdmin(SchoolAdmin admin) async {
+    try {
+      admins.value.schoolAdmins
+          .removeWhere((element) => element.id == admin.id);
+      admins.value.schoolAdmins.add(admin);
+      await _remoteServices.editSchoolAdmin(admin);
+      fetchAdmins(admin.school);
+    } catch (e) {
+      logger.d("Edit Admin Error:- $e");
+    }
+  }
+
+  void deleteSchoolAdmin(String adminId, String schoolId) async {
+    try {
+      await _remoteServices.deleteSchoolAdmin(adminId);
+    } finally {
+      fetchAdmins(schoolId);
+    }
+  }
+
+  void editSchoolTeacher(Teacher teacher) async {
+    try {
+      teachers.value.teachers
+          .removeWhere((element) => element.id == teacher.id);
+      teachers.value.teachers.add(teacher);
+      await _remoteServices.editSchoolTeacher(teacher);
+      fetchTeachers(teacher.currentSchool);
+    } catch (e) {
+      logger.d("Edit Admin Error:- $e");
+    }
+  }
+
+  void deleteSchoolTeacher(String teacherId, String schoolId) async {
+    try {
+      await _remoteServices.deleteSchoolTeacher(teacherId);
+
+      teachers.value.teachers.removeWhere((element) => element.id == teacherId);
+    } finally {
+      fetchAdmins(schoolId);
     }
   }
 

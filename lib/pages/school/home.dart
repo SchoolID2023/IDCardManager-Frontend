@@ -2,9 +2,12 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/edit_admin.dart';
+import 'package:idcard_maker_frontend/widgets/dialog/edit_teacher.dart';
 
 import '../../widgets/add_school_admin.dart';
 import '../../widgets/add_school_teacher.dart';
+import '../../widgets/dialog/confirm_delete.dart';
 import '../../widgets/edit_school.dart';
 
 class Home extends StatefulWidget {
@@ -24,6 +27,14 @@ class _HomeState extends State<Home> {
     logger.i("Home Page SchoolID: ${widget.schoolId}");
     studentController = Get.put(StudentController(widget.schoolId));
     super.initState();
+  }
+
+  void deleteSchoolAdmin(String adminId) {
+    studentController.deleteSchoolAdmin(adminId, widget.schoolId);
+  }
+
+  void deleteSchoolTeacher(String adminId) {
+    studentController.deleteSchoolTeacher(adminId, widget.schoolId);
   }
 
   @override
@@ -236,7 +247,7 @@ class _HomeState extends State<Home> {
                                                     style: theme
                                                         .typography.bodyLarge,
                                                   ),
-                                                  TextButton(
+                                                  Button(
                                                     child:
                                                         const Text("Add Admin"),
                                                     onPressed: () {
@@ -259,7 +270,7 @@ class _HomeState extends State<Home> {
                                                         return Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(8.0),
+                                                                  .all(18.0),
                                                           child: Container(
                                                             decoration:
                                                                 BoxDecoration(
@@ -276,37 +287,108 @@ class _HomeState extends State<Home> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .all(4.0),
-                                                              child: Column(
+                                                                          .all(
+                                                                      14.0),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween, // Aligns items at start and end
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
-                                                                        .start,
+                                                                        .start, // Aligns column items at start
                                                                 children: [
-                                                                  Text(
-                                                                    studentController
-                                                                        .getAdmins[
-                                                                            index]
-                                                                        .name
-                                                                        .toUpperCase(),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: theme
-                                                                        .typography
-                                                                        .bodyLarge,
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                        studentController
+                                                                            .getAdmins[index]
+                                                                            .name
+                                                                            .toUpperCase(),
+                                                                        textAlign:
+                                                                            TextAlign.start,
+                                                                        style: theme
+                                                                            .typography
+                                                                            .bodyLarge,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        studentController
+                                                                            .getAdmins[index]
+                                                                            .contact
+                                                                            .toUpperCase(),
+                                                                        textAlign:
+                                                                            TextAlign.start,
+                                                                        style: theme
+                                                                            .typography
+                                                                            .body,
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  Text(
-                                                                    studentController
-                                                                        .getAdmins[
-                                                                            index]
-                                                                        .contact
-                                                                        .toUpperCase(),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: theme
-                                                                        .typography
-                                                                        .body,
+                                                                  Row(
+                                                                    children: [
+                                                                      IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          logger.d(studentController
+                                                                              .getAdmins[index]
+                                                                              .id);
+                                                                          showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (context) =>
+                                                                                EditAdmin(
+                                                                              adminId: studentController.getAdmins[index].id,
+                                                                              schoolId: studentController.getAdmins[index].school,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          FluentIcons
+                                                                              .edit,
+                                                                          color:
+                                                                              Colors.white,
+                                                                          size:
+                                                                              20,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (context) {
+                                                                                return ConfirmDelete(
+                                                                                  type: "Admin",
+                                                                                  name: studentController.getAdmins[index].name.toUpperCase(),
+                                                                                  deleteDialogueFunction: () {
+                                                                                    deleteSchoolAdmin(studentController.getAdmins[index].id);
+                                                                                  },
+                                                                                  deletePhoto: false,
+                                                                                );
+                                                                              });
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          FluentIcons
+                                                                              .delete,
+                                                                          color:
+                                                                              Color(0xffec404f),
+                                                                          size:
+                                                                              20,
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),
@@ -332,7 +414,7 @@ class _HomeState extends State<Home> {
                                                     style: theme
                                                         .typography.bodyLarge,
                                                   ),
-                                                  TextButton(
+                                                  Button(
                                                     child: const Text(
                                                         "Add Teacher"),
                                                     onPressed: () {
@@ -356,7 +438,7 @@ class _HomeState extends State<Home> {
                                                         return Padding(
                                                           padding:
                                                               const EdgeInsets
-                                                                  .all(8.0),
+                                                                  .all(18.0),
                                                           child: Container(
                                                             decoration:
                                                                 BoxDecoration(
@@ -373,33 +455,105 @@ class _HomeState extends State<Home> {
                                                             child: Padding(
                                                               padding:
                                                                   const EdgeInsets
-                                                                      .all(4.0),
-                                                              child: Column(
+                                                                          .all(
+                                                                      14.0),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween, // Aligns items at start and end
                                                                 crossAxisAlignment:
                                                                     CrossAxisAlignment
-                                                                        .start,
+                                                                        .start, // Aligns column items at start
                                                                 children: [
-                                                                  Text(
-                                                                    studentController
-                                                                        .getTeachers[
-                                                                            index]
-                                                                        .name
-                                                                        .toUpperCase(),
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: theme
-                                                                        .typography
-                                                                        .bodyLarge,
+                                                                  Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      Text(
+                                                                        studentController
+                                                                            .getTeachers[index]
+                                                                            .name
+                                                                            .toUpperCase(),
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style: theme
+                                                                            .typography
+                                                                            .bodyLarge,
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        height:
+                                                                            10,
+                                                                      ),
+                                                                      Text(
+                                                                        "${studentController.getTeachers[index].teacherClass.toUpperCase()} - ${studentController.getTeachers[index].section.toUpperCase()}",
+                                                                        textAlign:
+                                                                            TextAlign.center,
+                                                                        style: theme
+                                                                            .typography
+                                                                            .body,
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  Text(
-                                                                    "${studentController.getTeachers[index].teacherClass.toUpperCase()} - ${studentController.getTeachers[index].section.toUpperCase()}",
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
-                                                                    style: theme
-                                                                        .typography
-                                                                        .body,
+                                                                  Row(
+                                                                    children: [
+                                                                      IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          logger.d(studentController
+                                                                              .getTeachers[index]
+                                                                              .id);
+                                                                          showDialog(
+                                                                            context:
+                                                                                context,
+                                                                            builder: (context) =>
+                                                                                EditTeacher(
+                                                                              teacherId: studentController.getTeachers[index].id,
+                                                                              schoolId: studentController.getTeachers[index].currentSchool,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          FluentIcons
+                                                                              .edit,
+                                                                          color:
+                                                                              Colors.white,
+                                                                          size:
+                                                                              20,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          showDialog(
+                                                                              context: context,
+                                                                              builder: (context) {
+                                                                                return ConfirmDelete(
+                                                                                  type: "Teacher",
+                                                                                  name: studentController.getTeachers[index].name.toUpperCase(),
+                                                                                  deleteDialogueFunction: () {
+                                                                                    deleteSchoolTeacher(studentController.getTeachers[index].id);
+                                                                                  },
+                                                                                  deletePhoto: false,
+                                                                                );
+                                                                              });
+                                                                        },
+                                                                        icon:
+                                                                            const Icon(
+                                                                          FluentIcons
+                                                                              .delete,
+                                                                          color:
+                                                                              Color(0xffec404f),
+                                                                          size:
+                                                                              20,
+                                                                        ),
+                                                                      ),
+                                                                    ],
                                                                   ),
                                                                 ],
                                                               ),

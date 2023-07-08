@@ -46,9 +46,10 @@ class SchoolTile extends StatelessWidget {
                     return ConfirmDelete(
                       type: "School",
                       name: school.name.toUpperCase(),
-                      deleteFunction: () {
+                      deleteDialogueFunction: () {
                         _schoolController.deleteSchool(school.id);
                       },
+                      deletePhoto: false,
                     );
                   });
             },
