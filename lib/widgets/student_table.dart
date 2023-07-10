@@ -749,6 +749,23 @@ class MyData extends DataTableSource {
             fluent.Row(
               children: [
                 GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Container(
+                              child: Image.network(_data[index][value]),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
                   onDoubleTap: () async {
                     // Download the image to the computer in downloads section
 
@@ -782,10 +799,10 @@ class MyData extends DataTableSource {
                     }
                   },
                   child: fluent.Padding(
-                    padding: const EdgeInsets.all(4.0),
+                    padding: const EdgeInsets.all(1.0),
                     child: Image.network(
                       _data[index][value],
-                      height: 90,
+                      height: 120,
                     ),
                   ),
                 ),

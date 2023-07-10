@@ -60,10 +60,12 @@ class StudentController extends GetxController {
 
   set setLoading(bool value) => isLoading.value = value;
 
-  Future<List<String>> addStudents(String schoolId, String excelFile) async {
+  Future<List<String>> addStudents(
+      String schoolId, String excelFile, bool? updateOnly) async {
     try {
       isLoading(true);
-      return await _remoteServices.addStudentData(schoolId, excelFile);
+      return await _remoteServices.addStudentData(
+          schoolId, excelFile, updateOnly);
     } finally {
       await fetchStudents(schoolId);
       isLoading(false);

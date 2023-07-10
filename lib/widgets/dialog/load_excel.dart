@@ -29,6 +29,8 @@ class _LoadExcelState extends State<LoadExcel> {
   late StudentController studentController;
   late SchoolController schoolController;
 
+  bool updateOnly = false;
+
   @override
   void initState() {
     super.initState();
@@ -91,7 +93,7 @@ class _LoadExcelState extends State<LoadExcel> {
               Text(
                 "Problem with ${problemStudents.length} students",
               ),
-              SizedBox(
+              const SizedBox(
                 height: 8,
               ),
               const Text(
@@ -104,42 +106,44 @@ class _LoadExcelState extends State<LoadExcel> {
             scrollDirection: Axis.vertical,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: mat.DataTable(
-                columns: const [
-                  mat.DataColumn(label: Text("S.No")),
-                  mat.DataColumn(label: Text("Admno")),
-                  mat.DataColumn(label: Text("Name")),
-                  mat.DataColumn(label: Text("Contact")),
-                  mat.DataColumn(label: Text("Class")),
-                  mat.DataColumn(label: Text("Section")),
-                ],
-                rows: problemStudents.asMap().entries.map((entry) {
-                  final int index = entry.key;
-                  final String student = entry.value;
-                  final studentData = jsonDecode(student);
-                  return mat.DataRow(
-                    color: mat.MaterialStateProperty.resolveWith<Color?>(
-                      (Set<mat.MaterialState> states) {
-                        if (states.contains(mat.MaterialState.selected)) {
-                          return mat.Colors.blue[100];
-                        }
-                        if (index % 2 != 0) {
-                          return Color.fromARGB(107, 0, 0, 0);
-                        }
-                        return null;
-                      },
-                    ),
-                    cells: [
-                      mat.DataCell(Text((index + 1).toString())),
-                      mat.DataCell(Text(studentData["admno"])),
-                      mat.DataCell(Text(studentData["name"])),
-                      mat.DataCell(Text(studentData["contact"])),
-                      mat.DataCell(Text(studentData["class"])),
-                      mat.DataCell(Text(studentData["section"])),
-                    ],
-                  );
-                }).toList(),
-              ),
+              child: !updateOnly
+                  ? mat.DataTable(
+                      columns: const [
+                        mat.DataColumn(label: Text("S.No")),
+                        mat.DataColumn(label: Text("Admno")),
+                        mat.DataColumn(label: Text("Name")),
+                        mat.DataColumn(label: Text("Contact")),
+                        mat.DataColumn(label: Text("Class")),
+                        mat.DataColumn(label: Text("Section")),
+                      ],
+                      rows: problemStudents.asMap().entries.map((entry) {
+                        final int index = entry.key;
+                        final String student = entry.value;
+                        final studentData = jsonDecode(student);
+                        return mat.DataRow(
+                          color: mat.MaterialStateProperty.resolveWith<Color?>(
+                            (Set<mat.MaterialState> states) {
+                              if (states.contains(mat.MaterialState.selected)) {
+                                return mat.Colors.blue[100];
+                              }
+                              if (index % 2 != 0) {
+                                return const Color.fromARGB(107, 0, 0, 0);
+                              }
+                              return null;
+                            },
+                          ),
+                          cells: [
+                            mat.DataCell(Text((index + 1).toString())),
+                            mat.DataCell(Text(studentData["admno"])),
+                            mat.DataCell(Text(studentData["name"])),
+                            mat.DataCell(Text(studentData["contact"])),
+                            mat.DataCell(Text(studentData["class"])),
+                            mat.DataCell(Text(studentData["section"])),
+                          ],
+                        );
+                      }).toList(),
+                    )
+                  : Text(problemStudents.toList().toString()),
             ),
           ),
           actions: [
@@ -192,9 +196,7 @@ class _LoadExcelState extends State<LoadExcel> {
                         });
                         try {
                           problemStudents = await studentController.addStudents(
-                            widget.schoolId,
-                            _excelPath.text,
-                          );
+                              widget.schoolId, _excelPath.text, updateOnly);
                         } catch (e) {
                           showDialog(
                             context: context,
@@ -225,32 +227,66 @@ class _LoadExcelState extends State<LoadExcel> {
           child: const Text("CANCEL"),
         ),
       ],
-      content: Row(
-        children: [
-          Expanded(
-            child: TextBox(
-              controller: _excelPath,
-              placeholder: "Excel Path",
-              readOnly: true,
+      content: IntrinsicHeight(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextBox(
+                    controller: _excelPath,
+                    placeholder: "Excel Path",
+                    readOnly: true,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                isLoading
+                    ? Button(
+                        child: const Text(" Uploading"),
+                        onPressed: () {},
+                      )
+                    : Button(
+                        child: const Text("Upload Excel"),
+                        onPressed: () async {
+                          await uploadExcel();
+                        },
+                      ),
+              ],
             ),
-          ),
-          isLoading
-              ? Button(
-                  child: const Text(" Uploading"),
-                  onPressed: () {},
-                )
-              :
-
-              //  const Row(
-              //   mainAxisAlignment : MainAxisAlignment.center,
-              //   children:  [Expanded(child: mat.CircularProgressIndicator(),)],) :
-              Button(
-                  child: const Text("Upload Excel"),
-                  onPressed: () async {
-                    await uploadExcel();
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Checkbox(
+                  checked: updateOnly,
+                  onChanged: (value) {
+                    setState(() {
+                      updateOnly = value ?? false;
+                    });
                   },
                 ),
-        ],
+                const SizedBox(
+                  width: 10,
+                ),
+                const Expanded(
+                    child:
+                        Text("update only, column required in sheet 'admno'")),
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Expanded(
+              child: Text(
+                "* For normal update, column required are 'admno' 'name', 'contact', 'class' and 'section'",
+                style: TextStyle(fontSize: 13),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

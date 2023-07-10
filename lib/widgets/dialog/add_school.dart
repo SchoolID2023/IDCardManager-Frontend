@@ -65,34 +65,36 @@ class _AddSchoolState extends State<AddSchool> {
           },
         )
       ],
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          TextBox(
-            controller: _schoolName,
-            placeholder: "School Name",
-          ),
-          // TextBox(
-          //   controller: _schoolAddress,
-          //   placeholder: "School Address",
-          // ),
-          // TextBox(
-          //   controller: _schoolClasses,
-          //   placeholder: "Classes",
-          // ),
-          // TextBox(
-          //   controller: _schoolSections,
-          //   placeholder: "Sections",
-          // ),
-          // TextBox(
-          //   controller: _schoolContact,
-          //   placeholder: "Contact",
-          // ),
-          // TextBox(
-          //   controller: _schoolEmail,
-          //   placeholder: "Email",
-          // ),
-        ],
+      content: IntrinsicHeight(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextBox(
+              controller: _schoolName,
+              placeholder: "School Name",
+            ),
+            // TextBox(
+            //   controller: _schoolAddress,
+            //   placeholder: "School Address",
+            // ),
+            // TextBox(
+            //   controller: _schoolClasses,
+            //   placeholder: "Classes",
+            // ),
+            // TextBox(
+            //   controller: _schoolSections,
+            //   placeholder: "Sections",
+            // ),
+            // TextBox(
+            //   controller: _schoolContact,
+            //   placeholder: "Contact",
+            // ),
+            // TextBox(
+            //   controller: _schoolEmail,
+            //   placeholder: "Email",
+            // ),
+          ],
+        ),
       ),
     );
   }
