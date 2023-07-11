@@ -227,7 +227,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
       logger.d("Pixel Ratio -> $pixelRatio");
 
-      pngBytes = resizeImage(pngBytes);
+      pngBytes = await resizeImage(pngBytes);
       if (Platform.isMacOS) {
         path = '$path/';
         fileImage = pathFun.joinAll(fileImage.split('/'));
