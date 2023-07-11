@@ -1,11 +1,10 @@
- 
-import 'dart:io'; 
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/scheduler.dart';
 import 'package:image/image.dart' as IMG;
 
 import 'package:file_picker/file_picker.dart';
-import 'package:fluent_ui/fluent_ui.dart'; 
+import 'package:fluent_ui/fluent_ui.dart';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +14,8 @@ import 'package:idcard_maker_frontend/models/id_card_generation_model.dart';
 import 'package:idcard_maker_frontend/models/student_model.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:screenshot/screenshot.dart';
-import '../services/logger.dart'; 
+import '../services/logger.dart';
+import 'package:path/path.dart' as pathFun;
 
 class GenerateIdCardList extends StatefulWidget {
   final String idCardId;
@@ -97,7 +97,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
         .where((student) => widget.isSelected[student.id] == true)
         .length;
 
-       setState(() {
+    setState(() {
       _isLoading = false;
     });
   }
@@ -105,7 +105,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   Future<void> fetchIdCardGenerationModel() async {
     _idCardGenerationModel =
         await _remoteServices.getIdCardGenerationModel(widget.idCardId);
-   
   }
 
   String getValue(Student student, bool isPhoto, String field) {
@@ -151,43 +150,55 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   );
 
   Future<void> chooseOutputPath() async {
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output destination:',
-      fileName: "1",
-    );
-    outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    logger.d(outputFile);
+    String? outputFile;
+    String? outputPath;
+
+    if (Platform.isWindows) {
+      outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Please select an output destination:',
+        fileName: "1",
+      );
+      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
+    } else if (Platform.isMacOS) {
+      outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Please select an output destination:',
+        fileName: "1",
+      );
+      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("/") + 1);
+    }
+
+    logger.d('the output path is');
+    logger.d(outputPath);
 
     setState(() {
-      _outputPath.text = outputFile!;
+      _outputPath.text = outputPath!;
     });
 
     errorFile = File('${_outputPath.text}error.txt');
 
-    Directory destinationFolder = Directory('${outputFile}front');
+    Directory destinationFolder = Directory('${outputPath}front');
     if (await destinationFolder.exists()) {
-      
-        frontPath = destinationFolder.path;
-    } else {
-      
-      await destinationFolder.create(recursive: true);
-      // setState(()  {
       frontPath = destinationFolder.path;
-      // });
+    } else {
+      await destinationFolder.create(recursive: true);
+      frontPath = destinationFolder.path;
     }
 
-    destinationFolder = Directory('${outputFile}back');
+    setState(() {
+      frontPath = destinationFolder.path;
+    });
+
+    destinationFolder = Directory('${outputPath}back');
     if (await destinationFolder.exists()) {
-    
-      setState(() {
-        backPath = destinationFolder.path;
-      });
+      backPath = destinationFolder.path;
     } else {
       await destinationFolder.create(recursive: true);
-      // setState(() {
-        backPath = destinationFolder.path;
-      // });
+      backPath = destinationFolder.path;
     }
+
+    setState(() {
+      backPath = destinationFolder.path;
+    });
   }
 
   Uint8List resizeImage(Uint8List data) {
@@ -204,7 +215,10 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   }
 
   Future<void> captureScreenshot(
-      Widget idCard, String path, String fileImage) async {
+    Widget idCard,
+    String path,
+    String fileImage,
+  ) async {
     try {
       Uint8List pngBytes = await screenshotController.captureFromWidget(
         idCard,
@@ -214,9 +228,14 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
       logger.d("Pixel Ratio -> $pixelRatio");
 
       pngBytes = resizeImage(pngBytes);
+      if (Platform.isMacOS) {
+        path = '$path/';
+        fileImage = pathFun.joinAll(fileImage.split('/'));
+        fileImage = fileImage.replaceAll('/', '\\');
+      }
 
-      await File('$path\\$fileImage.jpeg').writeAsBytes(pngBytes);
-      logger.d("SS Png Captured --> $path\\$fileImage.jpeg");
+      await File('$path$fileImage.jpeg').writeAsBytes(pngBytes);
+      logger.d("SS Png Captured --> $path$fileImage.jpeg");
     } catch (e) {
       logger.e("Error capturing screenshot: $e");
 
@@ -569,7 +588,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                         imageIndex++;
                                         currentCount++;
                                       });
-                                      
                                     } catch (e) {
                                       logger.e(
                                           "ID Card Gen Error ${student.name} --> $e");
@@ -585,7 +603,6 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                               await _remoteServices
                                   .attachIDCard(_idCardAttachModel);
 
-                             
                               SchedulerBinding.instance!
                                   .addPostFrameCallback((_) {
                                 setState(() {
