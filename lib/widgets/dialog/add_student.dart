@@ -29,14 +29,14 @@ class _AddStudentState extends State<AddStudent> {
     studentController = Get.put(StudentController(widget.currentSchool));
     studentDetails["currentSchool"] = widget.currentSchool;
 
-    () async {
-      await studentController.fetchSchool(widget.currentSchool);
-      schoolData = studentController.school.value;
-      setState(() {
-        classOptions = schoolData.classes;
-        sectionOptions = schoolData.sections;
-      });
-    }();
+    // () async {
+    // await studentController.fetchSchool(widget.currentSchool);
+    schoolData = studentController.school.value;
+    setState(() {
+      classOptions = schoolData.classes;
+      sectionOptions = schoolData.sections;
+    });
+    // }();
   }
 
   @override
@@ -113,8 +113,8 @@ class _AddStudentState extends State<AddStudent> {
                 const SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: () {
-                    studentController.addStudent(studentDetails);
                     Navigator.of(context).pop(studentDetails);
+                    studentController.addStudent(studentDetails);
                   },
                   child: const Text("Add Student"),
                 ),

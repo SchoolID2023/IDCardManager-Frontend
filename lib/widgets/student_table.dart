@@ -244,6 +244,7 @@ class _StudentTableState extends State<StudentTable> {
       deleteStudent,
       deleteStudentPhoto,
       widget.schoolId,
+      widget.labels,
     );
     return fluent.Column(
       children: [
@@ -524,6 +525,7 @@ class MyData extends DataTableSource {
   final String sectionFilter;
   final String schoolId;
   String outputFile = '';
+  final List<String> labels;
 
   String noPhoto =
       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png';
@@ -547,7 +549,8 @@ class MyData extends DataTableSource {
       this.sectionFilter,
       this.deleteFunction,
       this.deleteStudentPhotoFunction,
-      this.schoolId) {
+      this.schoolId,
+      this.labels) {
     bool ifFilter(Student student) {
       bool value = false;
       if (filterField == "") {
@@ -849,6 +852,7 @@ class MyData extends DataTableSource {
                     builder: (context) => EditStudent(
                       studentId: _data[index].last,
                       schoolId: schoolId,
+                      labels: labels,
                     ),
                   );
                 },

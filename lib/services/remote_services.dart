@@ -673,7 +673,7 @@ class RemoteServices {
     }
   }
 
-  Future<void> addStudent(Map<String, String> data) async {
+  Future<void> addStudent(Map<String, String?> data) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 

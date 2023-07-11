@@ -5,10 +5,18 @@ import '../../models/schools_model.dart';
 import '../../models/student_model.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/logger.dart';
+
 class EditStudent extends StatefulWidget {
   final String studentId;
   final String schoolId;
-  const EditStudent({Key? key, required this.studentId, required this.schoolId})
+
+  final List<String> labels;
+  const EditStudent(
+      {Key? key,
+      required this.studentId,
+      required this.schoolId,
+      required this.labels})
       : super(key: key);
 
   @override
@@ -41,15 +49,16 @@ class _EditStudentState extends State<EditStudent> {
 
     student = _studentController.getStudentById(widget.studentId);
     editingStudent = Student.fromJson(student.toJson());
-    () async {
-      await _studentController.fetchSchool(widget.schoolId);
-      schoolData = _studentController.school.value;
-      setState(() {
-        classOptions = schoolData.classes;
-        sectionOptions = schoolData.sections;
-        isLoading = false;
-      });
-    }();
+    // () async {
+    // await _studentController.fetchSchool(widget.schoolId);
+    schoolData = _studentController.school.value;
+    setState(() {
+      classOptions = schoolData.classes;
+      sectionOptions = schoolData.sections;
+      isLoading = false;
+    });
+
+    // }();
   }
 
   @override
@@ -78,8 +87,8 @@ class _EditStudentState extends State<EditStudent> {
                         ? const Center(child: CircularProgressIndicator())
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: editingStudent.data.length + 5,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: widget.labels.length + 5,
                             itemBuilder: (context, index) {
                               if (index == 0) {
                                 return buildTextBox(
@@ -131,19 +140,57 @@ class _EditStudentState extends State<EditStudent> {
                                 );
                               } else {
                                 final dataIndex = index - 5;
-                                final data = editingStudent.data[dataIndex];
-                                if (ignoredPlaceholders.contains(data.field)) {
-                                  return const SizedBox.shrink();
+                                if (editingStudent.data.isNotEmpty &&
+                                    dataIndex < editingStudent.data.length) {
+                                  final data = editingStudent.data[dataIndex];
+                                  final dataIndexFound = widget.labels
+                                      .indexWhere(
+                                          (label) => label == data.field);
+
+                                  if (dataIndexFound != -1 &&
+                                      !ignoredPlaceholders.contains(
+                                          widget.labels[dataIndexFound])) {
+                                    final value = data.value.toString();
+                                    final labelName =
+                                        editingStudent.data[dataIndex].field;
+                                    if (labelName.isEmpty) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    return buildTextBox(
+                                      labelName,
+                                      value,
+                                      (newValue) {
+                                        editingStudent.data[dataIndex].value =
+                                            newValue;
+                                      },
+                                    );
+                                  }
+                                } else {
+                                  final extraIndex = dataIndex;
+                                  if (extraIndex >= 0 &&
+                                      extraIndex < widget.labels.length) {
+                                    final label = widget.labels[extraIndex];
+                                    if (!ignoredPlaceholders.contains(label) &&
+                                        ![
+                                          "name",
+                                          "contact",
+                                          "class",
+                                          "section",
+                                          "admno"
+                                        ].contains(label)) {
+                                      return buildTextBox(
+                                        label,
+                                        '',
+                                        (newValue) {
+                                          editingStudent.data.add(Datum(
+                                              field: label, value: newValue));
+                                        },
+                                      );
+                                    }
+                                  }
                                 }
-                                return buildTextBox(
-                                  data.field,
-                                  data.value.toString(),
-                                  (value) {
-                                    editingStudent.data[dataIndex].value =
-                                        value;
-                                  },
-                                );
                               }
+                              return const SizedBox.shrink();
                             },
                           ),
                     const SizedBox(height: 16.0),
@@ -186,22 +233,19 @@ class _EditStudentState extends State<EditStudent> {
     void Function(String?)? onChanged,
     List<String> options,
   ) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10),
-      child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          labelText: placeholder,
-        ),
-        dropdownColor: Theme.of(context).cardColor,
-        value: value,
-        onChanged: onChanged,
-        items: options.map((String option) {
-          return DropdownMenuItem<String>(
-            value: option,
-            child: Text(option),
-          );
-        }).toList(),
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: placeholder,
       ),
+      dropdownColor: Theme.of(context).cardColor,
+      value: value,
+      onChanged: onChanged,
+      items: options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
     );
   }
 

@@ -41,6 +41,7 @@ class StudentDialog extends StatelessWidget {
                 builder: (context) => EditStudent(
                       schoolId: student.currentSchool,
                       studentId: student.id,
+                      labels: [],
                     ));
           },
         ),

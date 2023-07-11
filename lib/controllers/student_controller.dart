@@ -72,13 +72,26 @@ class StudentController extends GetxController {
     }
   }
 
-  void addStudent(Map<String, String> studentData) async {
+  void addStudent(Map<String, String?> studentData) async {
     try {
       isLoading(true);
       await _remoteServices.addStudent(studentData);
+      schoolId = studentData['currentSchool']!;
     } finally {
       fetchStudents(schoolId);
       isLoading(false);
+    }
+  }
+
+  void editStudent(Student student) async {
+    try {
+      students.value.students
+          .removeWhere((element) => element.id == student.id);
+      students.value.students.add(student);
+      await _remoteServices.editStudent(student);
+      fetchStudents(student.currentSchool);
+    } catch (e) {
+      logger.d("Edit Student Error:- $e");
     }
   }
 
@@ -172,18 +185,6 @@ class StudentController extends GetxController {
       logger.d("Teachers Fetched");
     } finally {
       // isLoading(false);
-    }
-  }
-
-  void editStudent(Student student) async {
-    try {
-      students.value.students
-          .removeWhere((element) => element.id == student.id);
-      students.value.students.add(student);
-      await _remoteServices.editStudent(student);
-      fetchStudents(student.currentSchool);
-    } catch (e) {
-      logger.d("Edit Student Error:- $e");
     }
   }
 

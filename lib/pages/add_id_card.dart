@@ -125,7 +125,6 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
     "username",
   };
 
-  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _fontSizeController = TextEditingController();
   final TextEditingController _widthController = TextEditingController();
   final TextEditingController _heightController = TextEditingController();
@@ -203,9 +202,7 @@ class _AddIdCardPageState extends State<AddIdCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    double cwidth = MediaQuery.of(context).size.width;
-    double cheight = MediaQuery.of(context).size.height;
-    ThemeData theme = FluentTheme.of(context);
+    FluentThemeData theme = FluentTheme.of(context);
 
     return NavigationView(
       // appBar: NavigationAppBar(
