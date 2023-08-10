@@ -7,8 +7,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
-
-import '../controllers/student_controller.dart';
+import 'package:path_provider/path_provider.dart';
 
 class LoadPhotos extends StatefulWidget {
   final String schoolId;
@@ -30,6 +29,60 @@ class _LoadPhotosState extends State<LoadPhotos> {
   int totalFiles = 1;
   bool uploadForAll = false;
   bool isLoading = false;
+  bool shouldContinueAsyncFunction = true;
+
+  void stopAsyncFunction() {
+    setState(() {
+      shouldContinueAsyncFunction = false;
+    });
+  }
+
+  // Future<void> uploadPhotos() async {
+  //   var nav = Navigator.of(context);
+  //   final result = await FilePicker.platform.pickFiles(
+  //     allowMultiple: !uploadForAll,
+  //   );
+
+  //   var file = result?.files.first;
+
+  //   // int batchCounter = 0;
+
+  //   String outputPath =
+  //       "${file!.path.toString().substring(0, file.path.toString().lastIndexOf("\\") + 1)}file.zip";
+  //   setState(() {
+  //     totalFiles = result!.files.length;
+  //   });
+
+  //   var encoder = ZipFileEncoder();
+  //   while (shouldContinueAsyncFunction) {
+  //     for (int counter = 0; counter < result!.files.length;) {
+  //       if (counter % 10 == 0) {
+  //         encoder.create(outputPath);
+  //         for (int i = counter; i < min(counter + 10, totalFiles); i++) {
+  //           await encoder.addFile(File(result.files[i].path.toString()));
+  //         }
+  //         encoder.close();
+
+  //         await _remoteServices.uploadStudentPhotos(
+  //           photoColumns,
+  //           outputPath,
+  //           widget.schoolId,
+  //           uploadForAll,
+  //         );
+
+  //         setState(() {
+  //           counter = min(counter + 10, totalFiles);
+
+  //           uploadedFiles = counter;
+  //           logger.d("Uploaded $counter files");
+  //           logger.d("Value = ${(uploadedFiles / totalFiles) * 100}");
+  //         });
+  //         await File(outputPath).delete();
+  //       }
+  //     }
+  //     nav.pop(true);
+  //   }
+  // }
 
   Future<void> uploadPhotos() async {
     var nav = Navigator.of(context);
@@ -37,45 +90,37 @@ class _LoadPhotosState extends State<LoadPhotos> {
       allowMultiple: !uploadForAll,
     );
 
-    var encoder = ZipFileEncoder();
-
-    var file = result?.files.first;
-
-    // int batchCounter = 0;
-
-    String outputPath =
-        "${file!.path.toString().substring(0, file.path.toString().lastIndexOf("\\") + 1)}file.zip";
+    String outputPath = "${(await getTemporaryDirectory()).path}/file.zip";
     setState(() {
       totalFiles = result!.files.length;
     });
 
-    for (int counter = 0; counter < result!.files.length;) {
-      if (counter % 10 == 0) {
-        encoder.create(outputPath);
-        for (int i = counter; i < min(counter + 10, totalFiles); i++) {
-          await encoder.addFile(File(result.files[i].path.toString()));
-        }
-        encoder.close();
-
-        await _remoteServices.uploadStudentPhotos(
-          photoColumns,
-          outputPath,
-          widget.schoolId,
-          uploadForAll,
-        );
-
-        setState(() {
-          counter = min(counter + 10, totalFiles);
-
-          uploadedFiles = counter;
-          logger.d("Uploaded $counter files");
-          logger.d("Value = ${(uploadedFiles / totalFiles) * 100}");
-        });
-        await File(outputPath).delete();
-      }
+    var encoder = ZipFileEncoder();
+    encoder.create(outputPath);
+    for (int i = 0; i < result!.files.length; i++) {
+      await encoder.addFile(File(result.files[i].path.toString()));
     }
+    encoder.close();
 
-    nav.pop();
+    print(
+        'the length for which the function will run is ${result.files.length}');
+    print(photoColumns.toList().toString());
+    try {
+      await _remoteServices.uploadStudentPhotos(
+        photoColumns,
+        outputPath,
+        widget.schoolId,
+        uploadForAll,
+      );
+    } catch (e) {
+      // Handle upload error if needed
+    } finally {
+      await File(outputPath).delete();
+      setState(() {
+        shouldContinueAsyncFunction = false;
+      });
+      nav.pop(true);
+    }
   }
 
   @override
@@ -85,7 +130,15 @@ class _LoadPhotosState extends State<LoadPhotos> {
       actions: [
         Button(
             child: const Text("CANCEL"),
-            onPressed: () => Navigator.pop(context)),
+            onPressed: () {
+              if (!isLoading) {
+                Navigator.of(context).pop();
+              }
+              stopAsyncFunction();
+              setState(() {
+                isLoading = false;
+              });
+            }),
       ],
       content: SizedBox(
         width: 500,
@@ -109,7 +162,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                         child: DropDownButton(
                           title: photoColumns.isNotEmpty
                               ? Text(photoColumns.join(", "))
-                              : Text("Select Columns"),
+                              : const Text("Select Columns"),
                           items: List<MenuFlyoutItemBase>.generate(
                             widget.fields.length,
                             (index) => MenuFlyoutItem(
@@ -149,6 +202,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                           onPressed: () async {
                             try {
                               setState(() {
+                                shouldContinueAsyncFunction = true;
                                 isLoading = true;
                               });
                               await uploadPhotos();
