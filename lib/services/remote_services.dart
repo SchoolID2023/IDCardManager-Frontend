@@ -22,9 +22,9 @@ class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  // final String baseUrl = 'http://13.232.50.132:3000';
+  final String baseUrl = 'http://13.232.50.132:3000';
 
-  final String baseUrl = 'http://192.168.0.101:3000';
+  // final String baseUrl = 'http://192.168.0.101:3000';
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {
