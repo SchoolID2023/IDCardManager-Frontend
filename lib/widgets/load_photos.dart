@@ -29,6 +29,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
   int uploadedFiles = 0;
   int totalFiles = 1;
   bool uploadForAll = false;
+  bool isLoading = false;
 
   Future<void> uploadPhotos() async {
     var nav = Navigator.of(context);
@@ -71,14 +72,11 @@ class _LoadPhotosState extends State<LoadPhotos> {
           logger.d("Value = ${(uploadedFiles / totalFiles) * 100}");
         });
         await File(outputPath).delete();
-
-        }
+      }
     }
 
     nav.pop();
   }
-
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +107,9 @@ class _LoadPhotosState extends State<LoadPhotos> {
                     children: [
                       Expanded(
                         child: DropDownButton(
-                          title: photoColumns.length > 0 ? Text(photoColumns.join(", ")) :  Text("Select Columns"),
+                          title: photoColumns.isNotEmpty
+                              ? Text(photoColumns.join(", "))
+                              : Text("Select Columns"),
                           items: List<MenuFlyoutItemBase>.generate(
                             widget.fields.length,
                             (index) => MenuFlyoutItem(
@@ -175,9 +175,7 @@ class _LoadPhotosState extends State<LoadPhotos> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 12),
-                  
                   Row(
                     children: [
                       Checkbox(
@@ -191,7 +189,6 @@ class _LoadPhotosState extends State<LoadPhotos> {
                       const Text("  Upload dummy image for all"),
                     ],
                   ),
-
                 ],
               ),
       ),

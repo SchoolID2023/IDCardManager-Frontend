@@ -84,7 +84,9 @@ class _EditStudentState extends State<EditStudent> {
                 child: Column(
                   children: [
                     isLoading
-                        ? const Center(child: CircularProgressIndicator())
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
                         : ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

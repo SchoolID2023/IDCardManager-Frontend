@@ -7,16 +7,13 @@ import '../services/logger.dart';
 class SchoolController extends GetxController {
   final RemoteServices _remoteServices = RemoteServices();
   var isLoading = true.obs;
-  // var isError = false.obs;
-  var schools =
-      SchoolsModel(success: false, message: "Schools List", schools: []).obs;
+  var schools = SchoolsModel(
+    success: false,
+    message: "Schools List",
+    schools: [],
+  ).obs;
 
   var superAdmins = <SuperAdmin>[].obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 
   List<School> get getSchools => schools.value.schools;
   List<SuperAdmin> get getSuperAdmins => superAdmins.value;
