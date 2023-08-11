@@ -761,9 +761,7 @@ class MyData extends DataTableSource {
                             onTap: () {
                               Navigator.of(context).pop();
                             },
-                            child: Container(
-                              child: Image.network(_data[index][value]),
-                            ),
+                            child: Image.network(_data[index][value]),
                           ),
                         );
                       },

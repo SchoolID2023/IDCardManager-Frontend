@@ -866,6 +866,7 @@ class RemoteServices {
         throw Exception(response.data);
       }
     } on DioException catch (e) {
+      logger.d('some error occur');
       logger.d(e.response);
     } catch (e) {
       logger.d("Error----->");
