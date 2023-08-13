@@ -59,6 +59,7 @@ dependencies:
   data_table_2: ^2.3.8
   image: ^4.0.17
   carousel_slider: ^4.2.1
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:

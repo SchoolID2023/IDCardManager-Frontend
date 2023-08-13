@@ -23,12 +23,22 @@ class _AddStudentState extends State<AddStudent> {
   List<String> sectionOptions = [];
   late School schoolData;
 
+  final Set<String> _rejectedLabels = {
+    "_id",
+    "id",
+    "otp",
+    "currentSchool",
+    "__v",
+    "idCard",
+    "createdat",
+    "updatedat",
+  };
+
   @override
   void initState() {
     super.initState();
     studentController = Get.put(StudentController(widget.currentSchool));
     studentDetails["currentSchool"] = widget.currentSchool;
-
     // () async {
     // await studentController.fetchSchool(widget.currentSchool);
     schoolData = studentController.school.value;
@@ -62,10 +72,10 @@ class _AddStudentState extends State<AddStudent> {
                       widget.labels[index].toUpperCase(),
                       studentDetails[widget.labels[index]],
                       (value) {
-                        setState(() {
-                          studentDetails[widget.labels[index]] =
-                              value!.isNotEmpty ? value : '';
-                        });
+                        // setState(() {
+                        studentDetails[widget.labels[index]] =
+                            value!.isNotEmpty ? value : '';
+                        // });
                       },
                       classOptions,
                     );
@@ -75,18 +85,24 @@ class _AddStudentState extends State<AddStudent> {
                       widget.labels[index].toUpperCase(),
                       studentDetails[widget.labels[index]],
                       (value) {
-                        setState(() {
-                          studentDetails[widget.labels[index]] =
-                              value!.isNotEmpty ? value : '';
-                        });
+                        // setState(() {
+                        studentDetails[widget.labels[index]] =
+                            value!.isNotEmpty ? value : '';
+                        // });
                       },
                       sectionOptions,
                     );
                   }
+
+                  if (_rejectedLabels
+                      .contains(widget.labels[index].toLowerCase())) {
+                    return const SizedBox.shrink();
+                  }
+                  studentDetails[widget.labels[index]] = '';
                   return buildTextField(
                     widget.labels[index].toUpperCase(),
                     studentDetails[widget.labels[index]] == null
-                        ? ''
+                        ? ' '
                         : studentDetails[widget.labels[index]].toString(),
                     (value) {
                       studentDetails[widget.labels[index]] = value;
@@ -164,6 +180,7 @@ class _AddStudentState extends State<AddStudent> {
         decoration: InputDecoration(
           labelText: placeholder,
         ),
+        key: UniqueKey(),
         controller: textEditingController,
         onChanged: onChanged,
         autofocus: false,

@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idcard_maker_frontend/constants/database_const.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
@@ -791,13 +792,7 @@ class MyData extends DataTableSource {
                       );
                     } on DioException catch (e) {
                       print(e.message);
-                    } finally {
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(
-                      //     content: Text("Image Downloaded in Downloads Folder"),
-                      //   ),
-                      // );
-                    }
+                    } finally {}
                   },
                   child: fluent.Padding(
                     padding: const EdgeInsets.all(1.0),
@@ -810,8 +805,7 @@ class MyData extends DataTableSource {
                 const SizedBox(
                   width: 10,
                 ),
-                !_data[index][value].contains(
-                        "https://idcardmaker1.s3.ap-south-1.amazonaws.com/")
+                !_data[index][value].contains(DBConstants.photoURLInclude)
                     ? const SizedBox.shrink()
                     : IconButton(
                         onPressed: () {

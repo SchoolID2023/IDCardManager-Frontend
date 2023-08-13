@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
+import 'package:idcard_maker_frontend/constants/database_const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
@@ -22,9 +23,9 @@ class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  final String baseUrl = 'http://13.232.50.132:3000';
+  final String baseUrl = DBConstants.baseURL;
 
-  // final String baseUrl = 'http://192.168.0.101:3000';
+  // final String baseUrl = DBConstants.localBaseURL;
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {

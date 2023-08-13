@@ -1,22 +1,17 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:idcard_maker_frontend/controllers/student_controller.dart';
 import 'package:idcard_maker_frontend/services/remote_services.dart';
-
-import '../../models/photos_list_model.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../services/logger.dart';
+import 'package:open_file/open_file.dart';
 
 class DownloadPhotosDialog extends StatefulWidget {
   final String schoolId;
-  
+
   final List<String>? fields;
-  const DownloadPhotosDialog({super.key, required this.schoolId,  this.fields});
+  const DownloadPhotosDialog({super.key, required this.schoolId, this.fields});
 
   @override
   State<DownloadPhotosDialog> createState() => _DownloadPhotosDialogState();
@@ -27,59 +22,42 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
   String selectedPath = "";
 
   Future<void> chooseOutputPath() async {
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output destination:',
-      fileName: "1",
-    );
-    outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    logger.d(outputFile);
-
-    Directory destinationFolder =
-        Directory('${outputFile}$schoolName\\$selectedLabel');
-    if (await destinationFolder.exists()) {
-      selectedPath = destinationFolder.path;
-    } else {
-      await destinationFolder.create(recursive: true);
-      selectedPath = destinationFolder.path;
-    }
-
-    downloadAndSavePhotos().then((value) {
+    downloadAndSavePhotos(selectedLabel).then((value) {
       Navigator.of(context).pop();
     });
   }
 
-  Future<void> downloadAndSavePhotos() async {
-    toSaveLabelName = toSaveLabelName.isEmpty ? selectedLabel : toSaveLabelName ;
-    final photosList = await RemoteServices().downloadPhotos(
-      widget.schoolId,
-      selectedClass,
-      selectedSection,
-      selectedLabel,
-      toSaveLabelName
-    );
+  Future<void> downloadAndSavePhotos(String selectedLabel) async {
+    String toSaveLabelName = selectedLabel;
+    final photosList = await RemoteServices().downloadPhotos(widget.schoolId,
+        selectedClass, selectedSection, selectedLabel, toSaveLabelName);
     final classes = photosList.classes;
+
+    String downloadsDirectory = (await getDownloadsDirectory())!.path;
 
     for (int i = 0; i < classes.length; i++) {
       for (int j = 0; j < classes[i].sections.length; j++) {
         for (int k = 0; k < classes[i].sections[j].photos.length; k++) {
-          final photo = classes[i].sections[j].photos[k]; 
-          String savename = photo.name;
+          final photoData = classes[i].sections[j].photos[k];
+          String savename = photoData.name;
           String savePath =
-              "$selectedPath/${classes[i].name}/${classes[i].sections[j].name}/$savename";
+              "$downloadsDirectory/$schoolName/$selectedLabel/${classes[i].name}/${classes[i].sections[j].name}/$savename";
+
           logger.i(savePath);
+
           try {
-            await Dio().download(photo.url, savePath,
-                onReceiveProgress: (received, total) {
-              if (total != -1) {
-                // print((receiv`ed / total * 100).toStringAsFixed(0) + "%");
-              }
-            });
+            await Dio().download(
+              photoData.url,
+              savePath,
+            );
           } catch (e) {
             logger.i(e);
           }
         }
       }
     }
+
+    await OpenFile.open(downloadsDirectory);
   }
 
   late StudentController studentController;
@@ -132,7 +110,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
                                 });
                               }))
                           .toList(),
-                      title: Text("${selectedClass} Class"),
+                      title: Text("$selectedClass Class"),
                     ),
                     const SizedBox(width: 10),
                     DropDownButton(
@@ -145,7 +123,7 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
                                 });
                               }))
                           .toList(),
-                      title: Text("${selectedSection} Section"),
+                      title: Text("$selectedSection Section"),
                     ),
                   ],
                 ),
@@ -166,7 +144,8 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
                     ),
                     const SizedBox(width: 10),
                     DropDownButton(
-                      items: widget.fields!.map(
+                      items: widget.fields!
+                          .map(
                             (e) => MenuFlyoutItem(
                               text: Text(e),
                               onPressed: () {
@@ -185,7 +164,6 @@ class _DownloadPhotosDialogState extends State<DownloadPhotosDialog> {
                 ),
               ],
             ),
-
       actions: [
         Button(
           onPressed: () {
