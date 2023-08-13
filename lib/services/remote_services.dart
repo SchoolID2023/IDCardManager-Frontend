@@ -23,9 +23,9 @@ class RemoteServices {
   static var client = http.Client();
   Dio dio = Dio();
 
-  final String baseUrl = DBConstants.baseURL;
+  // final String baseUrl = DBConstants.baseURL;
 
-  // final String baseUrl = DBConstants.localBaseURL;
+  final String baseUrl = DBConstants.baseURL;
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {

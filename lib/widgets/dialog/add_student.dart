@@ -98,11 +98,10 @@ class _AddStudentState extends State<AddStudent> {
                       .contains(widget.labels[index].toLowerCase())) {
                     return const SizedBox.shrink();
                   }
-                  studentDetails[widget.labels[index]] = '';
                   return buildTextField(
                     widget.labels[index].toUpperCase(),
                     studentDetails[widget.labels[index]] == null
-                        ? ' '
+                        ? ''
                         : studentDetails[widget.labels[index]].toString(),
                     (value) {
                       studentDetails[widget.labels[index]] = value;
