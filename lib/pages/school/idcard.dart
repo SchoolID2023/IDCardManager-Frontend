@@ -50,7 +50,7 @@ class _IdCardState extends State<IdCard> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         Text(
-                          "Your ID Cards",
+                          "ID Cards",
                           style: theme.typography.title,
                         ),
                         IconButton(

@@ -6,7 +6,6 @@ import 'package:idcard_maker_frontend/pages/school/students.dart';
 import 'package:idcard_maker_frontend/services/logger.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/add_student.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../services/remote_services.dart';
 import '../widgets/dialog/download_photos.dart';
 import '../widgets/dialog/load_excel.dart';
@@ -44,7 +43,6 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
       studentController.setRole(widget.role);
       await studentController.fetchSchoolLabels(widget.schoolId);
       await studentController.fetchSchool(widget.schoolId);
-      // await adminController.fetchAdmins(widget.schoolId);
       await studentController.fetchAdmins(widget.schoolId);
       await studentController.fetchTeachers(widget.schoolId);
       await studentController.fetchStudents(widget.schoolId);
@@ -63,9 +61,13 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.remove('token').then((value) => Navigator.of(context)
+                  prefs.remove('token').then((value) { 
+                    
+                    prefs.clear();
+                   return  Navigator.of(context)
                       .push(FluentPageRoute(
-                          builder: (context) => const LoginPage())));
+                          builder: (context) => const LoginPage()));
+                });
                 },
               ),
             ],
@@ -91,6 +93,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
         appBar: customNavigationAppBar(
           studentController.getSchool.name.toUpperCase(),
           context,
+          isHomePage:!(studentController.role.value == 0),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -171,12 +174,14 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.remove('token').then(
-                        (value) => Navigator.of(context).pushReplacement(
+                       prefs.remove('token').then(
+                        (value) { 
+                            prefs.clear();
+                          return Navigator.of(context).pushReplacement(
                           FluentPageRoute(
                             builder: (context) => const LoginPage(),
                           ),
-                        ),
+                        );}
                       );
                 },
               ),

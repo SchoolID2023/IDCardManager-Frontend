@@ -5,8 +5,6 @@ import 'package:image/image.dart' as IMG;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:idcard_maker_frontend/models/id_card_attach_model.dart';
@@ -34,7 +32,7 @@ class GenerateIdCardList extends StatefulWidget {
 }
 
 class _GenerateIdCardListState extends State<GenerateIdCardList> {
-  late IdCardGenerationModel _idCardGenerationModel;
+   late IdCardGenerationModel _idCardGenerationModel;
   final TextEditingController _outputPath = TextEditingController();
   final TextEditingController _dpi = TextEditingController();
   ScreenshotController screenshotController = ScreenshotController();
@@ -65,7 +63,194 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
   List<String> errorList = [];
   double pixelRatio = 1.0;
 
-  @override
+
+  Future<void> fetchIdCardGenerationModel() async {
+    
+    if (isStop) {
+      return;
+    }
+    _idCardGenerationModel =
+        await _remoteServices.getIdCardGenerationModel(widget.idCardId);
+  }
+
+ String getValue(Student student, bool isPhoto, String field) {
+    if (isStop) {
+      return '';
+    }
+    field = field.toLowerCase();
+
+    String value = "";
+
+    logger.d("<---Field --> $field $isPhoto <---${student.name}--->");
+
+    if (isPhoto) {
+      final photo = student.photo.firstWhere(
+        (element) => element.field == field,
+        orElse: () => Photo(field: field, value: "NullValue"),
+      );
+      value = 'http${photo.value.substring(5)}';
+    } else {
+      switch (field) {
+        case "name":
+          value = student.name;
+          break;
+        case "contact":
+          value = student.contact;
+          break;
+        case "class":
+          value = student.studentClass;
+          break;
+        case "section":
+          value = student.section;
+          break;
+        case "admno":
+          value = student.admno;
+          break;
+        default:
+          final dataField = student.data.firstWhere(
+            (element) => element.field == field,
+            orElse: () => Datum(field: '', value: ''),
+          ); 
+          value = dataField.value.toString();
+          break;
+      }
+    }
+
+    logger.d("Value--> $value");
+    return value;
+  }
+
+
+  Widget frontWidget = const SizedBox(
+    height: 1.0,
+  );
+
+  Future<void> chooseOutputPath() async {
+    String? outputFile;
+    String? outputPath;
+    if (isStop) {
+      return ;
+    }
+
+    if (Platform.isWindows) {
+      outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Please select an output destination:',
+        fileName: "1",
+      );
+      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
+    } else if (Platform.isMacOS) {
+      outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Please select an output destination:',
+        fileName: "1",
+      );
+      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("/") + 1);
+    }
+
+    setState(() {
+      _outputPath.text = outputPath!;
+    });
+
+    errorFile = File('${_outputPath.text}error.txt');
+
+    Directory destinationFolder = Directory('${outputPath}front');
+    logger.d(destinationFolder.toString());
+    if (await destinationFolder.exists()) {
+      frontPath = destinationFolder.path;
+    } else {
+      await destinationFolder.create(recursive: true);
+      frontPath = destinationFolder.path;
+    }
+
+    setState(() {
+      frontPath = destinationFolder.path;
+    });
+    logger.d('the output path is ---->  $frontPath');
+
+    destinationFolder = Directory('${outputPath}back');
+    if (await destinationFolder.exists()) {
+      backPath = destinationFolder.path;
+    } else {
+      await destinationFolder.create(recursive: true);
+      backPath = destinationFolder.path;
+    }
+
+    setState(() {
+      backPath = backPath;
+    });
+    logger.d('the output path is ---->  $backPath');
+  }
+
+  Uint8List resizeImage(Uint8List data) {
+    print('inside the resizeImage');
+    
+    if (isStop) {
+      return data;
+    }
+    Uint8List? resizedData = data;
+    IMG.Image? img = IMG.decodeImage(data);
+    IMG.Image resized = IMG.copyResize(
+      img!,
+      width: img.width * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
+      height: img.height * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
+    );
+    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
+    return resizedData;
+  }
+
+  Future<void> captureScreenshot(
+    Widget idCard,
+    String path,
+    String fileImage,
+  ) async {
+    try {
+      if(isStop) {
+        return;
+      }
+        Uint8List pngBytes = await screenshotController.captureFromWidget(
+          idCard,
+          pixelRatio: 10,
+        );
+
+        logger.d("Pixel Ratio -> $pixelRatio");
+
+        pngBytes = resizeImage(pngBytes);
+        path = '$path/';
+        if (Platform.isMacOS) {
+          path = '$path/';
+          fileImage = pathFun.joinAll(fileImage.split('/'));
+          fileImage = fileImage.replaceAll('/', '\\');
+        }
+        await File('$path$fileImage.jpeg').writeAsBytes(pngBytes);
+        logger.d("SS Png Captured --> $path$fileImage.jpeg");
+      
+    } catch (e) {
+      logger.e("Error capturing screenshot: $e");
+
+      logger.e("ID Card Gen Error $fileImage --> $e");
+      errors += "ID Card Gen Error $fileImage\n";
+      errorList.add("ID Card Gen Error $fileImage: $e");
+    }
+  }
+
+  List<List<T>> splitList<T>(List<T> list, int batchSize) {
+    final result = <List<T>>[];
+    final length = list.length;
+    if (isStop) {
+      return result;
+    }
+
+    for (var i = 0; i < length; i += batchSize) {
+      if(isStop) {
+        return result;
+      }
+      final end = (i + batchSize < length) ? i + batchSize : length;
+      result.add(list.sublist(i, end));
+    }
+
+    return result;
+  }
+
+ @override
   void initState() {
     super.initState();
     setState(() {
@@ -91,171 +276,17 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
             .asUint8List(tempImage.offsetInBytes, tempImage.lengthInBytes);
         backgroundImageBytes = audioUint8List.cast<int>();
       }
+
+      totalCount = widget.students
+          .where((student) => widget.isSelected[student.id] == true)
+          .length;
+
+      setState(() {
+        _isLoading = false;
+      });
     }();
-
-    totalCount = widget.students
-        .where((student) => widget.isSelected[student.id] == true)
-        .length;
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
-  Future<void> fetchIdCardGenerationModel() async {
-    _idCardGenerationModel =
-        await _remoteServices.getIdCardGenerationModel(widget.idCardId);
-  }
-
-  String getValue(Student student, bool isPhoto, String field) {
-    field = field.toLowerCase();
-
-    String value = "";
-
-    logger.d("<---Field --> $field $isPhoto <---${student.name}--->");
-    if (isPhoto) {
-      value = student.photo
-          .firstWhere(
-            (element) => element.field == field,
-            orElse: () => Photo(field: field, value: "NullValue"),
-          )
-          .value;
-
-      value = 'http${value.substring(5)}';
-    } else {
-      if (field == "name") {
-        value = student.name;
-      } else if (field == "contact") {
-        value = student.contact;
-      } else if (field == "class") {
-        value = student.studentClass;
-      } else if (field == "section") {
-        value = student.section;
-      } else {
-        logger.i("Student Data else section-> ${field}");
-        value = student.data
-            .firstWhere((element) => element.field == field,
-                orElse: () => student.data[0])
-            .value
-            .toString();
-      }
-    }
-
-    logger.d("Value--> $value");
-    return value;
-  }
-
-  Widget frontWidget = const SizedBox(
-    height: 1.0,
-  );
-
-  Future<void> chooseOutputPath() async {
-    String? outputFile;
-    String? outputPath;
-
-    if (Platform.isWindows) {
-      outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Please select an output destination:',
-        fileName: "1",
-      );
-      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    } else if (Platform.isMacOS) {
-      outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Please select an output destination:',
-        fileName: "1",
-      );
-      outputPath = outputFile?.substring(0, outputFile.lastIndexOf("/") + 1);
-    }
-
-    logger.d('the output path is');
-    logger.d(outputPath);
-
-    setState(() {
-      _outputPath.text = outputPath!;
-    });
-
-    errorFile = File('${_outputPath.text}error.txt');
-
-    Directory destinationFolder = Directory('${outputPath}front');
-    if (await destinationFolder.exists()) {
-      frontPath = destinationFolder.path;
-    } else {
-      await destinationFolder.create(recursive: true);
-      frontPath = destinationFolder.path;
-    }
-
-    setState(() {
-      frontPath = destinationFolder.path;
-    });
-
-    destinationFolder = Directory('${outputPath}back');
-    if (await destinationFolder.exists()) {
-      backPath = destinationFolder.path;
-    } else {
-      await destinationFolder.create(recursive: true);
-      backPath = destinationFolder.path;
-    }
-
-    setState(() {
-      backPath = destinationFolder.path;
-    });
-  }
-
-  Uint8List resizeImage(Uint8List data) {
-    print('inside the resizeImage');
-    Uint8List? resizedData = data;
-    IMG.Image? img = IMG.decodeImage(data);
-    IMG.Image resized = IMG.copyResize(
-      img!,
-      width: img.width * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
-      height: img.height * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
-    );
-    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
-    return resizedData;
-  }
-
-  Future<void> captureScreenshot(
-    Widget idCard,
-    String path,
-    String fileImage,
-  ) async {
-    try {
-      Uint8List pngBytes = await screenshotController.captureFromWidget(
-        idCard,
-        pixelRatio: 10,
-      );
-
-      logger.d("Pixel Ratio -> $pixelRatio");
-
-      pngBytes = await resizeImage(pngBytes);
-      if (Platform.isMacOS) {
-        path = '$path/';
-        fileImage = pathFun.joinAll(fileImage.split('/'));
-        fileImage = fileImage.replaceAll('/', '\\');
-      }
-
-      await File('$path$fileImage.jpeg').writeAsBytes(pngBytes);
-      logger.d("SS Png Captured --> $path$fileImage.jpeg");
-    } catch (e) {
-      logger.e("Error capturing screenshot: $e");
-
-      logger.e("ID Card Gen Error $fileImage --> $e");
-      errors += "ID Card Gen Error ${fileImage}\n";
-      errorList.add("ID Card Gen Error ${fileImage}: $e");
-    }
-  }
-
-  List<List<T>> splitList<T>(List<T> list, int batchSize) {
-    final result = <List<T>>[];
-    final length = list.length;
-
-    for (var i = 0; i < length; i += batchSize) {
-      final end = (i + batchSize < length) ? i + batchSize : length;
-      result.add(list.sublist(i, end));
-    }
-
-    return result;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -351,6 +382,10 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                               for (final studentBatch in studentBatches) {
                                 batchIndex++;
                                 imageIndex = 0;
+                                
+                                if (isStop) {
+                                  return;
+                                }
                                 await Future.wait(
                                     studentBatch.map((student) async {
                                   if (isStop) {
@@ -359,12 +394,20 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
                                   if (widget.isSelected[student.id]!) {
                                     logger.d(
-                                      "-=------>   ${student.name} ${student.contact} ${student.studentClass}",
+                                      "-=------>   ${student.name} ${student.contact} ${student.studentClass} ${student.toJson()}",
                                     );
                                     try {
+                                       if (isStop) {
+                                        return;
+                                      }
                                       for (int i = 0;
                                           i < student.photo.length;
                                           i++) {
+                                        if (isStop) {
+                                          return;
+                                        }  if (isStop) {
+                                          break;
+                                        }
                                         final tempImage =
                                             await NetworkAssetBundle(Uri.parse(
                                                     student.photo[i].value))
@@ -376,12 +419,12 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                             'The type is ${student.photo[i].field}');
                                       }
 
-                                      _idCardGenerationModel.idcard.labels
-                                          .forEach((label) {
+                                      for (var label in _idCardGenerationModel.idcard.labels) {
                                         if (label.isPhoto) {
                                           logger.d("Photo--> ${label.title}");
+                                          // label.isPrinted = true;
                                         }
-                                      });
+                                      }
 
                                       labelList.clear();
                                       labelList.add(
@@ -418,6 +461,12 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
 
                                       for (final label in _idCardGenerationModel
                                           .idcard.labels) {
+                                              if (isStop) {
+                                          return;
+                                        }
+                                          if (isStop) {
+                                          break;
+                                        }
                                         final isPrinted = label.isPrinted &&
                                             (!label.isFront ||
                                                 !_idCardGenerationModel
@@ -425,6 +474,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                         final isFront = label.isFront ||
                                             !_idCardGenerationModel
                                                 .idcard.isDual;
+
 
                                         if (isPrinted && isFront) {
                                           labelList.add(
@@ -574,6 +624,9 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                           : Container();
 
                                       print('the front path is $frontPath');
+                                        if (isStop) {
+                                          return;
+                                        }
                                       await captureScreenshot(frontWidget,
                                           frontPath, student.username);
                                       if (_idCardGenerationModel
@@ -636,14 +689,14 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                               ? Column(
                                   children: [
                                     Text(
-                                      "All ID Cards generated successfully !",
+                                     isStop ? "Some ID Cards were generated successfully" : "All ID Cards generated successfully !",
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green,
                                       ),
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       height: 10,
                                     ),
                                     SizedBox(
@@ -663,20 +716,30 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
                                   children: [
                                     Column(
                                       children: [
-                                        Container(
+                                        SizedBox(
                                           height: 100,
                                           child: Center(
-                                            child: Text(
-                                              "Generating... $currentCount/$totalCount and $imageIndex  and $batchIndex ",
-                                              style: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
+                                            child:Column(children: [
+                                            !isStop ?   Text(
+                                                "Generating ... $currentCount/$totalCount and $imageIndex  and $batchIndex ",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ) :
+
+                                               Text(
+                                                "Skipping ... $currentCount/$totalCount",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
+                                            ],)
                                           ),
                                         ),
                                         Button(
-                                            child: const Text("Stop Genrating"),
+                                            child: const Text("Stop Generating"),
                                             onPressed: () {
                                               setState(() {
                                                 isStop = true;

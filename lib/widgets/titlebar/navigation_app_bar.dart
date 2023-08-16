@@ -1,9 +1,5 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import './window_buttons.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../pages/login_screen.dart';
 
 NavigationAppBar customNavigationAppBar(
   String title,

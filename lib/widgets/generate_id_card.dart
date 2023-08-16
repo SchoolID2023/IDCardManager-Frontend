@@ -9,11 +9,11 @@ import 'package:idcard_maker_frontend/widgets/resizable_widget.dart';
 import 'package:keymap/keymap.dart';
 
 import '../models/id_card_model.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
-import 'package:file_picker/file_picker.dart';
+// import 'dart:async';
+// import 'dart:convert';
+// import 'dart:typed_data';
+// import 'dart:ui' as ui;
+// import 'package:file_picker/file_picker.dart';
 import '../services/logger.dart';
 
 class GenerateIdCard extends StatefulWidget {
@@ -52,40 +52,40 @@ class _GenerateIdCardState extends State<GenerateIdCard> {
     super.initState();
   }
 
-  Future<void> _capturePng(GlobalKey key, String folder) async {
-    final RenderRepaintBoundary boundary =
-        key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
-    final ui.Image image = await boundary.toImage();
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List pngBytes = byteData!.buffer.asUint8List();
+  // Future<void> _capturePng(GlobalKey key, String folder) async {
+  //   final RenderRepaintBoundary boundary =
+  //       key.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+  //   final ui.Image image = await boundary.toImage();
+  //   final ByteData? byteData =
+  //       await image.toByteData(format: ui.ImageByteFormat.png);
+  //   final Uint8List pngBytes = byteData!.buffer.asUint8List();
 
-    String? outputFile = await FilePicker.platform.saveFile(
-      dialogTitle: 'Please select an output file:',
-      fileName: "1",
-    );
-    outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
-    logger.d(outputFile);
+  //   String? outputFile = await FilePicker.platform.saveFile(
+  //     dialogTitle: 'Please select an output file:',
+  //     fileName: "1",
+  //   );
+  //   outputFile = outputFile?.substring(0, outputFile.lastIndexOf("\\") + 1);
+  //   logger.d(outputFile);
 
-    Directory destinationFolder = Directory('$outputFile${folder}');
-    String path = "";
-    if (await destinationFolder.exists()) {
-      path = destinationFolder.path;
-    } else {
-      await destinationFolder.create(recursive: true);
-      path = destinationFolder.path;
-    }
+  //   Directory destinationFolder = Directory('$outputFile${folder}');
+  //   String path = "";
+  //   if (await destinationFolder.exists()) {
+  //     path = destinationFolder.path;
+  //   } else {
+  //     await destinationFolder.create(recursive: true);
+  //     path = destinationFolder.path;
+  //   }
 
-    await File('${path}\\1.png').writeAsBytes(pngBytes);
+  //   await File('${path}\\1.png').writeAsBytes(pngBytes);
 
-    logger.d(destinationFolder.path);
+  //   logger.d(destinationFolder.path);
 
-    var destinationFile =
-        await File(outputFile! + '1' + '.png').writeAsBytes(pngBytes);
-  }
+  //   var destinationFile =
+  //       await File(outputFile! + '1' + '.png').writeAsBytes(pngBytes);
+  // }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     if (widget.idCard.foregroundImagePath != '') {
       labelList.add(
         SizedBox(

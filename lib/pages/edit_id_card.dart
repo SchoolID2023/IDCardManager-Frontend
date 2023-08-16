@@ -632,7 +632,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                     ),
               content: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Flexible(
                     flex: 2,
@@ -701,7 +701,7 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                           Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 vertical: 8.0,
-                                                horizontal: 64.0),
+                                                horizontal: 10.0),
                                             child: DropDownButton(
                                               items: [
                                                 MenuFlyoutItem(
@@ -803,27 +803,30 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                                   .typography
                                                                   .bodyLarge,
                                                             ),
-                                                            trailing: SizedBox(
-                                                              width: 200,
-                                                              child: Row(
-                                                                children: [
-                                                                  _idCard.isDual
-                                                                      ? ToggleSwitch(
-                                                                          checked: _idCard
-                                                                              .labels[index]
-                                                                              .isFront,
-                                                                          onChanged:
-                                                                              (_) {
-                                                                            setState(() {
-                                                                              _idCard.labels[index].isFront = !_idCard.labels[index].isFront;
-                                                                            });
-                                                                          },
-                                                                          content: _idCard.labels[index].isFront
-                                                                              ? const Text("On Front")
-                                                                              : const Text("On Back"),
-                                                                        )
-                                                                      : Container(),
-                                                                ],
+                                                            trailing: Padding(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 8,),
+                                                              child: SizedBox(
+                                                                width: 100,
+                                                                child: Row(
+                                                                  children: [
+                                                                    _idCard.isDual
+                                                                        ? ToggleSwitch(
+                                                                            checked: _idCard
+                                                                                .labels[index]
+                                                                                .isFront,
+                                                                            onChanged:
+                                                                                (_) {
+                                                                              setState(() {
+                                                                                _idCard.labels[index].isFront = !_idCard.labels[index].isFront;
+                                                                              });
+                                                                            },
+                                                                            content: _idCard.labels[index].isFront
+                                                                                ? const Text("On Front")
+                                                                                : const Text("On Back"),
+                                                                          )
+                                                                        : Container(),
+                                                                  ],
+                                                                ),
                                                               ),
                                                             ),
                                                           ),
@@ -926,24 +929,27 @@ class _EditIdCardPageState extends State<EditIdCardPage> {
                                                                         .bodyLarge,
                                                                   ),
                                                                   trailing:
-                                                                      SizedBox(
-                                                                    width: 200,
-                                                                    child: Row(
-                                                                      children: [
-                                                                        _idCard.isDual
-                                                                            ? ToggleSwitch(
-                                                                                checked: _idCard.labels[ind].isFront,
-                                                                                onChanged: (_) {
-                                                                                  setState(() {
-                                                                                    _idCard.labels[ind].isFront = !_idCard.labels[ind].isFront;
-                                                                                  });
-                                                                                },
-                                                                                content: _idCard.labels[ind].isFront ? const Text("On Front") : const Text("On Back"),
-                                                                              )
-                                                                            : Container(),
-                                                                      ],
-                                                                    ),
-                                                                  ),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets.all(8.0),
+                                                                        child: SizedBox(
+                                                                                                                                          width: 100,
+                                                                                                                                          child: Row(
+                                                                        children: [
+                                                                          _idCard.isDual
+                                                                              ? ToggleSwitch(
+                                                                                  checked: _idCard.labels[ind].isFront,
+                                                                                  onChanged: (_) {
+                                                                                    setState(() {
+                                                                                      _idCard.labels[ind].isFront = !_idCard.labels[ind].isFront;
+                                                                                    });
+                                                                                  },
+                                                                                  content: _idCard.labels[ind].isFront ? const Text("On Front") : const Text("On Back"),
+                                                                                )
+                                                                              : Container(),
+                                                                        ],
+                                                                                                                                          ),
+                                                                                                                                        ),
+                                                                      ),
                                                                 ),
                                                               ),
                                                             ),

@@ -60,27 +60,41 @@ class _LoadIdCardDataState extends State<LoadIdCardData> {
         children: [
           TextBox(
             controller: _title,
-            prefix: Text( "Title"),
+            prefix: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text( "Title"),
+            ),
             placeholder: 'Enter title',
           ),
+         const SizedBox(height:12),
           Row(
             children: [
               Expanded(
                 child: TextBox(
                   controller: _idCardWidth,
-                  prefix: Text( "ID Card Width (in mm)"),
+                  prefix: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 2.0),
+                    child: Text( "Width (in mm)", style:TextStyle(fontSize: 10,)),
+                  ),
                   placeholder: 'Enter width',
                 ),
               ),
+              const SizedBox(width: 4),
               Expanded(
                 child: TextBox(
                   controller: _idCardHeight,
-                  prefix: Text( "ID Card Height (in mm)"),
+                  prefix: Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 2.0),
+                    child: Text( "Height (in mm)",  style: TextStyle(
+                          fontSize: 10,
+                        )),
+                  ),
                   placeholder: 'Enter height',
                 ),
               ),
             ],
           ),
+          const SizedBox(height: 12),
           Row(
             children: [
               // Expanded(

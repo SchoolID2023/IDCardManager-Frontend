@@ -1126,7 +1126,7 @@ class RemoteServices {
 
   Future<IdCardGenerationModel> getIdCardGenerationModel(
       String schoolId) async {
-    logger.d("School ID-> $schoolId");
+    logger.d("idCard ID-> $schoolId");
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
