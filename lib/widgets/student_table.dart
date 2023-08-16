@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
@@ -11,7 +10,6 @@ import 'package:idcard_maker_frontend/widgets/dialog/confirm_delete.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/edit_student.dart';
 import 'package:idcard_maker_frontend/widgets/dialog/generate_id_card.dart';
 import '../services/logger.dart';
-
 import '../models/student_model.dart';
 
 class StudentTable extends StatefulWidget {
@@ -49,9 +47,7 @@ class _StudentTableState extends State<StudentTable> {
   String classFilter = 'All';
   String sectionFilter = 'All';
   final TextEditingController _filter = TextEditingController();
-
   List<String> filteredStudents = [];
-
   late Map<String, bool> isSelected;
   int currentPageIndex = 0;
 
@@ -59,20 +55,15 @@ class _StudentTableState extends State<StudentTable> {
   void initState() {
     super.initState();
     isSelected = widget.isSelected;
-
     logger.d("Length-> ${widget.students[0].data.length}");
-
     for (var element in widget.labels) {
       _isVisible[element] = false;
     }
-
     photoLabel = widget.photoLabels.isNotEmpty ? widget.photoLabels[0] : "-1";
-
     studentController = Get.put(StudentController(widget.schoolId));
   }
 
   final tableKey = GlobalKey<PaginatedDataTableState>();
-
   void onSelectingRow(String studentId, bool isSelected) {
     setState(() {
       this.isSelected[studentId] = isSelected;
@@ -292,7 +283,6 @@ class _StudentTableState extends State<StudentTable> {
                             isFiltering = true;
                             filteredStudents =
                                 _filter.text.toLowerCase().split(',').toList();
-                            logger.d(filteredStudents);
                           });
                         },
                       ),
@@ -307,7 +297,6 @@ class _StudentTableState extends State<StudentTable> {
                             isFiltering = true;
                             filteredStudents =
                                 _filter.text.toLowerCase().split(',').toList();
-                            logger.d(filteredStudents);
                           });
                         }),
                     const SizedBox(
@@ -488,8 +477,7 @@ class _StudentTableState extends State<StudentTable> {
                                   Text(widget.photoLabels[index].toUpperCase()),
                               onPressed: () {
                                 setState(() {
-                                  photoLabel =
-                                      widget.photoLabels[index].toUpperCase();
+                                  photoLabel = widget.photoLabels[index];
                                 });
                               },
                             ),
@@ -552,6 +540,7 @@ class MyData extends DataTableSource {
       this.deleteStudentPhotoFunction,
       this.schoolId,
       this.labels) {
+    bool resetIndex = false;
     bool ifFilter(Student student) {
       bool value = false;
       if (filterField == "") {
@@ -674,6 +663,16 @@ class MyData extends DataTableSource {
 
     for (int index = 0; index < students.length; index++) {
       if (isFiltering && filteredStudents.isNotEmpty) {
+        print('the data is');
+        print(index.toString());
+        print(resetIndex);
+        if (!resetIndex) {
+          index = 0;
+          resetIndex = true;
+        }
+        if (index == students.length - 1) {
+          resetIndex = false;
+        }
         if (!ifFilter(students[index])) {
           // logger.d(
           //     "##-> ${students[index].data[filterIndex].value} -- ${filteredStudents}");
@@ -726,7 +725,7 @@ class MyData extends DataTableSource {
       _data.add(studentData);
     }
   }
-  Set<int> selectedRows = Set<int>();
+  Set<int> selectedRows = <int>{};
   @override
   bool get isRowCountApproximate => false;
   @override
@@ -809,18 +808,17 @@ class MyData extends DataTableSource {
                     ? const SizedBox.shrink()
                     : IconButton(
                         onPressed: () {
-                          Student studentData = students[index];
                           showDialog(
                               context: context,
                               builder: (context) {
                                 return ConfirmDelete(
                                   type: "Student",
-                                  name: students[index].name.toUpperCase(),
+                                  name: _data[index][2].toUpperCase(),
                                   deleteDialogueFunction: () async {
                                     await deleteStudentPhotoFunction(
-                                        _data[index][value], studentData.id);
+                                        _data[index][7], _data[index].last);
                                   },
-                                  deletePhoto: false,
+                                  deletePhoto: true,
                                 );
                               });
                         },
@@ -867,7 +865,7 @@ class MyData extends DataTableSource {
                             builder: (context) {
                               return ConfirmDelete(
                                 type: "Student",
-                                name: students[index].name.toUpperCase(),
+                                name: _data[index][2].toUpperCase(),
                                 deleteDialogueFunction: () async {
                                   await deleteFunction(_data[index].last);
                                 },
