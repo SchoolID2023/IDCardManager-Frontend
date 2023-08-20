@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:image/image.dart' as IMG;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:fluent_ui/fluent_ui.dart';
@@ -14,6 +14,9 @@ import 'package:idcard_maker_frontend/services/remote_services.dart';
 import 'package:screenshot/screenshot.dart';
 import '../services/logger.dart';
 import 'package:path/path.dart' as pathFun;
+import 'dart:typed_data';
+import 'dart:async';
+import 'image_utils.dart';
 
 class GenerateIdCardList extends StatefulWidget {
   final String idCardId;
@@ -183,56 +186,53 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     logger.d('the output path is ---->  $backPath');
   }
 
-  Uint8List resizeImage(Uint8List data) {
-    if (isStop) {
-      return data;
-    }
-    Uint8List? resizedData = data;
-    IMG.Image? img = IMG.decodeImage(data);
-    IMG.Image resized = IMG.copyResize(
-      img!,
-      width: img.width * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
-      height: img.height * (pixelRatio / 10) * double.parse(_dpi.text) ~/ 100,
-    );
-    resizedData = Uint8List.fromList(IMG.encodeJpg(resized));
-    return resizedData;
-  }
-
   Future<void> captureScreenshotAndPreview(
     Widget idCard,
     String path,
     String fileImage,
   ) async {
+    if (isStop) {
+      return;
+    }
+
     try {
-      if (isStop) {
-        return;
-      }
       Uint8List pngBytes = await screenshotController.captureFromWidget(
         idCard,
         pixelRatio: 10,
-        delay: const Duration(
-          milliseconds: 200,
-        ),
+        delay: const Duration(milliseconds: 200),
       );
 
-      pngBytes = resizeImage(pngBytes);
+      // Prepare the message to send to the isolate
+      final message = {
+        'data': pngBytes,
+        'pixelRatio': pixelRatio,
+        'dpi': int.parse(_dpi.text),
+      };
+
+      // Use the compute function to invoke the isolate for image resizing
+      pngBytes = await compute(resizeImage, message);
+
       path = '$path/';
       if (Platform.isMacOS) {
         path = '$path/';
         fileImage = pathFun.joinAll(fileImage.split('/'));
         fileImage = fileImage.replaceAll('/', '\\');
       }
+
       setState(() {
         previewImageBytes = pngBytes;
       });
+
       await File('$path$fileImage.jpeg').writeAsBytes(pngBytes);
       logger.d("SS Png Captured --> $path$fileImage.jpeg");
+
       // Display the preview image widget
     } catch (e, stackTrace) {
       logger.e("Error capturing screenshot: $e\n$stackTrace");
       logger.e("ID Card Gen Error $fileImage --> $e");
       errors += "ID Card Gen Error $fileImage\n";
       errorList.add("ID Card Gen Error $fileImage: $e");
+      await errorFile.writeAsString(errors);
     }
   }
 
@@ -504,18 +504,18 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
     });
 
     try {
-      final imageMap = <String, List<int>>{};
       final labelList = <Widget>[];
       final labelBackList = <Widget>[];
 
+      final imageMap = <String, Uint8List>{};
       final selectedStudents = widget.students
           .where((student) => widget.isSelected[student.id]!)
           .toList();
       final totalCount = selectedStudents.length;
 
-      for (final student in selectedStudents) {
+      await Future.forEach(selectedStudents, (Student student) async {
         if (isStop) {
-          break;
+          return;
         }
 
         await Future.wait(student.photo.map((photo) async {
@@ -689,7 +689,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
           imageIndex++;
           currentCount++;
         });
-      }
+      });
 
       // Attach ID cards and update UI
       await errorFile.writeAsString(errors);
@@ -701,7 +701,7 @@ class _GenerateIdCardListState extends State<GenerateIdCardList> {
           _isGenerating = false; // Set generating flag to false
         });
       });
-      errorFile.writeAsString(errors);
+      await errorFile.writeAsString(errors);
     } catch (e, stackTrace) {
       logger.e("ID Card Gen Error: $e\n$stackTrace");
       // Handle the error
