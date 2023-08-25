@@ -61,13 +61,11 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.remove('token').then((value) { 
-                    
+                  prefs.remove('token').then((value) {
                     prefs.clear();
-                   return  Navigator.of(context)
-                      .push(FluentPageRoute(
-                          builder: (context) => const LoginPage()));
-                });
+                    return Navigator.of(context).push(FluentPageRoute(
+                        builder: (context) => const LoginPage()));
+                  });
                 },
               ),
             ],
@@ -93,7 +91,7 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
         appBar: customNavigationAppBar(
           studentController.getSchool.name.toUpperCase(),
           context,
-          isHomePage:!(studentController.role.value == 0),
+          isHomePage: !(studentController.role.value == 0),
           actions: [
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -148,8 +146,8 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () {
                   _remoteServices.generateExcel(
                     widget.schoolId,
-                    'all',
-                    'all',
+                    studentController.filterClass.value,
+                    studentController.filterSection.value,
                   );
                 },
               ),
@@ -174,15 +172,14 @@ class _SchoolInfoPageState extends State<SchoolInfoPage> {
                 onPressed: () async {
                   final SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                       prefs.remove('token').then(
-                        (value) { 
-                            prefs.clear();
-                          return Navigator.of(context).pushReplacement(
-                          FluentPageRoute(
-                            builder: (context) => const LoginPage(),
-                          ),
-                        );}
-                      );
+                  prefs.remove('token').then((value) {
+                    prefs.clear();
+                    return Navigator.of(context).pushReplacement(
+                      FluentPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ),
+                    );
+                  });
                 },
               ),
             ),

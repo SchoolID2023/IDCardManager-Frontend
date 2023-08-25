@@ -10,6 +10,8 @@ import '../services/logger.dart';
 
 class StudentController extends GetxController {
   StudentController(this.schoolId);
+  RxString filterClass = 'all'.obs;
+  RxString filterSection = 'all'.obs;
 
   final RemoteServices _remoteServices = RemoteServices();
   String schoolId;

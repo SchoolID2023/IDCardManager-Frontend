@@ -25,7 +25,7 @@ class RemoteServices {
 
   // final String baseUrl = DBConstants.baseURL;
 
-  final String baseUrl = DBConstants.baseURL;
+  final String baseUrl = DBConstants.localBaseURL;
 
   String getUrl(int role, String endpoint, {String? schoolId}) {
     if (role == 0) {

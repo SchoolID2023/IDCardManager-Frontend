@@ -333,6 +333,9 @@ class _StudentTableState extends State<StudentTable> {
                                 (index) => fluent.MenuFlyoutItem(
                                   text: Text(widget.classes[index]),
                                   onPressed: () {
+                                    studentController.filterClass.value =
+                                        widget.classes[index];
+
                                     setState(() {
                                       classFilter = widget.classes[index];
                                     });
@@ -358,6 +361,8 @@ class _StudentTableState extends State<StudentTable> {
                                 (index) => fluent.MenuFlyoutItem(
                                   text: Text(widget.sections[index]),
                                   onPressed: () {
+                                    studentController.filterSection.value =
+                                        widget.sections[index];
                                     setState(() {
                                       sectionFilter = widget.sections[index];
                                     });
